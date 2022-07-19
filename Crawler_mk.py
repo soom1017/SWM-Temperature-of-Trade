@@ -40,7 +40,7 @@ headers = {
 page=0
 news_list=[]
 art_list=[]
-for page in range(0,100):
+for page in range(0,10):
     url="https://www.mk.co.kr/news/economy/?page="+str(page)
     r = requests.get(url, headers=headers)
     bs=BeautifulSoup(r.content,'html.parser')
@@ -68,30 +68,48 @@ for news in news_list:
         if '[외환]' in title:
             continue
         sum=bs.find("h2","sub_title1_new").findAll(text=True)
+        kk=bs.find("div","art_txt").findAll(text=True)
+        kk=[i for i in kk if i != '\n']
+        kk.pop(0)
+        for i in range(len(kk)):
+            kk[i]=kk[i].replace('\r',"")
+        kk=kk[:-4]
+        result=""
+        paragraph=[]
+        for i in kk:
+            if "googletag" not in i:
+                result+=i+" "
+                paragraph.append(i)
         summary=""
         for i in sum:
             summary+=(i+" ")
         author=bs.find("li","author")
         main_author=author.text
         time=bs.find("li","lasttime").text.split('\xa0')
-        art=bs.find("div","art_txt").text
+        art=result
         try:
             fig=bs.findAll("figcaption")
             for i in fig:
                 art=art.replace(i.text,"")
+                for j in range(len(paragraph)):
+                    paragraph[j] = paragraph[j].replace(i.text,"")
         except:
             pass
-        paragraph=art.split("\r")
-        for i in range(len(paragraph)):
-            paragraph[i]=paragraph[i].replace("\n","")
+        # paragraph=art.split("\r")
+        # for i in range(len(paragraph)):
+            # paragraph[i]=paragraph[i].replace("\n","")
         if paragraph:
-            temp=paragraph.pop()
-            art=art.replace(temp,"")
+            # temp=paragraph.pop()
+            # art=art.replace(temp,"")
+            # art=result
             art_list.append(article(title,summary,main_author,time,art,paragraph,news))
             count+=1
             print(art_list[-1].title)
+        if count==29:
+            pdb.set_trace()
     except Exception as e:
         print(e)
         print(news)
+# pdb.set_trace()
 data = pd.DataFrame([(i.title,i.summary,i.author,i.create,i.modify,i.article,i.url,{j : i.sum[j] for j in range(len(i.sum))},{j:i.paragraph[j] for j in range(len(i.paragraph))}) for i in art_list ],columns=['제목','요약','기자','입력시간','최종변경시간','기사 전문','URL','요약(분리버전)','전문(분리버전)'])
-data.to_csv('C:\\Users\\SeoHyeongSeoksCOM\\Desktop\\result.csv',encoding="utf-8-sig",index=False)
+data.to_csv('C:\\Users\\seo\\Desktop\\result.csv',encoding="utf-8-sig",index=False)
