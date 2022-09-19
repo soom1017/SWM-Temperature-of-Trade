@@ -1,0 +1,13 @@
+# Mac OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# env
+*.env
+
+# DB
+init_db.*
+*.sqlite3
