@@ -1,13 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-<<<<<<< HEAD
-    package="com.example.tot">
-   <application
-        android:label="tot"
-=======
     package="com.example.startup">
    <application
         android:label="startup"
->>>>>>> 38401a8763b1bcd88018f1c87ac7dd9f88fb271e
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
