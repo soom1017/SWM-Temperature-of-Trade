@@ -26,6 +26,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>fb809329870409836</string>
+            </array>
+        </dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -37,6 +43,17 @@
 			</array>
 		</dict>
 	</array>
+	<key>FacebookAppID</key>
+    <string>809329870409836</string>
+    <key>FacebookClientToken</key>
+    <string>082dc7635e7caefc778741ab9a8b6950</string>
+    <key>FacebookDisplayName</key>
+    <string>Temperature of Trade</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>fbapi</string>
+      <string>fb-messenger-share-api</string>
+    </array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
