@@ -1,6 +1,9 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -10,25 +13,22 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  final app = AppState(true, '');
+  final app = AppState(false, null);
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  late FirebaseAuth _auth;
 
   @override
   void initState() {
     super.initState();
-    _delay();
+    _auth = FirebaseAuth.instance;
+    // Firebase.initializeApp().whenComplete(() => null);
   }
 
   @override
   Widget build(BuildContext context) {
     if (app.loading) return _loading();
-    if (app.user.isEmpty) return _signIn();
+    if (app.user == null) return _logIn();
     return _main();
-  }
-
-  _delay() {
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() => app.loading = false);
-    });
   }
 
   Widget _loading() {
@@ -37,7 +37,7 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  Widget _signIn() {
+  Widget _logIn() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -48,11 +48,7 @@ class _SettingScreenState extends State<SettingScreen> {
           ElevatedButton(
             child: Text('login'),
             onPressed: () {
-              setState(() {
-                app.loading = true;
-                app.user = 'my name';
-                _delay();
-              });
+              _signIn();
             },
           )
         ],
@@ -65,19 +61,48 @@ class _SettingScreenState extends State<SettingScreen> {
       child: IconButton(
         icon: Icon(Icons.account_circle),
         onPressed: () {
-          setState(() {
-            app.user = '';
-            app.loading = true;
-            _delay();
-          });
+          _signOut();
         },
       ),
     );
+  }
+
+  Future<String> _signIn() async {
+    setState(() => app.loading = true);
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+    final GoogleSignInAuthentication? googleSignInAuthentication =
+        await googleSignInAccount?.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication?.accessToken,
+      idToken: googleSignInAuthentication?.idToken,
+    );
+
+    final UserCredential authResult =
+        await _auth.signInWithCredential(credential);
+    final User? user = authResult.user;
+    print(user);
+
+    setState(() {
+      app.loading = false;
+      app.user = user!;
+    });
+
+    return 'success';
+  }
+
+  void _signOut() async {
+    await googleSignIn.signOut();
+    // await _auth.signOut();
+    setState(() {
+      app.user = null;
+    });
   }
 }
 
 class AppState {
   bool loading;
-  FirebaseUser user;
+  User? user;
   AppState(this.loading, this.user);
 }
