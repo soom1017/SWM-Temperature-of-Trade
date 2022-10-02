@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -9,6 +11,12 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final app = AppState(true, '');
+
+  @override
+  void initState() {
+    super.initState();
+    _delay();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +78,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
 class AppState {
   bool loading;
-  String user;
+  FirebaseUser user;
   AppState(this.loading, this.user);
 }
