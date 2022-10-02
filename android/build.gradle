@@ -8,10 +8,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-<<<<<<< HEAD
         classpath 'com.android.tools.build:gradle:3.6.1'
-=======
->>>>>>> 38401a8763b1bcd88018f1c87ac7dd9f88fb271e
+        classpath 'com.google.gms:google-services:4.3.2'
     }
 }
 
@@ -19,12 +17,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-<<<<<<< HEAD
-
-        // 카카오 SDK 레포지토리 설정
-        maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
-=======
->>>>>>> 38401a8763b1bcd88018f1c87ac7dd9f88fb271e
     }
 }
 
