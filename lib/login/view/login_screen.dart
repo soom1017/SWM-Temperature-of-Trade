@@ -1,10 +1,29 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tot/common/const/values.dart';
+
+String generateNonce([int length = 32]) {
+  final charset =
+      '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  final random = Random.secure();
+  return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+      .join();
+}
+
+String sha256ofString(String input) {
+  final bytes = utf8.encode(input);
+  final digest = sha256.convert(bytes);
+  return digest.toString();
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,26 +33,25 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final app = AppState(false, null);
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-  final FacebookLogin facebookSignIn = FacebookLogin();
-  LoginPlatform _loginPlatform = LoginPlatform.none;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    if (app.loading) return _loading();
-    if (app.user == null) return _logIn();
-    return _main();
+    print("loginScreen");
+    if (_isLoading) return _loading();
+    // if (FirebaseAuth.instance.currentUser == null) return _logIn();
+    return _logIn(); //asdfasdfasdfas
   }
 
   Widget _loading() {
+    print("loading in loginScreen");
     return const Center(
       child: CircularProgressIndicator(),
     );
   }
 
   Widget _logIn() {
+    print("_login in loginScreen");
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -51,88 +69,61 @@ class _LoginScreenState extends State<LoginScreen> {
               _signInFacebook();
             },
           ),
+          Platform.isIOS ? ElevatedButton(
+            child: Text('apple login'),
+            onPressed: () {
+              _signInApple();
+            },
+          ) : SizedBox(),
         ],
       ),
     );
   }
 
-  Widget _main() {
-    return Center(
-      child: IconButton(
-        icon: Icon(Icons.account_circle),
-        onPressed: () {
-          _signOut();
-        },
-      ),
-    );
-  }
-
-  Future<String> _signInGoogle() async {
-    setState(() => app.loading = true);
-    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-    final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount?.authentication;
+  Future<UserCredential> _signInGoogle() async {
+    setState(() => _isLoading = true);
+    final GoogleSignInAccount? googleSignInAccount =
+        await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? googleSignInAuthentication =
+        await googleSignInAccount?.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleSignInAuthentication?.accessToken,
       idToken: googleSignInAuthentication?.idToken,
     );
-    final UserCredential authResult = await _auth.signInWithCredential(credential);
-    final User user = authResult.user!;
-    print(user);
+    final authResult =
+        await FirebaseAuth.instance.signInWithCredential(credential);
 
-    setState(() {
-      _loginPlatform = LoginPlatform.google;
-      app.loading = false;
-      app.user = user;
-    });
-
-    return 'success';
+    setState(() => _isLoading = false);
+    return authResult;
   }
 
-  Future<String> _signInFacebook() async {
-    setState(() => app.loading = true);
-    final FacebookLoginResult result = await facebookSignIn.logIn();
-    final AuthCredential credential = FacebookAuthProvider.credential(result.accessToken!.token);
-    final UserCredential authResult = await _auth.signInWithCredential(credential);
-    final User user = authResult.user!;
-
-    print(user);
-
-    setState(() {
-      _loginPlatform = LoginPlatform.facebook;
-      app.loading = false;
-      app.user = user;
-    });
-
-    return 'success';
+  Future<UserCredential> _signInFacebook() async {
+    setState(() => _isLoading = true);
+    final FacebookLoginResult result = await FacebookLogin().logIn();
+    final AuthCredential credential =
+        FacebookAuthProvider.credential(result.accessToken!.token);
+    final authResult =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    print(credential.toString());
+    setState(() => _isLoading = false);
+    return authResult;
   }
 
-  void _signOut() async {
-    await _auth.signOut();
-    switch (_loginPlatform){
-      case LoginPlatform.google:
-        await googleSignIn.signOut();
-        break;
-      case LoginPlatform.facebook:
-        await facebookSignIn.logOut();
-        break;
-      case LoginPlatform.apple:
-        break;
-      case LoginPlatform.kakao:
-        break;
-      case LoginPlatform.naver:
-        break;
-      case LoginPlatform.none:
-        break;
-    }
-    setState(() {
-      _loginPlatform = LoginPlatform.none;
-      app.user = null;
-    });
-  }
-}
+  Future<UserCredential> _signInApple() async {
+    setState(() => _isLoading = true);
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
 
-class AppState {
-  bool loading;
-  User? user;
-  AppState(this.loading, this.user);
+    final oauthCredential = OAuthProvider("apple.com").credential(
+      idToken: appleCredential.identityToken,
+      accessToken: appleCredential.authorizationCode,
+    );
+
+    setState(() => _isLoading = false);
+    return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+  }
 }

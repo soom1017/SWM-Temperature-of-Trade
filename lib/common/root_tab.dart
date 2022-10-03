@@ -40,6 +40,7 @@ class _RootTabState extends State<RootTab>
 
   @override
   Widget build(BuildContext context) {
+    print("in root_tab build");
     return DefaultLayout(
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: KEYWORD_BG_COLOR,

@@ -21,6 +21,7 @@ class _App extends StatelessWidget {
     return FutureBuilder(
       future: Firebase.initializeApp(),
       builder: (context, snapshot){
+        print("main");
         if(snapshot.hasError){
           return MaterialApp(debugShowCheckedModeBanner: false, home: DefaultLayout(child: Center(
             child: Text("Firebase load fail"),
@@ -44,9 +45,12 @@ class _AuthApp extends StatelessWidget {
     return StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          print("authApp");
           if(!snapshot.hasData){
+            print("no data in authApp");
             return MaterialApp(debugShowCheckedModeBanner: false, home: DefaultLayout(child: LoginScreen(),));
           }else{
+            print("has data in authApp");
             return MaterialApp(debugShowCheckedModeBanner: false, home: RootTab());
           }
         },

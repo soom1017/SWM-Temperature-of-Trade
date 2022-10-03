@@ -38,6 +38,8 @@ dependencies:
   google_sign_in:
   flutter_login_facebook:
   flutter_facebook_auth:
+  sign_in_with_apple:
+  crypto:
 
 dev_dependencies:
   flutter_test:
