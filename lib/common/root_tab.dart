@@ -4,6 +4,7 @@ import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/home/view/home_screen.dart';
 import 'package:tot/mypage/view/mypage_screen.dart';
+import 'package:tot/login/view/login_screen.dart';
 import 'package:tot/setting/view/setting_screen.dart';
 
 class RootTab extends StatefulWidget {
