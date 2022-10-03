@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:tot/common/const/values.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -13,15 +15,10 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final app = AppState(false, null);
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  late FirebaseAuth _auth;
-
-  @override
-  void initState() {
-    super.initState();
-    _auth = FirebaseAuth.instance;
-    // Firebase.initializeApp().whenComplete(() => null);
-  }
+  final FacebookLogin facebookSignIn = FacebookLogin();
+  LoginPlatform _loginPlatform = LoginPlatform.none;
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +38,19 @@ class _SettingScreenState extends State<SettingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text('id'),
-          Text('pass'),
+        children: [
           ElevatedButton(
-            child: Text('login'),
+            child: Text('google login'),
             onPressed: () {
-              _signIn();
+              _signInGoogle();
             },
-          )
+          ),
+          ElevatedButton(
+            child: Text('facebook login'),
+            onPressed: () {
+              _signInFacebook();
+            },
+          ),
         ],
       ),
     );
@@ -66,35 +67,65 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  Future<String> _signIn() async {
+  Future<String> _signInGoogle() async {
     setState(() => app.loading = true);
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
-    final GoogleSignInAuthentication? googleSignInAuthentication =
-        await googleSignInAccount?.authentication;
-
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount?.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleSignInAuthentication?.accessToken,
       idToken: googleSignInAuthentication?.idToken,
     );
-
-    final UserCredential authResult =
-        await _auth.signInWithCredential(credential);
-    final User? user = authResult.user;
+    final UserCredential authResult = await _auth.signInWithCredential(credential);
+    final User user = authResult.user!;
     print(user);
 
     setState(() {
+      _loginPlatform = LoginPlatform.google;
       app.loading = false;
-      app.user = user!;
+      app.user = user;
+    });
+
+    return 'success';
+  }
+
+  Future<String> _signInFacebook() async {
+    setState(() => app.loading = true);
+    final FacebookLoginResult result = await facebookSignIn.logIn();
+    final AuthCredential credential = FacebookAuthProvider.credential(result.accessToken!.token);
+    final UserCredential authResult = await _auth.signInWithCredential(credential);
+    final User user = authResult.user!;
+
+    print(user);
+
+    setState(() {
+      _loginPlatform = LoginPlatform.facebook;
+      app.loading = false;
+      app.user = user;
     });
 
     return 'success';
   }
 
   void _signOut() async {
-    await googleSignIn.signOut();
-    // await _auth.signOut();
+    await _auth.signOut();
+    switch (_loginPlatform){
+      case LoginPlatform.google:
+        await googleSignIn.signOut();
+        break;
+      case LoginPlatform.facebook:
+        await facebookSignIn.logOut();
+        break;
+      case LoginPlatform.apple:
+        break;
+      case LoginPlatform.kakao:
+        break;
+      case LoginPlatform.naver:
+        break;
+      case LoginPlatform.none:
+        break;
+    }
     setState(() {
+      _loginPlatform = LoginPlatform.none;
       app.user = null;
     });
   }
