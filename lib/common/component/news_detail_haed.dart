@@ -40,6 +40,7 @@ class NewsDetailHead extends StatelessWidget {
           Text(newsTitle, style: TextStyle(fontSize: 24,),),
           SizedBox(height: 10,),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text("매일경제"),
               SizedBox(width: 25,),

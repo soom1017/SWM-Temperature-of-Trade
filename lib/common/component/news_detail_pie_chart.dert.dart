@@ -5,12 +5,14 @@ class NewsDetailPieChart extends StatelessWidget {
   final colorList;
   final dataMap;
   final centerText;
+  final legendLabels;
 
   NewsDetailPieChart({
     Key? key,
     required this.colorList,
     required this.dataMap,
     required this.centerText,
+    required this.legendLabels,
   }) : super(key: key);
 
   @override
@@ -18,21 +20,24 @@ class NewsDetailPieChart extends StatelessWidget {
     return PieChart(
       dataMap: dataMap,
       animationDuration: Duration(milliseconds: 800),
-      chartRadius: MediaQuery.of(context).size.width / 3.2,
+      chartRadius: MediaQuery.of(context).size.width / 2.6,
       initialAngleInDegree: 270,
       chartType: ChartType.ring,
       colorList: colorList,
       ringStrokeWidth: 32,
       centerText: centerText,
-      centerTextStyle: TextStyle(fontSize: 20, color: Colors.black),
+      legendLabels: legendLabels,
+      chartLegendSpacing: 25,
+      centerTextStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.w500),
       legendOptions: LegendOptions(
         showLegendsInRow: false,
-        legendPosition: LegendPosition.right,
-        showLegends: false,
-        legendShape: BoxShape.circle,
+        legendPosition: LegendPosition.left,
+        showLegends: true,
+        legendShape: BoxShape.rectangle,
         legendTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
         ),
+        legendLabels: legendLabels,
       ),
       chartValuesOptions: ChartValuesOptions(
         showChartValueBackground: false,

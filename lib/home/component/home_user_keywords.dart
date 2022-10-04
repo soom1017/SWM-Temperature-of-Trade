@@ -47,7 +47,8 @@ class HomeUserKeywordList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING + 2, 5, HORIZONTAL_PADDING + 2, 5),
+      padding: const EdgeInsets.fromLTRB(
+          HORIZONTAL_PADDING + 2, 5, HORIZONTAL_PADDING + 2, 5),
       child: Wrap(
         spacing: 8,
         runSpacing: -6,
@@ -71,13 +72,23 @@ class HomeUserKeywordList extends StatelessWidget {
 
 class HomeUserKeyword extends StatelessWidget {
   final String keyword;
+  final TextStyle textStyle;
 
-  const HomeUserKeyword({required this.keyword, Key? key}) : super(key: key);
+  const HomeUserKeyword(
+      {required this.keyword,
+      Key? key,
+      this.textStyle = const TextStyle(
+        fontSize: 23,
+        color: PRIMARY_COLOR,
+      )})
+      : super(key: key);
 
-  routeToKeywordMap(BuildContext context){
+  routeToKeywordMap(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => KeywordMapScreen(keyword: keyword,),
+        builder: (_) => KeywordMapScreen(
+          keyword: keyword,
+        ),
       ),
     );
   }
@@ -85,15 +96,12 @@ class HomeUserKeyword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: (){
+      onPressed: () {
         routeToKeywordMap(context);
       },
       child: Text(
         keyword,
-        style: TextStyle(
-          fontSize: 23,
-          color: PRIMARY_COLOR,
-        ),
+        style: textStyle,
       ),
     );
   }
