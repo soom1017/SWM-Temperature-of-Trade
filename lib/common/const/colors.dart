@@ -14,3 +14,5 @@ const NORMAL_FONT_COLOR = Color(0xFF000000);
 final HOME_BG_COLOR = Color(0xFF4099DD).withOpacity(0.15);
 // 뉴스탭 배경색
 const NEWSTAB_BG_COLOR = Color(0xFFF3F8FC);
+// 뉴스 디테일 제목색
+const NEWSDETAIL_TL_COLOR = Color(0xFFDFEDFA);

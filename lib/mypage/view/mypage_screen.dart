@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
@@ -13,6 +16,29 @@ class MypageScreen extends StatefulWidget {
 }
 
 class _MypageScreenState extends State<MypageScreen> {
+  Future<bool> test() async {
+    Dio dio = Dio(BaseOptions(
+      connectTimeout: 3000,
+      receiveTimeout: 3000,
+    ));
+    print("test 실행");
+    try{
+      print("response1");
+      Response response = await dio.get("http://3.38.140.121:8000/news/1");
+      print("response2");
+      if(response.statusCode == 200){
+        final jsonBody = jsonDecode(response.data);
+        print(jsonBody);
+      }else{
+        print(response.statusCode);
+      }
+      return true;
+    }catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
   // 가운뎃점 쓰는 경우가 있음
   final _newsTileList = <NewsTile>[
     NewsTile(
@@ -58,6 +84,7 @@ class _MypageScreenState extends State<MypageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // test();
     return Column(
       children: [
         Container(

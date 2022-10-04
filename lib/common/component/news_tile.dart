@@ -20,7 +20,7 @@ class NewsTile extends StatelessWidget {
   routeToNewsDetailPage(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => NewsDetailView(),
+        builder: (_) => NewsDetailView.fromNewsTile(this),
       ),
     );
   }
