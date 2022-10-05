@@ -61,7 +61,7 @@ class DefaultLayout extends StatelessWidget {
       title: Text(pageName!, style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600)),
       foregroundColor: Colors.black,
       backgroundColor: Colors.white,
-      elevation: 0,
+      elevation: 5,
     );
   }
 }

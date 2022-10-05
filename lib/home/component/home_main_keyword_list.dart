@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/keyword_map_screen.dart';
+import 'package:tot/home/view/home_keyword_rank_view.dart';
 
 import '../../common/const/colors.dart';
 
 class HomeMainKeywordList extends StatelessWidget {
   const HomeMainKeywordList({Key? key}) : super(key: key);
+
+  routeToKeywordRank(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => HomeKeywordRankView(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +47,14 @@ class HomeMainKeywordList extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.topRight,
-              child: Text(
-                "키워드 더보기 〉",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              child: GestureDetector(
+                onTap: () {
+                  routeToKeywordRank(context);
+                },
+                child: Text(
+                  "키워드 더보기 〉",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                ),
               ),
             ),
           ],
@@ -53,9 +67,10 @@ class HomeMainKeywordList extends StatelessWidget {
 class HomeMainKeywordButton extends StatelessWidget {
   final String keyword;
 
-  const HomeMainKeywordButton({required this.keyword, Key? key}) : super(key: key);
+  const HomeMainKeywordButton({required this.keyword, Key? key})
+      : super(key: key);
 
-  routeToKeywordMap(BuildContext context){
+  routeToKeywordMap(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => KeywordMapScreen(keyword: keyword),
