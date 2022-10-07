@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -18,6 +19,8 @@ class SettingScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               FirebaseAuth.instance.signOut();
+              // 카카오 로그아웃
+              // UserApi.instance.unlink();
             },
             child: Text("logout"),
           ),

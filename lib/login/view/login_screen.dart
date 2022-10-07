@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -53,12 +54,12 @@ class _LoginScreenState extends State<LoginScreen> {
               _signInApple();
             },
           ) : SizedBox(),
-          // ElevatedButton(
-          //   child: Text('kakao login'),
-          //   onPressed: () {
-          //     _signInKakao();
-          //   },
-          // ),
+          ElevatedButton(
+            child: Text('kakao login'),
+            onPressed: () {
+              _signInKakao();
+            },
+          ),
           // ElevatedButton(
           //   child: Text('naver login'),
           //   onPressed: () {
@@ -117,6 +118,15 @@ class _LoginScreenState extends State<LoginScreen> {
     return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   }
 
-  void _signInKakao() {}
+  void _signInKakao() async {
+    setState(() => _isLoading = true);
+    final isInstalled = await kakao.isKakaoTalkInstalled();
+    if(isInstalled){
+      await kakao.UserApi.instance.loginWithKakaoTalk();
+    }else{
+      await kakao.UserApi.instance.loginWithKakaoAccount();
+    }
+    setState(() => _isLoading = false);
+  }
   void _signInNaver() {}
 }

@@ -43,6 +43,7 @@ dependencies:
   dio:
   http:
   pie_chart: ^5.3.2
+  kakao_flutter_sdk_user:
 
 dev_dependencies:
   flutter_test:
