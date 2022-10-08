@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tot/common/view/news_detail_view.dart';
 
 import '../const/colors.dart';
@@ -27,39 +28,62 @@ class NewsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        routeToNewsDetailPage(context);
-      },
-      child: Container(
-        color: Colors.transparent,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              newsTitle,
-              style: TextStyle(fontSize: 19),
-              overflow: TextOverflow.ellipsis,
-            ),
-            Container(
-              height: 25,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (stockName == null) SizedBox.shrink() else stockTag(),
-                  ...keywordTags(),
-                  Spacer(),
-                  Text(
-                    postingDate,
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: SMALL_FONT_COLOR,
-                        fontWeight: FontWeight.w300),
-                  ),
-                ],
+    return Slidable(
+      groupTag: "asdf",
+      // Specify a key if the Slidable is dismissible.
+      key: const ValueKey(0),
+      // The end action pane is the one at the right or the bottom side.
+      endActionPane: const ActionPane(
+        extentRatio: 0.15,
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            onPressed: null,
+            backgroundColor: Colors.grey,
+            foregroundColor: Colors.white,
+            icon: Icons.bookmark_border,
+            label: '북마크',
+            padding: EdgeInsets.symmetric(horizontal: 10),
+          ),
+        ],
+      ),
+
+      // The child of the Slidable is what the user sees when the
+      // component is not dragged.
+      child: GestureDetector(
+        onTap: () {
+          routeToNewsDetailPage(context);
+        },
+        child: Container(
+          color: Colors.transparent,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                newsTitle,
+                style: TextStyle(fontSize: 19),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+              Container(
+                height: 25,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (stockName == null) SizedBox.shrink() else stockTag(),
+                    ...keywordTags(),
+                    Spacer(),
+                    Text(
+                      postingDate,
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: SMALL_FONT_COLOR,
+                          fontWeight: FontWeight.w300),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

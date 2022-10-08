@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -118,7 +119,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   }
 
-  void _signInKakao() async {
+  Future<String> createCustomToken(Map<String, dynamic> user) async{
+    final String url = 'http://';
+    final customTokenResponse = await Dio().post(url, data: {'body' : user});
+    return customTokenResponse.data;
+  }
+
+  Future<UserCredential> _signInKakao() async {
     setState(() => _isLoading = true);
     final isInstalled = await kakao.isKakaoTalkInstalled();
     if(isInstalled){
@@ -126,7 +133,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }else{
       await kakao.UserApi.instance.loginWithKakaoAccount();
     }
+
+    final user = await kakao.UserApi.instance.me();
+    final customToken = await createCustomToken({
+      'uid' : user!.id.toString(),
+      'displayName': user!.kakaoAccount!.profile!.nickname,
+    });
+
     setState(() => _isLoading = false);
+
+    return FirebaseAuth.instance.signInWithCustomToken(customToken);
   }
   void _signInNaver() {}
 }

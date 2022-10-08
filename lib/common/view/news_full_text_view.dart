@@ -3,7 +3,7 @@ import 'package:tot/common/component/news_detail_pie_chart.dert.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/component/news_detail_haed.dart';
-import 'package:tot/common/view/temp.dart';
+import 'package:tot/common/view/jsonParser.dart';
 import 'package:tot/home/component/home_user_keywords.dart';
 import '../layout/default_layout.dart';
 import 'package:tot/common/const/padding.dart';

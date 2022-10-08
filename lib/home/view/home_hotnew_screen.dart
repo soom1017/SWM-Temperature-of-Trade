@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tot/common/layout/default_layout.dart';
 
 import '../../common/component/news_tile.dart';
@@ -131,37 +132,39 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
       isExtraPage: true,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
-        child: ListView.separated(
-          itemBuilder: (context, i) {
-            if (i == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Text(
-                    widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 게재된 뉴스",
-                    style: TextStyle(
-                        fontSize: 30,
-                        color: PRIMARY_COLOR,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
+        child: SlidableAutoCloseBehavior(
+          child: ListView.separated(
+            itemBuilder: (context, i) {
+              if (i == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Text(
+                      widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 게재된 뉴스",
+                      style: TextStyle(
+                          fontSize: 30,
+                          color: PRIMARY_COLOR,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                );
+              }
+              return _newsTileList[i - 1];
+            },
+            separatorBuilder: (context, i) {
+              if (i == 0) return SizedBox.shrink();
+              return const Divider(
+                thickness: 1.5,
               );
-            }
-            return _newsTileList[i - 1];
-          },
-          separatorBuilder: (context, i) {
-            if (i == 0) return SizedBox.shrink();
-            return const Divider(
-              thickness: 1.5,
-            );
-          },
-          itemCount: _newsTileList.length,
+            },
+            itemCount: _newsTileList.length,
+          ),
         ),
       ),
     );
