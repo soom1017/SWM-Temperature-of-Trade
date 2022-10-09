@@ -120,29 +120,36 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<String> createCustomToken(Map<String, dynamic> user) async{
-    final String url = 'http://';
-    final customTokenResponse = await Dio().post(url, data: {'body' : user});
+    final dio = Dio();
+    final String url = 'http://52.79.240.67:8000/users/auth/kakao';
+    print(user.toString());
+    final customTokenResponse = await dio.post(url, data: user);
     return customTokenResponse.data;
   }
 
-  Future<UserCredential> _signInKakao() async {
+  Future<UserCredential?> _signInKakao() async {
     setState(() => _isLoading = true);
     final isInstalled = await kakao.isKakaoTalkInstalled();
+    var token;
     if(isInstalled){
-      await kakao.UserApi.instance.loginWithKakaoTalk();
+      final data = await kakao.UserApi.instance.loginWithKakaoTalk();
+      token = data.accessToken;
     }else{
-      await kakao.UserApi.instance.loginWithKakaoAccount();
+      final data = await kakao.UserApi.instance.loginWithKakaoAccount();
+      token = data.accessToken;
     }
 
     final user = await kakao.UserApi.instance.me();
+
     final customToken = await createCustomToken({
       'uid' : user!.id.toString(),
-      'displayName': user!.kakaoAccount!.profile!.nickname,
+      'access_token': token.toString(),
     });
 
     setState(() => _isLoading = false);
 
     return FirebaseAuth.instance.signInWithCustomToken(customToken);
   }
+
   void _signInNaver() {}
 }

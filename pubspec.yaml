@@ -47,6 +47,8 @@ dependencies:
   flutter_slidable: ^2.0.0
   settings_ui: ^2.0.2
   transition: ^2.0.2
+  flutter_launcher_icons:
+  graphview:
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +70,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: CustomIcons
+      fonts:
+        - asset: fonts/CustomIcons.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

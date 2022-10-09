@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tot/common/const/colors.dart';
+import 'package:tot/common/const/custom_icons_icons.dart';
 import 'package:tot/common/root_tab.dart';
 import 'package:tot/common/view/notify_view.dart';
 import 'package:tot/common/view/search_view.dart';
 import 'package:tot/home/view/home_screen.dart';
+import 'package:transition/transition.dart';
 
 class DefaultLayout extends StatelessWidget {
   final Widget child;
@@ -38,15 +40,12 @@ class DefaultLayout extends StatelessWidget {
           style: TextStyle(
               fontSize: 28.0,
               fontWeight: FontWeight.w500,
-              color: PRIMARY_COLOR)),
+              color: PRIMARY_COLOR,)),
       // centerTitle: true,
       leadingWidth: 30,
-      leading: Padding(
-        child: Icon(
-          Icons.cake,
-          color: PRIMARY_COLOR,
-        ),
+      leading: const Padding(
         padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
+        child: Icon(CustomIcons.icon1, color: PRIMARY_COLOR),
       ),
       // foregroundColor: Colors.black,
       elevation: 0,
@@ -99,9 +98,10 @@ class DefaultLayout extends StatelessWidget {
 
   routeToSearchPage(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => SearchView(),
-      ),
+      // MaterialPageRoute(
+      //   builder: (_) => SearchView(),
+      // ),
+      Transition(child: SearchView(), transitionEffect: TransitionEffect.FADE),
     );
   }
 
