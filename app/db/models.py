@@ -14,29 +14,28 @@ user_attention_stocks = Table(
     "user_attention_stocks",
     Base.metadata,
     Column('user_id', Integer, ForeignKey("user.id")),
-    Column('stock_id', Integer, ForeignKey("stock.id"))
+    Column('stock_id', Integer, ForeignKey("stock.name"))
 )      
     
 user_attention_keywords = Table(
     "user_attention_keywords",
     Base.metadata,
     Column('user_id', Integer, ForeignKey("user.id")),
-    Column('keyword_id', Integer, ForeignKey("keyword.id"))
+    Column('keyword_id', Integer, ForeignKey("keyword.name"))
 )
     
 news_keywords = Table(
     "news_keywords",
     Base.metadata,
     Column('news_id', Integer, ForeignKey("news.id")),
-    Column('keyword_id', Integer, ForeignKey("keyword.id"))
+    Column('keyword_id', Integer, ForeignKey("keyword.name"))
 )
 
 class User(Base):
     __tablename__ = "user"
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(20), unique=True, nullable=False)
-    auth_key = Column(String(50))
+    id = Column(String(50), primary_key=True)
+    access_token = Column(String(50))
     main_page_id = Column(Integer)
     
     news = relationship('News', secondary=user_bookmark_news, back_populates="user")
@@ -54,7 +53,7 @@ class News(Base):
     body = Column(Text)
     highlight_indexes = Column(String(50))
     summary = Column(Text)
-    attention_stock_id = Column(Integer, ForeignKey("stock.id"))
+    attention_stock_id = Column(String, ForeignKey("stock.name"))
     stock_prob = Column(String(50))
     temperature = Column(Integer)
     
@@ -64,8 +63,7 @@ class News(Base):
 class Stock(Base):
     __tablename__ = "stock"
     
-    id = Column(Integer, primary_key=True)
-    name = Column(String(20), unique=True)
+    name = Column(String(20), primary_key=True)
     
     user = relationship('User', secondary=user_attention_stocks, back_populates="stock")
     news = relationship('News')
@@ -73,8 +71,7 @@ class Stock(Base):
 class Keyword(Base):
     __tablename__ = "keyword"
     
-    id = Column(Integer, primary_key=True)
-    name = Column(String(20), unique=True)
+    name = Column(String(20), primary_key=True)
     
     user = relationship('User', secondary=user_attention_keywords, back_populates="keyword")
     news = relationship('News', secondary=news_keywords, back_populates="keyword")

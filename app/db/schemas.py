@@ -2,51 +2,30 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
 
-# base models
-class UserBase(BaseModel):
+class Keyword(BaseModel):
     name: str
-    
-    class Config:
-        orm_mode = True
         
-class KeywordBase(BaseModel):
+class Stock(BaseModel):
     name: str
     
-    class Config:
-        orm_mode = True
-        
-class StockBase(BaseModel):
-    name: str
-    
-    class Config:
-        orm_mode = True
-    
-class NewsBase(BaseModel): 
+class News(BaseModel): 
     id: int
     title: str
     created_at: datetime = None
-    attention_stock_id: Optional[int] = None
-    keyword: Optional[List[KeywordBase]] = None
+    attention_stock_id: Optional[str] = None
+    keyword: Optional[List[Keyword]] = None
     
     class Config:
         orm_mode = True
         
-# actual database models
-class User(UserBase):
+class User(BaseModel):
     id: int
     main_page_id: int = 1
-    auth_key: str
-    news: Optional[List[NewsBase]] = None
-    keyword: Optional[List[KeywordBase]] = None
-    stock: Optional[List[StockBase]] = None
-        
-class Keyword(KeywordBase):
-    id: int
-
-class Stock(StockBase):
-    id: int
+    news: Optional[List[News]] = None
+    keyword: Optional[List[Keyword]] = None
+    stock: Optional[List[Stock]] = None
     
-class NewsDetail(NewsBase): 
+class NewsDetail(News): 
     reporter: Optional[str] = None
     press: Optional[str] = None
     body: str

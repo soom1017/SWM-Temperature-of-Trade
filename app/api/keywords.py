@@ -8,7 +8,7 @@ from app.db import schemas
 
 keywords = APIRouter()
 
-@keywords.get('/map/{keyword_name}', response_model=List[schemas.NewsBase])
+@keywords.get('/map/{keyword_name}', response_model=List[schemas.News])
 async def get_graph_map_by_keyword_name(keyword_name: int, db: Session = Depends(get_db)):
     """
     1. search keyword from Keyword DB (GRAPH DB)
