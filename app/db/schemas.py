@@ -17,13 +17,19 @@ class News(BaseModel):
     
     class Config:
         orm_mode = True
-        
+                
 class User(BaseModel):
     id: int
     main_page_id: int = 1
     news: Optional[List[News]] = None
     keyword: Optional[List[Keyword]] = None
     stock: Optional[List[Stock]] = None
+    
+class NewsOut(BaseModel):
+    data: List[News] = None
+    
+    class Config:
+        orm_mode = True
     
 class NewsDetail(News): 
     reporter: Optional[str] = None
