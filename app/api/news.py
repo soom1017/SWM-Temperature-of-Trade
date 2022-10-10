@@ -26,7 +26,7 @@ async def get_hot_news_list(db: Session = Depends(get_db)):
     return {"data": news_list}
 
 @news.get('/keyword/{keyword_name}', response_model=schemas.NewsOut)
-async def get_news_list_by_keyword(keyword_name: int, db: Session = Depends(get_db)):
+async def get_news_list_by_keyword(keyword_name: str, db: Session = Depends(get_db)):
     keyword = db.query(models.Keyword).filter(models.Keyword.name == keyword_name).first()
     if not keyword:
         raise HTTPException(status_code=404, detail="Keyword not found")

@@ -4,9 +4,15 @@ from pydantic import BaseModel
 
 class Keyword(BaseModel):
     name: str
+    
+    class Config:
+        orm_mode = True
         
 class Stock(BaseModel):
     name: str
+    
+    class Config:
+        orm_mode = True
     
 class News(BaseModel): 
     id: int
