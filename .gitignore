@@ -1,3 +1,7 @@
+graph/
+ios/
+startup/
+
 # Miscellaneous
 *.class
 *.log
@@ -30,7 +34,7 @@ migrate_working_dir/
 .packages
 .pub-cache/
 .pub/
-/build/
+tot/build/
 
 # Web related
 lib/generated_plugin_registrant.dart

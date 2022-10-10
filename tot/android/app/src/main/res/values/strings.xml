@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Temperature of Trade</string>
+    <string name="facebook_app_id">809329870409836</string>
+    <string name="fb_login_protocol_scheme">fb809329870409836</string>
+    <string name="facebook_client_token">082dc7635e7caefc778741ab9a8b6950</string>
+</resources>
