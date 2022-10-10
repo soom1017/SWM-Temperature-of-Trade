@@ -12,7 +12,7 @@ class News(BaseModel):
     id: int
     title: str
     created_at: datetime = None
-    attention_stock_id: Optional[str] = None
+    attention_stock: Optional[str] = None
     keyword: Optional[List[Keyword]] = None
     
     class Config:
@@ -20,7 +20,7 @@ class News(BaseModel):
                 
 class User(BaseModel):
     id: int
-    main_page_id: int = 1
+    main_page: int = 1
     news: Optional[List[News]] = None
     keyword: Optional[List[Keyword]] = None
     stock: Optional[List[Stock]] = None
@@ -36,9 +36,10 @@ class NewsDetail(News):
     press: Optional[str] = None
     body: str
     summary: Optional[str] = None
-    highlight_indexes: Optional[str] = None
+    highlight_idx: Optional[str] = None
     stock_prob: Optional[str] = None
-    temperature: Optional[str] = None
+    label: Optional[int] = None
+    score: Optional[float] = None
     
     class Config:
         orm_mode = True

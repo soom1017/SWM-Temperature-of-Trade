@@ -1,77 +1,80 @@
-from sqlalchemy import Table, Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import INTEGER, VARCHAR, Float, Table, Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from .database import Base
 
-user_bookmark_news = Table(
-    "user_bookmark_news",
+user_bookmark = Table(
+    "user_bookmark",
     Base.metadata,
     Column('user_id', Integer, ForeignKey("user.id")),
     Column('news_id', Integer, ForeignKey("news.id"))
 )     
 
-user_attention_stocks = Table(
-    "user_attention_stocks",
+user_stocks = Table(
+    "user_stocks",
     Base.metadata,
     Column('user_id', Integer, ForeignKey("user.id")),
-    Column('stock_id', Integer, ForeignKey("stock.name"))
+    Column('stock_name', VARCHAR(45), ForeignKey("stock.name"))
 )      
     
-user_attention_keywords = Table(
-    "user_attention_keywords",
+user_keywords = Table(
+    "user_keywords",
     Base.metadata,
     Column('user_id', Integer, ForeignKey("user.id")),
-    Column('keyword_id', Integer, ForeignKey("keyword.name"))
+    Column('keyword_name', VARCHAR(45), ForeignKey("keyword.name"))
 )
     
 news_keywords = Table(
     "news_keywords",
     Base.metadata,
     Column('news_id', Integer, ForeignKey("news.id")),
-    Column('keyword_id', Integer, ForeignKey("keyword.name"))
+    Column('keyword_name', VARCHAR(45), ForeignKey("keyword.name"))
 )
 
 class User(Base):
     __tablename__ = "user"
     
-    id = Column(String(50), primary_key=True)
-    main_page_id = Column(Integer)
+    id = Column(INTEGER, primary_key=True, autoincrement=True)
+    uid = Column(VARCHAR(128), nullable=False)
+    token = Column(VARCHAR(128))
+    main_page = Column(Integer)
     
-    news = relationship('News', secondary=user_bookmark_news, back_populates="user")
-    keyword = relationship('Keyword', secondary=user_attention_keywords, back_populates="user")
-    stock = relationship('Stock', secondary=user_attention_stocks, back_populates="user")
+    news = relationship('News', secondary=user_bookmark, back_populates="user")
+    keyword = relationship('Keyword', secondary=user_keywords, back_populates="user")
+    stock = relationship('Stock', secondary=user_stocks, back_populates="user")
     
 class News(Base):
     __tablename__ = "news"
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String(50), unique=True, nullable=False)
-    reporter = Column(String(20))
-    press = Column(String(20))
-    created_at = Column(DateTime)
+    id = Column(Integer, primary_key=True)
+    title = Column(VARCHAR(100), unique=True, nullable=False)
     body = Column(Text)
-    highlight_indexes = Column(String(50))
+    reporter = Column(VARCHAR(45))
+    press = Column(VARCHAR(45))
+    created_at = Column(DateTime)
+    highlight_idx = Column(VARCHAR(45))
     summary = Column(Text)
-    attention_stock_id = Column(String, ForeignKey("stock.name"))
-    stock_prob = Column(String(50))
-    temperature = Column(Integer)
+    attention_stock = Column(VARCHAR(45), ForeignKey("stock.name"))
+    stock_prob = Column(VARCHAR(45))
+    label = Column(Integer)
+    score = Column(Float)
     
-    user = relationship('User', secondary=user_bookmark_news, back_populates="news")
+    user = relationship('User', secondary=user_bookmark, back_populates="news")
     keyword = relationship('Keyword', secondary=news_keywords, back_populates="news")
 
 class Stock(Base):
     __tablename__ = "stock"
     
-    name = Column(String(20), primary_key=True)
+    name = Column(VARCHAR(20), primary_key=True)
     
-    user = relationship('User', secondary=user_attention_stocks, back_populates="stock")
+    user = relationship('User', secondary=user_stocks, back_populates="stock")
     news = relationship('News')
     
 class Keyword(Base):
     __tablename__ = "keyword"
     
-    name = Column(String(20), primary_key=True)
+    name = Column(VARCHAR(20), primary_key=True)
     
-    user = relationship('User', secondary=user_attention_keywords, back_populates="keyword")
+    user = relationship('User', secondary=user_keywords, back_populates="keyword")
     news = relationship('News', secondary=news_keywords, back_populates="keyword")
     
