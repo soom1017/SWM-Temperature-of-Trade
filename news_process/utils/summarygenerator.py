@@ -64,7 +64,7 @@ class SummaryGenerator():
         # handles too long article
         if len(input_ids) > 1026:
             summary = ""
-            self.summary_ids = []
+            self.summary_ids = np.array([1])
             
             for para in self.sentences:
                 if len(para) < 2:
@@ -78,6 +78,7 @@ class SummaryGenerator():
                 summary += p_summary + " "
                 self.summary_ids = np.concatenate((self.summary_ids, p_summary_ids[1:-1]), axis=0)
             self.summary_ids = np.concatenate(([self.tokenizer.bos_token_id], self.summary_ids[1:], [self.tokenizer.eos_token_id]), axis=0)
+            summary, k = self.get_model_output(self.summary_ids)
                 
             return summary
         # handles article w/ normal length
