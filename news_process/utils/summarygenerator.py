@@ -67,14 +67,17 @@ class SummaryGenerator():
             self.summary_ids = []
             
             for para in self.sentences:
+                if len(para) < 2:
+                    continue
                 p_raw_input_ids = []
                 for st in para:
-                    p_raw_input_ids.append(self.tokenizer.encode(st))
+                    p_raw_input_ids += self.tokenizer.encode(st)
                 p_input_ids = [self.tokenizer.bos_token_id] + p_raw_input_ids + [self.tokenizer.eos_token_id]
                 p_summary, p_summary_ids = self.get_model_output(p_input_ids)
                 
                 summary += p_summary + " "
-                self.summary_ids += p_summary_ids
+                self.summary_ids = np.concatenate((self.summary_ids, p_summary_ids[1:-1]), axis=0)
+            self.summary_ids = np.concatenate(([self.tokenizer.bos_token_id], self.summary_ids[1:], [self.tokenizer.eos_token_id]), axis=0)
                 
             return summary
         # handles article w/ normal length
@@ -100,7 +103,7 @@ class SummaryGenerator():
         return idxes_
 
     def get_highlight_indexes(self) -> list:
-        if (not self.sentences) or (not self.summary_ids):
+        if (self.sentences == None) or (self.summary_ids is None):
             raise Exception()
         
         if self.num_sentences > 5:
@@ -109,4 +112,3 @@ class SummaryGenerator():
             return highlight_indexes
         
         return None
-
