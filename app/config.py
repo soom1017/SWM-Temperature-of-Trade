@@ -14,6 +14,8 @@ class Settings:
 	
     DATABASE_URL = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8"
     
+    HOT_NEWSLIST_PATH: str = os.getenv("HOT_NEWSLIST_PATH")
+    
 class OauthSettings:
     FIREBASE_CERT_PATH: str = os.getenv("FIREBASE_CERT_PATH")
     

@@ -12,3 +12,4 @@ __pycache__/
 # DB
 init_db.*
 *.sqlite3
+*.txt

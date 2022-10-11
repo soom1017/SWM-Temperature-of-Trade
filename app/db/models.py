@@ -58,6 +58,7 @@ class News(Base):
     stock_prob = Column(VARCHAR(45))
     label = Column(Integer)
     score = Column(Float)
+    views = Column(Integer, nullable=False)
     
     user = relationship('User', secondary=user_bookmark, back_populates="news")
     keyword = relationship('Keyword', secondary=news_keywords, back_populates="news")
