@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tot/common/const/padding.dart';
-import 'package:tot/common/keyword_map_screen.dart';
+import 'package:tot/common/view/keyword_map_screen.dart';
 import '../../common/const/colors.dart';
 import '../../common/layout/default_layout.dart';
 

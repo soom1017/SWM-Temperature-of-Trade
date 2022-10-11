@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/custom_icons_icons.dart';
-import 'package:tot/common/root_tab.dart';
+import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/common/view/notify_view.dart';
 import 'package:tot/common/view/search_view.dart';
 import 'package:tot/home/view/home_screen.dart';

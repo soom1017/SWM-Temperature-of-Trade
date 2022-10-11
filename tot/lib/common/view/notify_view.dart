@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:graphview/GraphView.dart';
 
 import '../layout/default_layout.dart';
 

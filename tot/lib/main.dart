@@ -3,8 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:tot/common/layout/default_layout.dart';
-import 'package:tot/common/root_tab.dart';
+import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/firebase_options.dart';
+import 'package:tot/graph.dart';
 import 'package:tot/login/view/login_screen.dart';
 
 void main() async {
@@ -38,7 +39,8 @@ class _App extends StatelessWidget {
           );
         }
         if (snapshot.connectionState == ConnectionState.done) {
-          return _AuthApp();
+          // return _AuthApp();
+          return MyApp();
         }
         // 로딩 페이지
         return MaterialApp(

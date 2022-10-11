@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 
-import '../../common/keyword_map_screen.dart';
+import '../../common/view/keyword_map_screen.dart';
 
 class HomeUserKeywords extends StatelessWidget {
   final String name;
