@@ -23,21 +23,18 @@ class News(BaseModel):
     
     class Config:
         orm_mode = True
-                
-class User(BaseModel):
-    id: int
-    main_page: int = 1
-    news: Optional[List[News]] = None
-    keyword: Optional[List[Keyword]] = None
-    stock: Optional[List[Stock]] = None
-    
-class NewsOut(BaseModel):
-    data: List[News] = None
-    
-    class Config:
-        orm_mode = True
-    
-class NewsDetail(News): 
+
+class NewsParsed:
+    def __init__(self, news: News):
+        self.id = news.id
+        self.title = news.title
+        self.created_at = news.created_at
+        self.attention_stock = news.attention_stock
+        self.keyword = []
+        for k in news.keyword:
+            self.keyword.append(k.name)
+
+class NewsDetail(News):
     reporter: Optional[str] = None
     press: Optional[str] = None
     body: str
@@ -47,5 +44,15 @@ class NewsDetail(News):
     label: Optional[int] = None
     score: Optional[float] = None
     
-    class Config:
-        orm_mode = True
+class NewsDetailParsed(NewsParsed):
+    def __init__(self, news: NewsDetail):
+        super().__init__(news)
+        self.reporter = news.reporter
+        self.press = news.press
+        self.body = eval(news.body)
+        self.summary = news.summary
+        self.highlight_idx = eval(news.highlight_idx)
+        self.stock_prob = eval(news.stock_prob)
+        self.label = news.label
+        self.score = news.score
+        
