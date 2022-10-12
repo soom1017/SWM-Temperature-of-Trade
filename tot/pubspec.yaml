@@ -49,6 +49,7 @@ dependencies:
   transition: ^2.0.2
   flutter_launcher_icons:
   graphview:
+  firebase_messaging: ^13.1.0
 
 dev_dependencies:
   flutter_test:

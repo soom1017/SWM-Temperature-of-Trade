@@ -9,6 +9,8 @@ import 'news_data.dart';
 Dio dioSetting(){
   final dio = Dio();
   dio.options.baseUrl = "http://43.201.79.31:8000";
+  dio.options.headers['accept'] = 'application/json';
+  dio.options.headers['Content-Type'] = 'application/json';
   return dio;
 }
 

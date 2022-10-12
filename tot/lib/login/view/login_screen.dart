@@ -2,12 +2,14 @@
 
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:tot/common/data/API.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -119,12 +121,19 @@ class _LoginScreenState extends State<LoginScreen> {
     return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   }
 
-  Future<String> createCustomToken(Map<String, dynamic> user) async{
-    final dio = Dio();
-    final String url = 'http://52.79.240.67:8000/users/auth/kakao';
-    print(user.toString());
-    final customTokenResponse = await dio.post(url, data: user);
-    return customTokenResponse.data;
+  Future<String?> createCustomToken(Map<String, dynamic> user) async{
+    try {
+      final String url = '/users/auth/kakao';
+      // print(user.toString());
+      print("create custom token start");
+      // final customTokenResponse = await API.dio.post(url, queryParameters: user);
+      final customTokenResponse = await API.dio.post(url, data: user);
+      print("create custom token end");
+      return customTokenResponse.data;
+    } catch(e){
+      print(e);
+      return null;
+    }
   }
 
   Future<UserCredential?> _signInKakao() async {
@@ -140,15 +149,23 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final user = await kakao.UserApi.instance.me();
-
+    print("customToken start");
     final customToken = await createCustomToken({
       'uid' : user!.id.toString(),
+      // 'name' : user!.kakaoAccount!.name,
       'access_token': token.toString(),
     });
-
+    print("customToken end");
     setState(() => _isLoading = false);
-
-    return FirebaseAuth.instance.signInWithCustomToken(customToken);
+    print("temp start");
+    final temp = await FirebaseAuth.instance.signInWithCustomToken(customToken!);
+    print("temp end");
+    print("idToken start");
+    final idToken = await FirebaseMessaging.instance.getToken();
+    print("idToken end");
+    // print(temp);
+    print(idToken);
+    return temp;
   }
 
   void _signInNaver() {}
