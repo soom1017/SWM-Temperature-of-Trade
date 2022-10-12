@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.db.models import News, Keyword
-from app.db.schemas import NewsDetailParsed
+from app.db.schemas import NewsDetailParsed, NewsParsed
 from app.config import settings
 
 news = APIRouter()
@@ -36,7 +36,7 @@ async def get_recent_news_list(news_id: int, db: Session = Depends(get_db)):
     
     data = []
     for news in news_list:
-        data.append(NewsDetailParsed(news))
+        data.append(NewsParsed(news))
     return {"data": data}
     
 @news.get('/list-hot/{news_id}')
@@ -60,7 +60,7 @@ async def get_hot_news_list(news_id: int, db: Session = Depends(get_db)):
             
     data = []
     for news in news_list:
-        data.append(NewsDetailParsed(news))
+        data.append(NewsParsed(news))
     return {"data": data}
 
 @news.get('/keyword/{keyword_name}/{news_id}')
@@ -80,6 +80,6 @@ async def get_news_list_by_keyword(keyword_name: str, news_id: int, db: Session 
             limit(20).all()
     data = []
     for news in news_list:
-        data.append(NewsDetailParsed(news))
+        data.append(NewsParsed(news))
     return {"data": data}
     
