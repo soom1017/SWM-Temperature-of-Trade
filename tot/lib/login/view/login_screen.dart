@@ -152,11 +152,12 @@ class _LoginScreenState extends State<LoginScreen> {
     print("customToken start");
     final customToken = await createCustomToken({
       'uid' : user!.id.toString(),
-      // 'name' : user!.kakaoAccount!.name,
+      // 'displayName' : user!.kakaoAccount!.name,
       'access_token': token.toString(),
     });
     print("customToken end");
     setState(() => _isLoading = false);
+    print(customToken);
     print("temp start");
     final temp = await FirebaseAuth.instance.signInWithCustomToken(customToken!);
     print("temp end");
@@ -165,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
     print("idToken end");
     // print(temp);
     print(idToken);
+    print(await temp.user!.getIdToken());
     return temp;
   }
 
