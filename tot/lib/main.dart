@@ -39,8 +39,8 @@ class _App extends StatelessWidget {
           );
         }
         if (snapshot.connectionState == ConnectionState.done) {
-          // return _AuthApp();
-          return MyApp();
+          return _AuthApp();
+          // return MyApp();
         }
         // 로딩 페이지
         return MaterialApp(

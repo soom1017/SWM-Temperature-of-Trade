@@ -45,7 +45,7 @@ class DefaultLayout extends StatelessWidget {
       leadingWidth: 30,
       leading: const Padding(
         padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-        child: Icon(CustomIcons.icon1, color: PRIMARY_COLOR),
+        child: Icon(CustomIcons.icon1, color: KEYWORD_BG_COLOR, size: 30,),
       ),
       // foregroundColor: Colors.black,
       elevation: 0,
@@ -98,9 +98,6 @@ class DefaultLayout extends StatelessWidget {
 
   routeToSearchPage(BuildContext context) {
     Navigator.of(context).push(
-      // MaterialPageRoute(
-      //   builder: (_) => SearchView(),
-      // ),
       Transition(child: SearchView(), transitionEffect: TransitionEffect.FADE),
     );
   }

@@ -17,7 +17,7 @@ class NewsTileData {
     final data = response;
     final id = data['id'];
     final title = data['title'];
-    final created_at = data['created_at'].toString().substring(data['created_at'].toString().indexOf("T"));
+    final created_at = data['created_at'].toString().substring(0, data['created_at'].toString().indexOf("T"));
     final attention_stock = data['attention_stock'];
     final keywords = List<String>.from(data['keyword']);
 

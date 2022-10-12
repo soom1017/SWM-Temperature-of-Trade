@@ -15,9 +15,9 @@ Map<String, double> dataMap = {
 };
 
 Map<String, String> legendLabels = {
-  "현대카드" : "현대카드 56%",
-  "삼성카드" : "삼성카드 19%",
-  "토스" : "토스 16%",
+  "현대카드": "현대카드 56%",
+  "삼성카드": "삼성카드 19%",
+  "토스": "토스 16%",
 };
 
 final List<Color> colorList = [
@@ -30,13 +30,15 @@ class NewsDetailView extends StatelessWidget {
   final String? stockName;
   final String postingDate;
   final String newsTitle;
-  late List<String> tagList;
+  final List<String> tagList;
+  final int? id;
 
-  NewsDetailView(
+  const NewsDetailView(
       {required this.tagList,
       required this.postingDate,
       required this.newsTitle,
       this.stockName,
+      this.id,
       Key? key})
       : super(key: key);
 
@@ -46,13 +48,15 @@ class NewsDetailView extends StatelessWidget {
       postingDate: tile.postingDate,
       newsTitle: tile.newsTitle,
       stockName: tile.stockName,
+      id: tile.id,
     );
   }
 
   routeToNewsFullTextView(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => NewsFullTextView(newsDetailHead: NewsDetailHead.fromDetailView(this)),
+        builder: (_) => NewsFullTextView(
+            newsDetailHead: NewsDetailHead.fromDetailView(this)),
       ),
     );
   }
@@ -146,7 +150,10 @@ class NewsDetailView extends StatelessWidget {
                   SizedBox(
                     height: 30,
                   ),
-                  Text("관련된 종목들은 아래와 같아요", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),),
+                  Text(
+                    "관련된 종목들은 아래와 같아요",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+                  ),
                   SizedBox(
                     height: 35,
                   ),
@@ -155,81 +162,95 @@ class NewsDetailView extends StatelessWidget {
                     // mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Spacer(),
-                      // Column(
-                      //   children: [
-                      //     SizedBox(
-                      //       width: 110,
-                      //       child: Row(
-                      //         children: [
-                      //           Text("삼성카드", style: TextStyle(fontSize: 17),),
-                      //           Spacer(),
-                      //           Text("19%", style: TextStyle(fontSize: 17),),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //     SizedBox(
-                      //       width: 110,
-                      //       child: Row(
-                      //         children: [
-                      //           Text("토스", style: TextStyle(fontSize: 17),),
-                      //           Spacer(),
-                      //           Text("16%", style: TextStyle(fontSize: 17),),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                       NewsDetailPieChart(
                         legendLabels: legendLabels,
                         colorList: colorList,
                         dataMap: dataMap,
                         centerText: "현대카드\n56%",
                       ),
-                      SizedBox(width: 20,),
+                      SizedBox(
+                        width: 20,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 60,),
+                  SizedBox(
+                    height: 60,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                    Text(" 해당뉴스는", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: ElevatedButton(onPressed: null, child: Text("현대카드", style: TextStyle(fontSize: 25),),style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.symmetric(horizontal: 15.0)),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        backgroundColor: MaterialStateProperty.all<Color>(PRIMARY_COLOR),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                      Text(
+                        " 해당뉴스는",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w600),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: ElevatedButton(
+                          onPressed: null,
+                          child: Text(
+                            "현대카드",
+                            style: TextStyle(fontSize: 25),
+                          ),
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                                EdgeInsets.symmetric(horizontal: 15.0)),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(PRIMARY_COLOR),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
                           ),
                         ),
-                      ),),
-                    ),
-                    Text("에 대해", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),),
-                  ],),
+                      ),
+                      Text(
+                        "에 대해",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: ElevatedButton(onPressed: null, child: Text("긍정", style: TextStyle(fontSize: 25),), style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.symmetric(horizontal: 15.0)),
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                        backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFEA4242)),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton(
+                          onPressed: null,
+                          child: Text(
+                            "긍정",
+                            style: TextStyle(fontSize: 25),
+                          ),
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                                EdgeInsets.symmetric(horizontal: 15.0)),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFFEA4242)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
                           ),
                         ),
-                      ),),
-                    ),
-                    Text("적인 내용을 다루고 있어요", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),),
-                  ],),
+                      ),
+                      Text(
+                        "적인 내용을 다루고 있어요",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

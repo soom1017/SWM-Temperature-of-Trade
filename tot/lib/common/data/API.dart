@@ -28,9 +28,9 @@ abstract class API {
     }
   }
 
-  static Future<List<NewsTileData>?> getNewsListNew() async {
+  static Future<List<NewsTileData>?> getNewsListNew({int news_id = -1}) async {
     try {
-      final response = await dio.get("/news/list-new/");
+      final response = await dio.get("/news/list-new/${news_id}");
       return List<Map<String, dynamic>>.from(response.data['data']).map((e) => NewsTileData.fromResponse(e)).toList();
     } catch(e){
       print(e);
@@ -38,9 +38,9 @@ abstract class API {
     }
   }
 
-  static Future<List<NewsTileData>?> getNewsListHot() async {
+  static Future<List<NewsTileData>?> getNewsListHot({int news_id = -1}) async {
     try {
-      final response = await dio.get("/news/list-hot/");
+      final response = await dio.get("/news/list-hot/${news_id}");
       return List<Map<String, dynamic>>.from(response.data['data']).map((e) => NewsTileData.fromResponse(e)).toList();
     } catch(e){
       print(e);
@@ -48,9 +48,9 @@ abstract class API {
     }
   }
 
-  static Future<List<NewsTileData>?> getNewsListByKeyword(String keyword_name) async {
+  static Future<List<NewsTileData>?> getNewsListByKeyword(String keyword_name, {int news_id = -1}) async {
     try {
-      final response = await dio.get("/news/keyword/${keyword_name}");
+      final response = await dio.get("/news/keyword/${keyword_name}/${news_id}");
       return List<Map<String, dynamic>>.from(response.data['data']).map((e) => NewsTileData.fromResponse(e)).toList();
     } catch(e){
       print(e);

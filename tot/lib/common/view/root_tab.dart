@@ -23,7 +23,7 @@ class _RootTabState extends State<RootTab>
     super.initState();
     controller = TabController(length: 4, vsync: this);
     controller.addListener(tabListener);
-  }  
+  }
 
   @override
   void dispose() {
@@ -50,17 +50,17 @@ class _RootTabState extends State<RootTab>
           controller.animateTo(index);
         },
         currentIndex: index,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined, size: 30,),
+            icon: index == 0 ? Icon(Icons.home, size: 30) : Icon(Icons.home_outlined, size: 30,),
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.perm_identity, size: 30,),
+            icon: index == 1 ? Icon(Icons.person, size:30,) : Icon(Icons.person_outline, size: 30,),
             label: '마이페이지',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_border, size: 30,),
+            icon: index == 2 ? Icon(Icons.bookmark, size:30,) : Icon(Icons.bookmark_border, size: 30,),
             label: '북마크',
           ),
           BottomNavigationBarItem(
