@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/view/news_detail_view.dart';
 
@@ -9,14 +11,14 @@ class NewsTile extends StatefulWidget {
   final String? stockName;
   final String postingDate;
   final String newsTitle;
-  final int? id;
+  final int id;
   final List<String> tagList;
 
   const NewsTile(
       {required this.tagList,
       required this.postingDate,
       required this.newsTitle,
-      this.id,
+      required this.id,
       this.stockName,
       Key? key})
       : super(key: key);
@@ -35,9 +37,23 @@ class NewsTile extends StatefulWidget {
   State<NewsTile> createState() => _NewsTileState();
 }
 
+int checkBookmark(int id) {
+  if (userBookmark.contains(id)) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 class _NewsTileState extends State<NewsTile> {
   List<IconData> toggleIcon = [Icons.bookmark_border, Icons.bookmark];
-  int toggle = 0;
+  late int toggle;
+
+  @override
+  initState() {
+    super.initState();
+    toggle = checkBookmark(widget.id);
+  }
 
   routeToNewsDetailPage(BuildContext context) {
     Navigator.of(context).push(
@@ -59,8 +75,46 @@ class _NewsTileState extends State<NewsTile> {
         motion: ScrollMotion(),
         children: [
           SlidableAction(
-            autoClose: false,
+            // autoClose: false,
             onPressed: (BuildContext context) {
+              var snackbar;
+              if (toggle == 0) {
+                userBookmark.add(widget.id);
+                API.createBookmarkById(widget.id);
+                snackbar = SnackBar(
+                  content: Text("북마크에 추가했습니다."),
+                  duration: Duration(milliseconds: 1500),
+                  action: SnackBarAction(
+                    label: '취소',
+                    onPressed: () {
+                      userBookmark.remove(widget.id);
+                      API.deleteBookmarkById(widget.id);
+                      setState(() {
+                        toggle ^= 1;
+                      });
+                    },
+                  ),
+                );
+              }
+              if (toggle == 1) {
+                userBookmark.remove(widget.id);
+                API.deleteBookmarkById(widget.id);
+                snackbar = SnackBar(
+                  content: Text("북마크에서 삭제했습니다."),
+                  duration: Duration(milliseconds: 1500),
+                  action: SnackBarAction(
+                    label: '취소',
+                    onPressed: () {
+                      userBookmark.add(widget.id);
+                      API.createBookmarkById(widget.id);
+                      setState(() {
+                        toggle ^= 1;
+                      });
+                    },
+                  ),
+                );
+              }
+              ScaffoldMessenger.of(context).showSnackBar(snackbar);
               setState(() {
                 toggle ^= 1;
               });
@@ -96,7 +150,10 @@ class _NewsTileState extends State<NewsTile> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (widget.stockName == null) SizedBox.shrink() else stockTag(),
+                    if (widget.stockName == null)
+                      SizedBox.shrink()
+                    else
+                      stockTag(),
                     ...keywordTags(),
                     Spacer(),
                     Text(

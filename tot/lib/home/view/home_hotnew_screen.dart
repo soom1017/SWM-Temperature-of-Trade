@@ -26,7 +26,7 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
         future: widget.isHot ? API.getNewsListHot() : API.getNewsListNew(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if(snapshot.hasData == false)
-            return CircularProgressIndicator();
+            return Center(child:CircularProgressIndicator());
           return Container(
             color: NEWSTAB_BG_COLOR,
             padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),

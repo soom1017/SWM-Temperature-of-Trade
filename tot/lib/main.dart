@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/firebase_options.dart';
@@ -9,13 +11,34 @@ import 'package:tot/graph.dart';
 import 'package:tot/login/view/login_screen.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
   WidgetsFlutterBinding.ensureInitialized();
   kakao.KakaoSdk.init(nativeAppKey: '65883b79301a6a8e7b88ab503dfc2959');
   runApp(
     _App(),
   );
+}
+
+Future<FirebaseApp> _load() async{
+  var temp = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  if(FirebaseAuth.instance.currentUser != null && !FirebaseAuth.instance.currentUser!.isAnonymous) {
+    await API.changeDioToken();
+    final bookmark = await API.getUserBookmark();
+    if(bookmark != null) {
+      userBookmark = bookmark.map((e) => e.id).toList();
+    }else{
+      userBookmark = [];
+    }
+    print(userBookmark);
+  }
+  if(FirebaseAuth.instance.currentUser == null)
+  {
+    await FirebaseAuth.instance.signInAnonymously();
+    print(FirebaseAuth.instance.currentUser!.isAnonymous);
+  }
+  // print(API.dio.options.headers);
+  return temp;
 }
 
 class _App extends StatelessWidget {
@@ -24,9 +47,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
+      future: _load(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return MaterialApp(
@@ -39,7 +60,10 @@ class _App extends StatelessWidget {
           );
         }
         if (snapshot.connectionState == ConnectionState.done) {
-          return _AuthApp();
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: RootTab(),
+          );
           // return MyApp();
         }
         // 로딩 페이지
@@ -53,29 +77,29 @@ class _App extends StatelessWidget {
     );
   }
 }
-
-class _AuthApp extends StatelessWidget {
-  const _AuthApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-        if (!snapshot.hasData) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: DefaultLayout(
-              child: LoginScreen(),
-            ),
-          );
-        } else {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: RootTab(),
-          );
-        }
-      },
-    );
-  }
-}
+//
+// class _AuthApp extends StatelessWidget {
+//   const _AuthApp({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return StreamBuilder(
+//       stream: FirebaseAuth.instance.authStateChanges(),
+//       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+//         if (!snapshot.hasData) {
+//           return MaterialApp(
+//             debugShowCheckedModeBanner: false,
+//             home: DefaultLayout(
+//               child: LoginScreen(),
+//             ),
+//           );
+//         } else {
+//           return MaterialApp(
+//             debugShowCheckedModeBanner: false,
+//             home: RootTab(),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }

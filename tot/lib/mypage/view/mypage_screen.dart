@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
@@ -16,75 +18,48 @@ class MypageScreen extends StatefulWidget {
 }
 
 class _MypageScreenState extends State<MypageScreen> {
-  Future<bool> test() async {
-    Dio dio = Dio(BaseOptions(
-      connectTimeout: 3000,
-      receiveTimeout: 3000,
-    ));
-    print("test 실행");
-    try{
-      print("response1");
-      Response response = await dio.get("http://3.38.140.121:8000/news/1");
-      print("response2");
-      if(response.statusCode == 200){
-        final jsonBody = jsonDecode(response.data);
-        print(jsonBody);
-      }else{
-        print(response.statusCode);
-      }
-      return true;
-    }catch (e) {
-      print(e.toString());
-      return false;
-    }
-  }
-
   // 가운뎃점 쓰는 경우가 있음
   final _newsTileList = <NewsTile>[
-    NewsTile(
-      newsTitle: "전장에 날았지만...'TV 적자전환'에 주춤한 LG전자",
-      stockName: "LG전자",
-      tagList: ["#소비재", "#경기침체", "#인플레"],
-      postingDate: "2022.07.29",
-    ),
-    NewsTile(
-      newsTitle: "카드채 금리 급등...카드론 받기 어려워진다",
-      tagList: ["#카드론", "#대출", "#금리"],
-      postingDate: "2022.07.29",
-    ),
-    NewsTile(
-      newsTitle: "트윔, 에너지 산업 분야에 50억 원 규모 수주",
-      stockName: "트윔",
-      tagList: ["#인공지능", "#에너지 산업"],
-      postingDate: "2022.07.29",
-    ),
-    NewsTile(
-      newsTitle: "\"성수기에 영업 방해\"... 파업 속 하이트진로, 2분기 실적은?",
-      stockName: "하이트진로",
-      tagList: ["#파업", "#주류", "#성수기"],
-      postingDate: "2022.07.29",
-    ),
-    NewsTile(
-      newsTitle: "힘 못쓰던 탄소배출권ETF 연일 '신바람'",
-      tagList: ["#탄소배출권", "#전쟁", "#수익률 증가"],
-      postingDate: "2022.07.29",
-    ),
-    NewsTile(
-      newsTitle: "버핏에 이어 손정의도 30조 손실...주식 거목도 피하지 못한 하락장",
-      tagList: ["#하락장", "#손정의", "#소프트뱅크"],
-      postingDate: "2022.07.29",
-    ),
     NewsTile(
       newsTitle: "이화전기, 위스키 브랜드 '윈저' 인수전 참여",
       stockName: "이화전기",
       tagList: ["#인수", "#코스닥", "#위스키"],
       postingDate: "2022.07.29",
+      id: 10,
     ),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    if (FirebaseAuth.instance.currentUser!.isAnonymous) {
+      Future.delayed(
+          Duration.zero,
+          () => showPlatformDialog(
+                context: context,
+                builder: (_) => PlatformAlertDialog(
+                  title: Text('회원가입 후 이용 할 수 있습니다.'),
+                  content: Text('비회원은 이용 할 수 없는 기능입니다.\n회원가입 하시겠습니까?'),
+                  actions: <Widget>[
+                    PlatformDialogAction(
+                      child: PlatformText("네"),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    PlatformDialogAction(
+                      child: PlatformText("아니오"),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // test();
+    if (FirebaseAuth.instance.currentUser!.isAnonymous) {
+      return Container();
+    }
     return Column(
       children: [
         Container(
@@ -144,9 +119,12 @@ class _MypageScreenState extends State<MypageScreen> {
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all<EdgeInsets>(
                       EdgeInsets.symmetric(horizontal: 15.0)),
-                  minimumSize: MaterialStateProperty.all<Size>(Size.fromHeight(50)),
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor: MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
+                  minimumSize:
+                      MaterialStateProperty.all<Size>(Size.fromHeight(50)),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
@@ -162,13 +140,20 @@ class _MypageScreenState extends State<MypageScreen> {
                       style: TextStyle(fontSize: 30),
                     ),
                     // ∧∨
-                    Icon(Icons.expand_more_outlined, size: 50,),
+                    Icon(
+                      Icons.expand_more_outlined,
+                      size: 50,
+                    ),
                   ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Text("뉴스 모아봤어요.", style: TextStyle(fontSize: 30, color: PRIMARY_COLOR, height: 1.4),),
+                child: Text(
+                  "뉴스 모아봤어요.",
+                  style: TextStyle(
+                      fontSize: 30, color: PRIMARY_COLOR, height: 1.4),
+                ),
               ),
             ],
           ),
@@ -194,7 +179,7 @@ class _MypageScreenState extends State<MypageScreen> {
                 HORIZONTAL_PADDING, 20.0, HORIZONTAL_PADDING, 0.0),
             child: ListView.separated(
               itemBuilder: (context, i) {
-                return _newsTileList[i];
+                return _newsTileList[0];
               },
               separatorBuilder: (context, i) {
                 return const Divider(

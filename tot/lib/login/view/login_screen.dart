@@ -1,8 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'dart:io';
-import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,21 +17,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _isLoading = false;
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return _loading();
-    return _logIn();
-  }
-
-  Widget _loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-
-  Widget _logIn() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -51,31 +36,32 @@ class _LoginScreenState extends State<LoginScreen> {
               _signInFacebook();
             },
           ),
-          Platform.isIOS ? ElevatedButton(
-            child: Text('apple login'),
-            onPressed: () {
-              _signInApple();
-            },
-          ) : SizedBox(),
+          Platform.isIOS
+              ? ElevatedButton(
+                  child: Text('apple login'),
+                  onPressed: () {
+                    _signInApple();
+                  },
+                )
+              : SizedBox(),
           ElevatedButton(
             child: Text('kakao login'),
             onPressed: () {
               _signInKakao();
             },
           ),
-          // ElevatedButton(
-          //   child: Text('naver login'),
-          //   onPressed: () {
-          //     _signInNaver();
-          //   },
-          // ),
+          ElevatedButton(
+            child: Text('뒤로가기'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );
   }
 
-  Future<UserCredential> _signInGoogle() async {
-    setState(() => _isLoading = true);
+  void _signInGoogle() async {
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
     final GoogleSignInAuthentication? googleSignInAuthentication =
@@ -84,27 +70,19 @@ class _LoginScreenState extends State<LoginScreen> {
       accessToken: googleSignInAuthentication?.accessToken,
       idToken: googleSignInAuthentication?.idToken,
     );
-    final authResult =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-    setState(() => _isLoading = false);
-    return authResult;
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.pop(context);
   }
 
-  Future<UserCredential> _signInFacebook() async {
-    setState(() => _isLoading = true);
+  void _signInFacebook() async {
     final FacebookLoginResult result = await FacebookLogin().logIn();
     final AuthCredential credential =
         FacebookAuthProvider.credential(result.accessToken!.token);
-    final authResult =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    print(credential.toString());
-    setState(() => _isLoading = false);
-    return authResult;
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.pop(context);
   }
 
-  Future<UserCredential> _signInApple() async {
-    setState(() => _isLoading = true);
+  void _signInApple() async {
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
@@ -116,58 +94,44 @@ class _LoginScreenState extends State<LoginScreen> {
       idToken: appleCredential.identityToken,
       accessToken: appleCredential.authorizationCode,
     );
-
-    setState(() => _isLoading = false);
-    return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    Navigator.pop(context);
   }
 
-  Future<String?> createCustomToken(Map<String, dynamic> user) async{
+  Future<String?> createCustomToken(Map<String, dynamic> user) async {
     try {
       final String url = '/users/auth/kakao';
-      // print(user.toString());
-      print("create custom token start");
-      // final customTokenResponse = await API.dio.post(url, queryParameters: user);
       final customTokenResponse = await API.dio.post(url, data: user);
-      print("create custom token end");
       return customTokenResponse.data;
-    } catch(e){
+    } catch (e) {
       print(e);
       return null;
     }
   }
 
-  Future<UserCredential?> _signInKakao() async {
-    setState(() => _isLoading = true);
+  void _signInKakao() async {
     final isInstalled = await kakao.isKakaoTalkInstalled();
-    var token;
-    if(isInstalled){
-      final data = await kakao.UserApi.instance.loginWithKakaoTalk();
-      token = data.accessToken;
-    }else{
-      final data = await kakao.UserApi.instance.loginWithKakaoAccount();
-      token = data.accessToken;
+    late String token;
+    if (isInstalled) {
+      final temp = await kakao.UserApi.instance
+          .loginWithKakaoTalk();
+      token = temp.accessToken;
+    } else {
+      final temp = await kakao.UserApi.instance
+          .loginWithKakaoAccount();
+      token = temp.accessToken;
     }
 
     final user = await kakao.UserApi.instance.me();
-    print("customToken start");
     final customToken = await createCustomToken({
-      'uid' : user!.id.toString(),
+      'uid': user.id.toString(),
       // 'displayName' : user!.kakaoAccount!.name,
       'access_token': token.toString(),
     });
-    print("customToken end");
-    setState(() => _isLoading = false);
-    print(customToken);
-    print("temp start");
-    final temp = await FirebaseAuth.instance.signInWithCustomToken(customToken!);
-    print("temp end");
-    print("idToken start");
-    final idToken = await FirebaseMessaging.instance.getToken();
-    print("idToken end");
-    // print(temp);
-    print(idToken);
-    print(await temp.user!.getIdToken());
-    return temp;
+
+    await FirebaseAuth.instance.signInWithCustomToken(customToken!);
+    await API.changeDioToken();
+    Navigator.pop(context);
   }
 
   void _signInNaver() {}

@@ -38,7 +38,8 @@ class DefaultLayout extends StatelessWidget {
       // toolbarHeight: 62,
       title: const Text('ToT',
           style: TextStyle(
-              fontSize: 28.0,
+              // fontSize: 28.0,
+              fontSize: 32.0,
               fontWeight: FontWeight.w500,
               color: PRIMARY_COLOR,)),
       // centerTitle: true,

@@ -49,7 +49,9 @@ dependencies:
   transition: ^2.0.2
   flutter_launcher_icons:
   graphview:
-  firebase_messaging: ^13.1.0
+  flutter_secure_storage:
+  flutter_platform_widgets: ^2.0.0
+  flutter_native_splash: ^2.2.11
 
 dev_dependencies:
   flutter_test:

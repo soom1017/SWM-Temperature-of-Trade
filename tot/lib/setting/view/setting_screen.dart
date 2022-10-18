@@ -1,53 +1,105 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:settings_ui/settings_ui.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/cache.dart';
+import 'package:tot/common/layout/default_layout.dart';
+import 'package:tot/login/view/login_screen.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return
-    //   SettingsList(
-    //   sections: [
-    //     SettingsSection(
-    //       title: Text('Common'),
-    //       tiles: <SettingsTile>[
-    //         SettingsTile.navigation(
-    //           leading: Icon(Icons.language),
-    //           title: Text('Language'),
-    //           value: Text('English'),
-    //         ),
-    //         SettingsTile.switchTile(
-    //           onToggle: (value) {},
-    //           initialValue: true,
-    //           leading: Icon(Icons.format_paint),
-    //           title: Text('Enable custom theme'),
-    //         ),
-    //       ],
-    //     ),
-    //   ],
-    // );
-      Center(
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+        if (!snapshot.hasData) {
+          return _SettingView();
+        } else {
+          return _SettingView();
+        }
+      },
+    );
+  }
+}
+
+class _SettingView extends StatelessWidget {
+  const _SettingView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text("Setting page"),
-          Text(FirebaseAuth.instance.currentUser!.email.toString()),
-          Text(FirebaseAuth.instance.currentUser!.displayName.toString()),
-          Text(FirebaseAuth.instance.currentUser!.metadata.toString()),
+          if (FirebaseAuth.instance.currentUser != null)
+            Text("name : ${FirebaseAuth.instance.currentUser!.displayName.toString()}"),
+          if (FirebaseAuth.instance.currentUser != null)
+            Text("isAnonymous : ${FirebaseAuth.instance.currentUser!.isAnonymous.toString()}"),
+          if (FirebaseAuth.instance.currentUser != null)
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                await API.changeDioToken();
+                userBookmark = [];
+              },
+              child: Text("logout"),
+            ),
+          if (FirebaseAuth.instance.currentUser == null)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DefaultLayout(
+                              child: LoginScreen(),
+                              isExtraPage: true,
+                              pageName: "로그인",
+                            )));
+              },
+              child: Text("login"),
+            ),
           ElevatedButton(
             onPressed: () {
-              FirebaseAuth.instance.signOut();
-              // 카카오 로그아웃
-              // UserApi.instance.unlink();
+              showPlatformDialog(
+                context: context,
+                builder: (_) => PlatformAlertDialog(
+                  title: Text('Alert'),
+                  content: Text('Some content'),
+                  actions: <Widget>[
+                    PlatformDialogAction(child: PlatformText("ok"), onPressed: () => Navigator.of(context).pop(),),
+                    PlatformDialogAction(child: PlatformText("cancle"), onPressed: () => Navigator.of(context).pop(),),
+                  ],
+                ),
+              );
             },
-            child: Text("logout"),
+            child: Text("alert"),
           ),
         ],
       ),
     );
   }
 }
+
+//   SettingsList(
+//   sections: [
+//     SettingsSection(
+//       title: Text('Common'),
+//       tiles: <SettingsTile>[
+//         SettingsTile.navigation(
+//           leading: Icon(Icons.language),
+//           title: Text('Language'),
+//           value: Text('English'),
+//         ),
+//         SettingsTile.switchTile(
+//           onToggle: (value) {},
+//           initialValue: true,
+//           leading: Icon(Icons.format_paint),
+//           title: Text('Enable custom theme'),
+//         ),
+//       ],
+//     ),
+//   ],
+// );
