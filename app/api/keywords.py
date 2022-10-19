@@ -1,19 +1,26 @@
-from typing import List
-from defusedxml import DTDForbidden
-from fastapi import APIRouter, Depends, HTTPException
+import pandas as pd
+from fastapi import APIRouter
 
-from sqlalchemy.orm import Session
-from app.db.database import get_db
-from app.db import schemas
+from app.util.keywordcrawler import MapCrawler
+from app.config import settings
+
+HOT_KEYWORD_PATH = settings.HOT_KEYWORD_PATH
 
 keywords = APIRouter()
 
-@keywords.get('/map/{keyword_name}', response_model=List[schemas.News])
-async def get_graph_map_by_keyword_name(keyword_name: int, db: Session = Depends(get_db)):
-    """
-    1. search keyword from Keyword DB (GRAPH DB)
-    2. if exists, show graph in DB
-       else, execute `keywordcrawler.py` to scrap map info. from https://data.kostat.go.kr/social/keyword/
-             then show graph in DB
-    """
-    pass
+@keywords.get('/rank/{page_offset}')
+async def get_keyword_rank(page_offset: int):
+    start, end = page_offset * 15, (page_offset + 1) * 15
+    
+    data_rank = pd.read_csv(HOT_KEYWORD_PATH)
+    data = data_rank["name"][start:end].values.tolist()
+    
+    return {"data": data, "fin": end}
+        
+
+@keywords.get('/map/{keyword_name}')
+async def get_graph_map_by_keyword_name(keyword_name: str):
+    mapCrawler_ = MapCrawler()
+    data = mapCrawler_.get_map_data(keyword_name)
+    
+    return data
