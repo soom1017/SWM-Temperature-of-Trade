@@ -60,7 +60,7 @@ class _MypageScreenState extends State<MypageScreen> {
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       return Container();
     }
-    return Column(
+    return Stack(
       children: [
         Container(
           width: double.infinity,
@@ -158,37 +158,44 @@ class _MypageScreenState extends State<MypageScreen> {
             ],
           ),
         ),
-        Spacer(),
-        Container(
-          width: double.infinity,
-          height: 450,
-          decoration: BoxDecoration(
-            color: NEWSTAB_BG_COLOR,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.7),
-                spreadRadius: 0,
-                blurRadius: 5,
-                offset: Offset(0, -1),
+        DraggableScrollableSheet(
+          initialChildSize: 0.5,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return Container(
+              width: double.infinity,
+              // height: 450,
+              decoration: BoxDecoration(
+                color: NEWSTAB_BG_COLOR,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.7),
+                    spreadRadius: 0,
+                    blurRadius: 5,
+                    offset: Offset(0, -1),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-                HORIZONTAL_PADDING, 20.0, HORIZONTAL_PADDING, 0.0),
-            child: ListView.separated(
-              itemBuilder: (context, i) {
-                return _newsTileList[0];
-              },
-              separatorBuilder: (context, i) {
-                return const Divider(
-                  thickness: 1.5,
-                );
-              },
-              itemCount: 7,
-            ),
-          ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    HORIZONTAL_PADDING, 20.0, HORIZONTAL_PADDING, 0.0),
+                child: ListView.separated(
+                  itemBuilder: (context, i) {
+                    return _newsTileList[0];
+                  },
+                  separatorBuilder: (context, i) {
+                    return const Divider(
+                      thickness: 1.5,
+                    );
+                  },
+                  itemCount: 30,
+                  controller: scrollController,
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

@@ -35,9 +35,9 @@ abstract class API {
   }
 
   // news api
-  static Future<NewsData?> getNewsById(int news_id) async {
+  static Future<NewsData?> getNewsById(int newsId) async {
     try {
-      final response = await dio.get("/news/${news_id}");
+      final response = await dio.get("/news/${newsId}");
       return NewsData.fromResponse(response.data);
     } catch (e) {
       print(e);
@@ -69,11 +69,11 @@ abstract class API {
     }
   }
 
-  static Future<List<NewsTileData>?> getNewsListByKeyword(String keyword_name,
+  static Future<List<NewsTileData>?> getNewsListByKeyword(String keywordName,
       {int news_id = -1}) async {
     try {
       final response =
-          await dio.get("/news/keyword/${keyword_name}/${news_id}");
+          await dio.get("/news/keyword/$keywordName/$news_id");
       return List<Map<String, dynamic>>.from(response.data['data'])
           .map((e) => NewsTileData.fromResponse(e))
           .toList();
@@ -83,9 +83,9 @@ abstract class API {
     }
   }
 
-  static Future<String?> createBookmarkById(int news_id) async {
+  static Future<String?> createBookmarkById(int newsId) async {
     try {
-      final response = await dio.get("/users/create/bookmark/${news_id}");
+      final response = await dio.get("/users/create/bookmark/$newsId");
       return "success";
     } catch (e) {
       print(e.toString());
@@ -93,9 +93,9 @@ abstract class API {
     }
   }
 
-  static Future<String?> deleteBookmarkById(int news_id) async {
+  static Future<String?> deleteBookmarkById(int newsId) async {
     try {
-      final response = await dio.get("/users/delete/bookmark/${news_id}");
+      final response = await dio.get("/users/delete/bookmark/$newsId");
       return "success";
     } catch (e) {
       print(e.toString());
@@ -108,6 +108,30 @@ abstract class API {
       final response = await dio.get("/users/bookmarks");
       return List<Map<String, dynamic>>.from(response.data['data'])
           .map((e) => NewsTileData.fromResponse(e))
+          .toList();
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  static Future<List<String>?> getKeywordRank(int pageOffset) async {
+    try {
+      final response = await dio.get("/keywords/rank/$pageOffset");
+      return List<String>.from(response.data['data'])
+          .map((e) => e.toString())
+          .toList();
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  static Future<List<String>?> getGraphMapByKeyword(int pageOffset) async {
+    try {
+      final response = await dio.get("/keywords/rank/$pageOffset");
+      return List<String>.from(response.data['data'])
+          .map((e) => e.toString())
           .toList();
     } catch (e) {
       print(e.toString());
