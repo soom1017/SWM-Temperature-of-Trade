@@ -4,24 +4,25 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/home/component/home_hotnew_button.dart';
 import 'package:tot/home/component/home_main_keyword_list.dart';
 
-class MypageScreen extends StatefulWidget {
-  const MypageScreen({Key? key}) : super(key: key);
+class MyfilterScreen extends StatefulWidget {
+  const MyfilterScreen({Key? key}) : super(key: key);
 
   @override
-  State<MypageScreen> createState() => _MypageScreenState();
+  State<MyfilterScreen> createState() => _MyfilterScreenState();
 }
 
-class _MypageScreenState extends State<MypageScreen> {
+class _MyfilterScreenState extends State<MyfilterScreen> {
   // 가운뎃점 쓰는 경우가 있음
   final _newsTileList = <NewsTile>[
     NewsTile(
-      newsTitle: "이화전기, 위스키 브랜드 '윈저' 인수전 참여",
+      newsTitle: "1",
       stockName: "이화전기",
       tagList: ["#인수", "#코스닥", "#위스키"],
       postingDate: "2022.07.29",
@@ -29,9 +30,19 @@ class _MypageScreenState extends State<MypageScreen> {
     ),
   ];
 
+  RefreshController _controller = RefreshController();
+
   @override
   void initState() {
     super.initState();
+    for(int i=0;i<29;i++)
+      _newsTileList.add(NewsTile(
+        newsTitle: "${i+2}",
+        stockName: "이화전기",
+        tagList: ["#인수", "#코스닥", "#위스키"],
+        postingDate: "2022.07.29",
+        id: 10,
+      ));
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       Future.delayed(
           Duration.zero,
@@ -181,17 +192,42 @@ class _MypageScreenState extends State<MypageScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                     HORIZONTAL_PADDING, 20.0, HORIZONTAL_PADDING, 0.0),
-                child: ListView.separated(
-                  itemBuilder: (context, i) {
-                    return _newsTileList[0];
-                  },
-                  separatorBuilder: (context, i) {
-                    return const Divider(
-                      thickness: 1.5,
+                child: StatefulBuilder(
+                  builder: (BuildContext context2, setter) {
+                    return SmartRefresher(
+                      controller: _controller,
+                      child: ListView.separated(
+                        itemBuilder: (context, i) {
+                          return _newsTileList[i];
+                        },
+                        separatorBuilder: (context, i) {
+                          return const Divider(
+                            thickness: 1.5,
+                          );
+                        },
+                        itemCount: _newsTileList.length,
+                        controller: scrollController,
+                        physics: ClampingScrollPhysics(),
+                      ),
+                      onLoading: () async {
+                        await Future.delayed(
+                            Duration(milliseconds: 1000));
+                        _controller.loadComplete();
+                        for (int i = 0; i < 15; i++) {
+                          _newsTileList.add(NewsTile(
+                            newsTitle: "이화전기, 위스키 브랜드 '윈저' 인수전 참여",
+                            stockName: "이화전기",
+                            tagList: ["#인수", "#코스닥", "#위스키"],
+                            postingDate: "2022.07.29",
+                            id: 10,
+                          ));
+                        }
+                        setter(() {});
+                      },
+                      enablePullUp: true,
+                      enablePullDown: false,
                     );
                   },
-                  itemCount: 30,
-                  controller: scrollController,
                 ),
               ),
             );

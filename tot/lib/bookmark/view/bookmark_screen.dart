@@ -55,6 +55,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
             child: SlidableAutoCloseBehavior(
               child: ListView.separated(
+                physics: ClampingScrollPhysics(),
                 itemBuilder: (context, i) {
                   if (i == 0) {
                     return Column(

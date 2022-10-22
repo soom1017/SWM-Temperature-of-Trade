@@ -4,7 +4,7 @@ import 'package:tot/bookmark/view/bookmark_screen.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/home/view/home_screen.dart';
-import 'package:tot/mypage/view/mypage_screen.dart';
+import 'package:tot/myfilter/view/myfilter_screen.dart';
 import 'package:tot/setting/view/setting_screen.dart';
 
 class RootTab extends StatefulWidget {
@@ -57,8 +57,8 @@ class _RootTabState extends State<RootTab>
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: index == 1 ? Icon(Icons.person, size:30,) : Icon(Icons.person_outline, size: 30,),
-            label: '마이페이지',
+            icon: index == 1 ? Icon(Icons.filter_alt, size:30,) : Icon(Icons.filter_alt_outlined, size: 30,),
+            label: '마이필터',
           ),
           BottomNavigationBarItem(
             icon: index == 2 ? Icon(Icons.bookmark, size:30,) : Icon(Icons.bookmark_border, size: 30,),
@@ -75,7 +75,7 @@ class _RootTabState extends State<RootTab>
         controller: controller,
         children: [
           HomeScreen(),
-          MypageScreen(),
+          MyfilterScreen(),
           BookmarkScreen(),
           SettingScreen(),
         ],
