@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
           child: HomeMainKeywordList(),
           height: 300,
         ),
-        HomeUserKeywords(name: "JH"),
+        //HomeUserKeywords(name: "JH"),
       ]),
     );
   }

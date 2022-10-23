@@ -26,7 +26,7 @@ final List<Color> colorList = [
   HOME_BG_COLOR,
 ];
 
-class NewsDetailView extends StatelessWidget {
+class NewsDetailView extends StatefulWidget {
   final String? stockName;
   final String postingDate;
   final String newsTitle;
@@ -52,11 +52,16 @@ class NewsDetailView extends StatelessWidget {
     );
   }
 
+  @override
+  State<NewsDetailView> createState() => _NewsDetailViewState();
+}
+
+class _NewsDetailViewState extends State<NewsDetailView> {
   routeToNewsFullTextView(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => NewsFullTextView(
-            newsDetailHead: NewsDetailHead.fromDetailView(this)),
+            newsDetailHead: NewsDetailHead.fromDetailView(widget)),
       ),
     );
   }
@@ -72,7 +77,7 @@ class NewsDetailView extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
         child: Column(
           children: [
-            NewsDetailHead.fromDetailView(this),
+            NewsDetailHead.fromDetailView(widget),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
@@ -84,7 +89,7 @@ class NewsDetailView extends StatelessWidget {
                   Row(
                     children: [
                       Spacer(),
-                      for (String keyword in tagList)
+                      for (String keyword in widget.tagList)
                         HomeUserKeyword(
                           keyword: keyword,
                           textStyle: TextStyle(

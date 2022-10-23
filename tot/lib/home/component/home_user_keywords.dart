@@ -100,7 +100,7 @@ class HomeUserKeyword extends StatelessWidget {
         routeToKeywordMap(context);
       },
       child: Text(
-        keyword,
+        "#$keyword",
         style: textStyle,
       ),
     );

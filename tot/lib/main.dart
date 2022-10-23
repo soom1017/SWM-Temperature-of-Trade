@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +40,29 @@ Future<FirebaseApp> _load() async{
     print(FirebaseAuth.instance.currentUser!.isAnonymous);
   }
   // print(API.dio.options.headers);
+  await getKeywordListByLoad();
   return temp;
+}
+
+Future<void> getKeywordListByLoad() async{
+  final temp = await Future.wait([_getKeywordListPage(2), _getKeywordListPage(1), _getKeywordListPage(0)]);
+  temp[0].addAll(temp[1]);
+  temp[0].addAll(temp[2]);
+  var _keywordList = SplayTreeMap<int, List<String>?>.from(temp[0]);
+  keywordList = [];
+  for(final int key in _keywordList.keys){
+    if(_keywordList != null) {
+      keywordList.addAll(_keywordList[key]!);
+    }
+  }
+}
+
+Future<Map<int, List<String>?>> _getKeywordListPage(int page) async{
+  List<String>? temp = await API.getKeywordRank(page);
+  if(temp!.isEmpty) return {page: []};
+  Map<int, List<String>?> val = await _getKeywordListPage(page+3);
+  val[page] = temp;
+  return val;
 }
 
 class _App extends StatelessWidget {

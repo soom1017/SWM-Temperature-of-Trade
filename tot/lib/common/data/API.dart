@@ -127,12 +127,10 @@ abstract class API {
     }
   }
 
-  static Future<List<String>?> getGraphMapByKeyword(int pageOffset) async {
+  static Future<Map<String, dynamic>?> getGraphMapByKeyword(String keywordName) async {
     try {
-      final response = await dio.get("/keywords/rank/$pageOffset");
-      return List<String>.from(response.data['data'])
-          .map((e) => e.toString())
-          .toList();
+      final response = await dio.get("/keywords/map/$keywordName");
+      return response.data;
     } catch (e) {
       print(e.toString());
       return null;

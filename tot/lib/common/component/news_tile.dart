@@ -203,9 +203,13 @@ class _NewsTileState extends State<NewsTile> {
   }
 
   List<Widget> keywordTags() {
-    return List.from(widget.tagList.map((keyword) => KeywordTag(
-          keywordName: ("#" + keyword),
-        )));
+    return List.from(
+      widget.tagList.map(
+        (keyword) => KeywordTag(
+          keywordName: ("#$keyword"),
+        ),
+      ),
+    );
   }
 }
 

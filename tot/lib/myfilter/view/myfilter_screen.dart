@@ -87,85 +87,85 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
                     fontWeight: FontWeight.w500,
                     height: 1.5),
               ),
-              SizedBox(
-                height: 30,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: null,
-                    // onPressed: null,
-                    child: Text(
-                      "관심종목",
-                      style: TextStyle(
-                          fontSize: 26,
-                          color: PRIMARY_COLOR,
-                          fontWeight: FontWeight.w400),
-                    ),
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsets>(
-                          EdgeInsets.fromLTRB(17, 5, 17, 5)),
-                      side: MaterialStateProperty.all<BorderSide>(BorderSide(
-                        width: 2.0,
-                        color: PRIMARY_COLOR,
-                      )),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(PRIMARY_COLOR),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 12,
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 15.0)),
-                  minimumSize:
-                      MaterialStateProperty.all<Size>(Size.fromHeight(50)),
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                  ),
-                ),
-                onPressed: null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'JH님이 관심가질 만한',
-                      style: TextStyle(fontSize: 30),
-                    ),
-                    // ∧∨
-                    Icon(
-                      Icons.expand_more_outlined,
-                      size: 50,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Text(
-                  "뉴스 모아봤어요.",
-                  style: TextStyle(
-                      fontSize: 30, color: PRIMARY_COLOR, height: 1.4),
-                ),
-              ),
+              // SizedBox(
+              //   height: 30,
+              // ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     ElevatedButton(
+              //       onPressed: null,
+              //       // onPressed: null,
+              //       child: Text(
+              //         "관심종목",
+              //         style: TextStyle(
+              //             fontSize: 26,
+              //             color: PRIMARY_COLOR,
+              //             fontWeight: FontWeight.w400),
+              //       ),
+              //       style: ButtonStyle(
+              //         padding: MaterialStateProperty.all<EdgeInsets>(
+              //             EdgeInsets.fromLTRB(17, 5, 17, 5)),
+              //         side: MaterialStateProperty.all<BorderSide>(BorderSide(
+              //           width: 2.0,
+              //           color: PRIMARY_COLOR,
+              //         )),
+              //         foregroundColor:
+              //             MaterialStateProperty.all<Color>(PRIMARY_COLOR),
+              //         backgroundColor:
+              //             MaterialStateProperty.all<Color>(Colors.white),
+              //         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              //           RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(12),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // SizedBox(
+              //   height: 12,
+              // ),
+              // ElevatedButton(
+              //   style: ButtonStyle(
+              //     padding: MaterialStateProperty.all<EdgeInsets>(
+              //         EdgeInsets.symmetric(horizontal: 15.0)),
+              //     minimumSize:
+              //         MaterialStateProperty.all<Size>(Size.fromHeight(50)),
+              //     foregroundColor:
+              //         MaterialStateProperty.all<Color>(Colors.white),
+              //     backgroundColor:
+              //         MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
+              //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              //       RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(18),
+              //       ),
+              //     ),
+              //   ),
+              //   onPressed: null,
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(
+              //         'JH님이 관심가질 만한',
+              //         style: TextStyle(fontSize: 30),
+              //       ),
+              //       // ∧∨
+              //       Icon(
+              //         Icons.expand_more_outlined,
+              //         size: 50,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              //   child: Text(
+              //     "뉴스 모아봤어요.",
+              //     style: TextStyle(
+              //         fontSize: 30, color: PRIMARY_COLOR, height: 1.4),
+              //   ),
+              // ),
             ],
           ),
         ),

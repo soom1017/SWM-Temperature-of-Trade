@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tot/common/const/padding.dart';
+import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/view/keyword_screen.dart';
 import 'package:tot/home/view/home_keyword_rank_view.dart';
 
@@ -34,10 +35,8 @@ class HomeMainKeywordList extends StatelessWidget {
                         fontSize: 32,
                         fontWeight: FontWeight.w500,
                         height: 2.0)),
-                HomeMainKeywordButton(keyword: "#코로나19"),
-                HomeMainKeywordButton(keyword: "#금리"),
-                HomeMainKeywordButton(keyword: "#대출"),
-                HomeMainKeywordButton(keyword: "#전기차"),
+                for(var i=0;i<4;i++)
+                  HomeMainKeywordButton(keyword: keywordList[i]),
                 Text(
                   "입니다.",
                   style: TextStyle(
@@ -52,7 +51,7 @@ class HomeMainKeywordList extends StatelessWidget {
                   routeToKeywordRank(context);
                 },
                 child: Text(
-                  "키워드 더보기 〉",
+                  "키워드 순위 보기 〉",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -85,7 +84,7 @@ class HomeMainKeywordButton extends StatelessWidget {
         routeToKeywordMap(context);
       },
       child: Text(
-        keyword,
+        "#$keyword",
         style: TextStyle(fontSize: 24),
       ),
       style: ButtonStyle(
