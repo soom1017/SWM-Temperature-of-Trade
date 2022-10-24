@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -8,8 +5,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
-import 'package:tot/home/component/home_hotnew_button.dart';
-import 'package:tot/home/component/home_main_keyword_list.dart';
 
 class MyfilterScreen extends StatefulWidget {
   const MyfilterScreen({Key? key}) : super(key: key);
@@ -22,6 +17,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
   // 가운뎃점 쓰는 경우가 있음
   final _newsTileList = <NewsTile>[
     NewsTile(
+      summary: "asdf",
       newsTitle: "1",
       stockName: "이화전기",
       tagList: ["#인수", "#코스닥", "#위스키"],
@@ -37,6 +33,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
     super.initState();
     for(int i=0;i<29;i++)
       _newsTileList.add(NewsTile(
+        summary: "asdf",
         newsTitle: "${i+2}",
         stockName: "이화전기",
         tagList: ["#인수", "#코스닥", "#위스키"],
@@ -215,6 +212,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
                         _controller.loadComplete();
                         for (int i = 0; i < 15; i++) {
                           _newsTileList.add(NewsTile(
+                            summary: "asdf",
                             newsTitle: "이화전기, 위스키 브랜드 '윈저' 인수전 참여",
                             stockName: "이화전기",
                             tagList: ["#인수", "#코스닥", "#위스키"],

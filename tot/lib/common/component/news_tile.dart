@@ -11,6 +11,7 @@ class NewsTile extends StatefulWidget {
   final String? stockName;
   final String postingDate;
   final String newsTitle;
+  final String summary;
   final int id;
   final List<String> tagList;
 
@@ -19,6 +20,7 @@ class NewsTile extends StatefulWidget {
       required this.postingDate,
       required this.newsTitle,
       required this.id,
+      required this.summary,
       this.stockName,
       Key? key})
       : super(key: key);
@@ -30,6 +32,7 @@ class NewsTile extends StatefulWidget {
       newsTitle: data.title,
       stockName: data.attention_stock,
       id: data.id,
+      summary: data.summary,
     );
   }
 
@@ -46,6 +49,7 @@ int checkBookmark(int id) {
 }
 
 class _NewsTileState extends State<NewsTile> {
+  bool _expanded = false;
   List<IconData> toggleIcon = [Icons.bookmark_border, Icons.bookmark];
   late int toggle;
 
@@ -65,11 +69,51 @@ class _NewsTileState extends State<NewsTile> {
 
   @override
   Widget build(BuildContext context) {
+    return ExpansionPanelList(
+      children: [
+        ExpansionPanel(
+          backgroundColor: Colors.transparent,
+          headerBuilder: (context, isExpanded) {
+            return _newsTile();
+          },
+          body: Container(
+            // color: Color(0xFF88A4D7),
+            // height: 150,
+            // width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: Colors.grey),
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(15),),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("뉴스 요약", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(widget.summary),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          isExpanded: _expanded,
+        ),
+      ],
+      elevation: 0,
+      expandedHeaderPadding: EdgeInsets.zero,
+      expansionCallback: (panelIndex, isExpanded) {
+        _expanded = !_expanded;
+        setState(() {});
+      },
+    );
+  }
+
+  Widget _newsTile() {
     return Slidable(
       groupTag: "tile",
-      // Specify a key if the Slidable is dismissible.
       key: const ValueKey(0),
-      // The end action pane is the one at the right or the bottom side.
       endActionPane: ActionPane(
         extentRatio: 0.15,
         motion: ScrollMotion(),
@@ -128,9 +172,6 @@ class _NewsTileState extends State<NewsTile> {
           ),
         ],
       ),
-
-      // The child of the Slidable is what the user sees when the
-      // component is not dragged.
       child: GestureDetector(
         onTap: () {
           routeToNewsDetailPage(context);
