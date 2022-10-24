@@ -76,7 +76,9 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
                               physics: ClampingScrollPhysics(),
                             ),
                             onLoading: () async {
-                              final _next = await API.getNewsListByKeyword(widget.keyword, news_id: _newsTileData.last.id);
+                              var _next = null;
+                              if(!_newsTileData.isEmpty)
+                                _next = await API.getNewsListByKeyword(widget.keyword, news_id: _newsTileData.last.id);
                               _controller.loadComplete();
                               if(_next != null) {
                                 _newsTileData.addAll(_next!);

@@ -8,6 +8,7 @@ import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tot/common/data/API.dart';
+import 'package:tot/main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -131,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);
     await API.changeDioToken();
+    await getBookmarkByLoad();
     Navigator.pop(context);
   }
 

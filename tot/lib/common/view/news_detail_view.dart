@@ -3,6 +3,8 @@ import 'package:tot/common/component/news_detail_pie_chart.dert.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/component/news_detail_haed.dart';
+import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/news_data.dart';
 import 'package:tot/common/view/news_full_text_view.dart';
 import 'package:tot/home/component/home_user_keywords.dart';
 import '../layout/default_layout.dart';
@@ -57,11 +59,11 @@ class NewsDetailView extends StatefulWidget {
 }
 
 class _NewsDetailViewState extends State<NewsDetailView> {
-  routeToNewsFullTextView(BuildContext context) {
+  routeToNewsFullTextView(BuildContext context, NewsData news) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => NewsFullTextView(
-            newsDetailHead: NewsDetailHead.fromDetailView(widget)),
+        builder: (_) =>
+            NewsFullTextView(news: news,),
       ),
     );
   }
@@ -75,191 +77,248 @@ class _NewsDetailViewState extends State<NewsDetailView> {
         physics: ClampingScrollPhysics(),
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
-        child: Column(
-          children: [
-            NewsDetailHead.fromDetailView(widget),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Spacer(),
-                      for (String keyword in widget.tagList)
-                        HomeUserKeyword(
-                          keyword: keyword,
-                          textStyle: TextStyle(
-                            fontSize: 20,
-                            color: PRIMARY_COLOR,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "국채와 금리差 12년만에 최고 카드채 금리 상반기 2배 올라 여전사 자금조달 어려워지며 CP 발행 올 들어 3배 넘게 증가 카드론 한도 줄고 금리 오를듯 취약차주 대출 받기 힘들어져",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                    height: 27,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        routeToNewsFullTextView(context);
-                      },
-                      child: Text(
-                        "전문 보기 〉",
-                        style: TextStyle(fontSize: 17),
-                      ),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.symmetric(horizontal: 17)),
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      ),
+        child: FutureBuilder(
+          future: API.getNewsById(widget.id!),
+          builder: (BuildContext context, AsyncSnapshot<NewsData?> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final news = snapshot.data!;
+            return Column(
+              children: [
+                NewsDetailHead.fromNewsData(news),
+                _Information(news),
+                Divider(
+                  thickness: 5.0,
+                  color: Color(0xFF9BACBC).withOpacity(0.4),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 20,
                     ),
+                    if (news.attention_stock != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: HORIZONTAL_PADDING),
+                        child: _Sentiment(news),
+                      ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    if (news.attention_stock != null)
+                      Divider(
+                        thickness: 2.0,
+                        color: Color(0xFF9BACBC).withOpacity(0.4),
+                      ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: HORIZONTAL_PADDING),
+                      child: _Graph(news),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _Information(NewsData news) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Spacer(),
+              for (String keyword in widget.tagList)
+                HomeUserKeyword(
+                  keyword: keyword,
+                  textStyle: TextStyle(
+                    fontSize: 20,
+                    color: PRIMARY_COLOR,
+                    fontWeight: FontWeight.w600,
                   ),
-                  SizedBox(
-                    height: 15,
+                ),
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            news.summary,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Container(
+            height: 27,
+            child: ElevatedButton(
+              onPressed: () {
+                routeToNewsFullTextView(context, news);
+              },
+              child: Text(
+                "전문 보기 〉",
+                style: TextStyle(fontSize: 17),
+              ),
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all<EdgeInsets>(
+                    EdgeInsets.symmetric(horizontal: 17)),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                ],
+                ),
               ),
             ),
-            Divider(
-              thickness: 5.0,
-              color: Color(0xFF9BACBC).withOpacity(0.4),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _Graph(NewsData news) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "관련된 종목들은 아래와 같아요",
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+        ),
+        SizedBox(
+          height: 35,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Spacer(),
+            NewsDetailPieChart(
+              legendLabels: legendLabels,
+              colorList: colorList,
+              dataMap: dataMap,
+              centerText: "현대카드\n56%",
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Text(
-                    "관련된 종목들은 아래와 같아요",
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: 35,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Spacer(),
-                      NewsDetailPieChart(
-                        legendLabels: legendLabels,
-                        colorList: colorList,
-                        dataMap: dataMap,
-                        centerText: "현대카드\n56%",
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 60,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        " 해당뉴스는",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w600),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: ElevatedButton(
-                          onPressed: null,
-                          child: Text(
-                            "현대카드",
-                            style: TextStyle(fontSize: 25),
-                          ),
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                                EdgeInsets.symmetric(horizontal: 15.0)),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(PRIMARY_COLOR),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "에 대해",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ElevatedButton(
-                          onPressed: null,
-                          child: Text(
-                            "긍정",
-                            style: TextStyle(fontSize: 25),
-                          ),
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                                EdgeInsets.symmetric(horizontal: 15.0)),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Color(0xFFEA4242)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "적인 내용을 다루고 있어요",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            SizedBox(
+              width: 20,
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _Sentiment(NewsData news) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              " 해당뉴스는",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: _SentimentStockName(news.attention_stock!),
+            ),
+            Text(
+              "에 대해",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: _SentimentButton(news.label),
+            ),
+            Text(
+              "적인 내용을 다루고 있어요",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _SentimentButton(int val){
+    String sname;
+    Color color;
+    if(val == 0) {
+      sname = '중립';
+      color = Color(0xFF9C9934);
+    } else if(val == 1) {
+      sname = '긍정';
+      color = Color(0xFFEA4242);
+    } else {
+      sname = '부정';
+      color = Color(0xFF375FCA);
+    }
+    return ElevatedButton(
+      onPressed: null,
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsets>(
+            EdgeInsets.symmetric(horizontal: 15.0)),
+        foregroundColor:
+        MaterialStateProperty.all<Color>(Colors.white),
+        backgroundColor:
+        MaterialStateProperty.all<Color>(color),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+      ),
+      child: Text(
+        sname,
+        style: TextStyle(fontSize: 25),
+      ),
+    );
+  }
+
+  Widget _SentimentStockName(String stockName) {
+    return ElevatedButton(
+      onPressed: null,
+      child: Text(
+        stockName,
+        style: TextStyle(fontSize: 25),
+      ),
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsets>(
+            EdgeInsets.symmetric(horizontal: 15.0)),
+        foregroundColor:
+        MaterialStateProperty.all<Color>(Colors.white),
+        backgroundColor:
+        MaterialStateProperty.all<Color>(PRIMARY_COLOR),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
         ),
       ),
     );

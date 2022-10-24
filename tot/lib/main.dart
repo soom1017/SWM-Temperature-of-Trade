@@ -25,14 +25,7 @@ Future<FirebaseApp> _load() async{
     options: DefaultFirebaseOptions.currentPlatform,
   );
   if(FirebaseAuth.instance.currentUser != null && !FirebaseAuth.instance.currentUser!.isAnonymous) {
-    await API.changeDioToken();
-    final bookmark = await API.getUserBookmark();
-    if(bookmark != null) {
-      userBookmark = bookmark.map((e) => e.id).toList();
-    }else{
-      userBookmark = [];
-    }
-    print(userBookmark);
+    await getBookmarkByLoad();
   }
   if(FirebaseAuth.instance.currentUser == null)
   {
@@ -42,6 +35,17 @@ Future<FirebaseApp> _load() async{
   // print(API.dio.options.headers);
   await getKeywordListByLoad();
   return temp;
+}
+
+Future<void> getBookmarkByLoad() async{
+  await API.changeDioToken();
+  final bookmark = await API.getUserBookmark();
+  if(bookmark != null) {
+    userBookmark = bookmark.map((e) => e.id).toList();
+  }else{
+    userBookmark = [];
+  }
+  print(userBookmark);
 }
 
 Future<void> getKeywordListByLoad() async{

@@ -35,13 +35,16 @@ class _SettingView extends StatelessWidget {
         children: [
           Text("Setting page"),
           if (FirebaseAuth.instance.currentUser != null)
-            Text("name : ${FirebaseAuth.instance.currentUser!.displayName.toString()}"),
+            Text(
+                "name : ${FirebaseAuth.instance.currentUser!.displayName.toString()}"),
           if (FirebaseAuth.instance.currentUser != null)
-            Text("isAnonymous : ${FirebaseAuth.instance.currentUser!.isAnonymous.toString()}"),
+            Text(
+                "isAnonymous : ${FirebaseAuth.instance.currentUser!.isAnonymous.toString()}"),
           if (FirebaseAuth.instance.currentUser != null)
             ElevatedButton(
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
+                await FirebaseAuth.instance.signInAnonymously();
                 await API.changeDioToken();
                 userBookmark = [];
               },
@@ -61,22 +64,6 @@ class _SettingView extends StatelessWidget {
               },
               child: Text("login"),
             ),
-          ElevatedButton(
-            onPressed: () {
-              showPlatformDialog(
-                context: context,
-                builder: (_) => PlatformAlertDialog(
-                  title: Text('Alert'),
-                  content: Text('Some content'),
-                  actions: <Widget>[
-                    PlatformDialogAction(child: PlatformText("ok"), onPressed: () => Navigator.of(context).pop(),),
-                    PlatformDialogAction(child: PlatformText("cancle"), onPressed: () => Navigator.of(context).pop(),),
-                  ],
-                ),
-              );
-            },
-            child: Text("alert"),
-          ),
         ],
       ),
     );
