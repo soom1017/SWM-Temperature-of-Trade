@@ -16,12 +16,11 @@ class Settings:
     
     HOT_NEWSLIST_PATH: str = os.getenv("HOT_NEWSLIST_PATH")
     HOT_KEYWORD_PATH: str = os.getenv("HOT_KEYWORD_PATH")
+    KEYWORD_LIST_PATH: str = os.getenv("KEYWORD_LIST_PATH")
+    SENTIMENT_STATS_PATH: str = os.getenv("SENTIMENT_STATS_PATH")
     
 class OauthSettings:
     FIREBASE_CERT_PATH: str = os.getenv("FIREBASE_CERT_PATH")
-    
-    KAKAO_REST_API_KEY : str = os.getenv("REST_API_KEY")
-    KAKAO_REDIRECT_URI : str = os.getenv("REDIRECT_URI")
 
 settings = Settings()
 oauthsettings = OauthSettings()

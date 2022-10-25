@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.db.models import News, Keyword
-from app.db.schemas import NewsDetailParsed, NewsParsed
-from app.config import settings
-from app.crud.news import get_one_news_by_id
+from app.util.models import FilterData
+from app.db.models import News
+from app.db.schemas import NewsDetailParsed
+from app.crud.news import get_one_news_by_id, get_recent_news, get_hot_news, get_news_by_filter, get_news_by_keyword, get_weekly_sentiment_stats
 
 news = APIRouter()
     
@@ -20,60 +20,25 @@ async def get_news_by_id(news_id: int, db: Session = Depends(get_db)):
 
 @news.get('/list-new/{news_id}')
 async def get_recent_news_list(news_id: int, db: Session = Depends(get_db)):
-    if news_id == -1:
-        db_news_list = db.query(News).order_by(News.created_at.desc()).limit(20).all()
-    else:
-        criterion = get_one_news_by_id(news_id, db)
-        db_news_list = db.query(News).\
-            filter(News.id < criterion.id).\
-            limit(20).all()
-    
-    data = []
-    for news in db_news_list:
-        data.append(NewsParsed(news))
-    return {"data": data}
+    data = get_recent_news(news_id, db)
+    return data
     
 @news.get('/list-hot/{news_id}')
 async def get_hot_news_list(news_id: int, db: Session = Depends(get_db)):
-    with open(settings.HOT_NEWSLIST_PATH, 'r') as f:
-        dt = f.read()
-        hot_news_ids = dt.split('\n')
-        
-    news_list = []
-    if news_id == -1:
-        for id in hot_news_ids[:20]:
-            news_list.append(db.query(News).filter(News.id == int(id)).first())
-    else:
-        try:
-            idx = hot_news_ids.index(str(news_id))
-        except:
-            raise HTTPException(status_code=404, detail="News not found")
-        if idx != len(hot_news_ids) - 1:
-            for id in hot_news_ids[idx+1:idx+21]:
-                news_list.append(db.query(News).filter(News.id == int(id)).first())
-            
-    data = []
-    for news in news_list:
-        data.append(NewsParsed(news))
-    return {"data": data}
+    data = get_hot_news(news_id, db)
+    return data
 
 @news.get('/keyword/{keyword_name}/{news_id}')
 async def get_news_list_by_keyword(keyword_name: str, news_id: int, db: Session = Depends(get_db)):
-    if news_id == -1:
-        db_news_list = db.query(News).\
-            join(News.keyword).\
-            filter(Keyword.name == keyword_name).\
-            order_by(News.created_at.desc()).\
-            limit(20).all()
-    else:
-        criterion = get_one_news_by_id(news_id, db)
-        db_news_list = db.query(News).\
-            join(News.keyword).\
-            filter(Keyword.name == keyword_name, News.created_at < criterion.created_at).\
-            order_by(News.created_at.desc()).\
-            limit(20).all()
-    data = []
-    for news in db_news_list:
-        data.append(NewsParsed(news))
-    return {"data": data}
+    data = get_news_by_keyword(news_id, keyword_name, db)
+    return data
+
+@news.post('/list-filter')
+async def get_news_list_by_filter(filters: FilterData, news_id: int, db: Session = Depends(get_db)):
+    data = get_news_by_filter(news_id, filters, db)
+    return data
     
+@news.get('/stat-sentiment')
+async def get_sentiment_stats(db: Session = Depends(get_db)):
+    data = get_weekly_sentiment_stats(db)
+    return {"data": data}

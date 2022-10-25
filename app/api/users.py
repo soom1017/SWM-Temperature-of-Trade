@@ -3,12 +3,11 @@ from fastapi.security import OAuth2PasswordBearer
 
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.util.models import AuthData
+from app.util.models import AuthData, FilterData
 from app.db.models import User
-from app.db.schemas import NewsParsed
 from app.config import oauthsettings
 from app.crud.news import get_one_news_by_id
-from app.crud.users import get_one_user_by_token, create_new_user, get_uid_from_token
+from app.crud.users import get_uid_from_token, get_one_user_by_token, create_new_user, get_bookmarks_of, get_favorites_of, update_favorites_of
 
 import requests
 import firebase_admin
@@ -65,14 +64,11 @@ async def auth_request(token: str = Depends(oauth2_scheme), db: Session = Depend
     if not db_user:
         create_new_user(uid, db)
 
+# Bookmark
 @users.get('/bookmarks')
 async def get_user_bookmark(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     db_user = get_one_user_by_token(token, db)
-    bookmark_news_list = db_user.news
-    
-    data = []
-    for news in bookmark_news_list:
-        data.append(NewsParsed(news))
+    data = get_bookmarks_of(db_user)
     return {"data": data}
 
 @users.get('/create/bookmark/{news_id}', status_code=201)
@@ -90,3 +86,15 @@ async def create_user_bookmark(news_id: int, token: str = Depends(oauth2_scheme)
     
     db_user.news.remove(db_news)
     db.commit()
+    
+# Favorite - Keyword, Stock
+@users.get('/favorites')
+async def get_user_favorites(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    db_user = get_one_user_by_token(token, db)
+    favorites = get_favorites_of(db_user)
+    return favorites
+
+@users.patch('/favorites', status_code=204)
+async def update_user_favorite(favorites: FilterData, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    db_user = get_one_user_by_token(token, db)
+    update_favorites_of(db_user, favorites, db)
