@@ -18,6 +18,7 @@ class News(BaseModel):
     id: int
     title: str
     created_at: datetime = None
+    summary: Optional[str] = None
     attention_stock: Optional[str] = None
     keyword: Optional[List[Keyword]] = None
     
@@ -29,6 +30,7 @@ class NewsParsed:
         self.id = news.id
         self.title = news.title
         self.created_at = news.created_at
+        self.summary = news.summary
         self.attention_stock = news.attention_stock
         self.keyword = []
         for k in news.keyword:
@@ -38,7 +40,6 @@ class NewsDetail(News):
     reporter: Optional[str] = None
     press: Optional[str] = None
     body: str
-    summary: Optional[str] = None
     highlight_idx: Optional[str] = None
     stock_prob: Optional[str] = None
     label: Optional[int] = None
@@ -50,7 +51,6 @@ class NewsDetailParsed(NewsParsed):
         self.reporter = news.reporter
         self.press = news.press
         self.body = eval(news.body)
-        self.summary = news.summary
         self.highlight_idx = eval(news.highlight_idx)
         self.stock_prob = eval(news.stock_prob)
         self.label = news.label
