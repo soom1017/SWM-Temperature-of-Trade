@@ -77,9 +77,6 @@ class _NewsTileState extends State<NewsTile> {
             return _newsTile();
           },
           body: Container(
-            // color: Color(0xFF88A4D7),
-            // height: 150,
-            // width: double.infinity,
             decoration: BoxDecoration(
               border: Border.all(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(15),),
