@@ -3,6 +3,7 @@ from math import log
 import pickle
 import os
 import sys
+import pandas as pd
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from config import config
@@ -10,69 +11,70 @@ from config import config
 import warnings
 warnings.simplefilter("ignore")
 
-DF_SAVE_PATH = config.DF_SAVED_PATH
+DATA_SAVE_PATH = config.DF_SAVED_PATH
     
-class ToTTfidfVectorizer():
-    def __init__(self, stopwords: list = None) -> None:
-        self.stopwords = stopwords
-        self.tokenizer = Mecab()
-        self.docs = None
-        self.N_docs = 0
-        self.vocab = None
-        # if DF saved in disk, load it
-        try:
-            with open(DF_SAVE_PATH, 'rb') as fp: 
-                self.df = pickle.load(fp)
-        except FileNotFoundError:
-            self.df = None
+def load_data():
+    try:
+        with open(DATA_SAVE_PATH, 'rb') as fp: 
+            df = pickle.load(fp)
+    except FileNotFoundError:
+        df = None
+        
+    return df
 
-    def load_vocab(self, docs: list) -> list:
+def update_data(data):
+    with open(DATA_SAVE_PATH, 'wb') as fp:
+        pickle.dump(data, fp)
+        
+### Keyword Extractor Module
+class ToTTfidfVectorizer():
+    def __init__(self):
+        self.tokenizer = Mecab()
+        self.data = load_data()
+        self.tfidf = None
+        
+            
+    def get_vocab(self, docs: list):
         vocab = []
         for d in docs:
-            tokens_ = self.tokenizer.nouns(d)
-            for tok in tokens_:
-                if tok.isalpha() and len(tok) != 1:
-                    vocab.append(tok)
+            tokens = self.tokenizer.nouns(d)
+            for t in tokens:
+                if t.isalpha() and len(t) != 1:
+                    vocab.append(t)
         return sorted(list(set(vocab)))
 
-    def fit(self, docs: list) -> None:
-        self.docs = docs
-        self.N_docs = len(docs)
-        self.vocab = self.load_vocab(docs)
-        self.df = {}
-        for t in self.vocab:
+    def fit(self, docs: list):
+        N_docs = len(docs)
+        tokens = self.get_vocab(docs)
+        self.data = {"N_docs": N_docs}
+        
+        for t in tokens:
             df = 0
             for d in docs:
                 df += t in d
-            self.df[t] = df
-        # save DF to disk
-        with open(DF_SAVE_PATH, 'wb') as fp:
-            pickle.dump(self.df, fp)
+            self.data[t] = df
+        update_data(self.data)
 
-
-    def transform(self, d: str) -> dict:
-        tokens_ = self.load_vocab([d])
-        tfidf_ = {}
-        for t in tokens_:
-            tf_ = d.count(t)
-            try:
-                df_ = self.df[t]
-                tfidf_[t] = tf_ * log(self.N_docs/(df_ + 1))
-            
-                self.df[t] += 1
-            except:
-                tfidf_[t] = tf_ * log(self.N_docs)
-                
-                self.df[t] = 1
-                
-        # save updated DF to disk
-        with open(DF_SAVE_PATH, 'wb') as fp:
-            pickle.dump(self.df, fp)
-        return tfidf_
-    
-    def get_keyword_names(self, d: str, N_keywords: int = 5) -> list:
-        tfidf_ = self.transform(d)
-        sorted_dict = sorted(tfidf_.items(), key = lambda item: item[1], reverse = True)
+    def transform(self, d: str):
+        self.data["N_docs"] += 1
+        N_docs = self.data["N_docs"]
+        tokens = self.get_vocab([d])
         
-        keywords = [x for (x, y) in sorted_dict[:N_keywords]]
+        tfidf = {}
+        for t in tokens:
+            tf = d.count(t)
+            try:            
+                self.data[t] += 1
+            except:
+                self.data[t] = 1
+            df = self.data[t]
+            tfidf[t] = tf * log(N_docs/(df))
+        update_data(self.data)
+        
+        self.tfidf = dict(sorted(tfidf.items(), key = lambda item: item[1], reverse = True))
+        return self.tfidf
+    
+    def get_keyword_names(self, N_keywords: int = 3):
+        data = list(self.tfidf.items())
+        keywords = [x for (x, y) in data[:N_keywords]]
         return keywords
