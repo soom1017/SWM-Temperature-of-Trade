@@ -1,9 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:graphview/GraphView.dart';
 import 'package:multiple_search_selection/helpers/create_options.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
+import 'package:tot/common/component/news_tile.dart';
+import 'package:tot/common/const/colors.dart';
+import 'package:tot/common/const/padding.dart';
+import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
 
@@ -20,146 +25,207 @@ TextStyle kStyleDefault = const TextStyle(
   fontWeight: FontWeight.bold,
 );
 
-
 class _SearchViewState extends State<SearchView> {
+  List<_Keyword> _keylist = [];
+
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       isExtraPage: true,
       pageName: "검색",
-      child: MultipleSearchSelection<Country>(
-        clearSearchFieldOnSelect: true,
-        title: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text(
-            '키워드 리스트',
-            style: kStyleDefault.copyWith(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _search(),
+          Divider(
+            thickness: 1,
+            color: Colors.grey,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text("필터 뉴스", style: TextStyle(
+                fontSize: 26,
+                color: PRIMARY_COLOR,
+                fontWeight: FontWeight.w600),),
+          ),
+          SizedBox(height: 20,),
+          _list(),
+        ],
+      ),
+    );
+  }
+
+  Widget _search() {
+    return Container(
+      color: HOME_BG_COLOR,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: MultipleSearchSelection<_Keyword>(
+          clearSearchFieldOnSelect: true,
+          pickedItemsContainerMaxHeight: 100,
+          title: Container(
+            color: Colors.transparent,
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(5, 12, 12, 5),
+              child: Text(
+                '필터',
+                style: TextStyle(
+                    fontSize: 26,
+                    color: PRIMARY_COLOR,
+                    fontWeight: FontWeight.w600),
+              ),
             ),
           ),
-        ),
-        onItemAdded: (c) {
-          Future.delayed(Duration(milliseconds: 1000), () {
-            print(c.toString());
+          onPickedChange: (c) {
             setState(() {
-
+              _keylist = c;
             });
-          });
-        },
-
-        items: countries, // List<Country>
-        fieldToCheck: (c) {
-          return c.name;
-        },
-        itemBuilder: (country) {
-          return Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: Container(
+            print(_keylist.length);
+          },
+          items: keywords,
+          // List<_Keyword>
+          fieldToCheck: (c) {
+            return c.name;
+          },
+          itemBuilder: (_Keyword) {
+            return Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: HOME_BG_COLOR,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12.0,
+                    horizontal: 12,
+                  ),
+                  child: Text(
+                    _Keyword.name,
+                    style: TextStyle(
+                      color: SMALL_FONT_COLOR,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          pickedItemBuilder: (_Keyword) {
+            return Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
-                color: Colors.white,
+                color: Color(0xFFD8E1E8),
+                border: Border.all(color: Color(0xFFD8E1E8)),
+                borderRadius: BorderRadius.circular(30),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 12,
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      _Keyword.name,
+                      style: TextStyle(fontSize: 21, color: PRIMARY_COLOR),
+                    ),
+                    Text(
+                      '  ×',
+                      style: TextStyle(fontSize: 15, color: SMALL_FONT_COLOR),
+                    ),
+                  ],
                 ),
-                child: Text(country.name),
               ),
-            ),
-          );
-        },
-        pickedItemBuilder: (country) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey[400]!),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(country.name),
-            ),
-          );
-        },
-        // showedItemsBoxDecoration:BoxDecoration(color: Colors.red),
-        // sortShowedItems: true,
-        // sortPickedItems: true,
-        selectAllButton: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.blue),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Select All',
-                style: kStyleDefault,
-              ),
+            );
+          },
+          clearAllButton: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text(
+              '필터 초기화',
+              style: TextStyle(fontSize: 17, color: Colors.redAccent),
             ),
           ),
-        ),
-        clearAllButton: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.red),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Clear All',
-                style: kStyleDefault,
-              ),
+          showItemsButton: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text(
+              '키워드 찾기',
+              style: TextStyle(fontSize: 17, color: Colors.blueAccent),
             ),
           ),
-        ),
-        fuzzySearch: FuzzySearch.jaro,
-        itemsVisibility: ShowedItemsVisibility.onType,
-        showSelectAllButton: false,
-        searchFieldInputDecoration: InputDecoration(
-          hintText: '검색어를 입력하세요',
-          hintStyle: kStyleDefault.copyWith(
-            fontSize: 13,
-            color: Colors.grey[400],
-          ),
-        ),
-        pickedItemsBoxDecoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.blue[300]!,
-          ),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        showedItemsBackgroundColor: Colors.grey.withOpacity(0.1),
-        showShowedItemsScrollbar: false,
-        noResultsWidget: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'No items found',
-            style: kStyleDefault.copyWith(
-              color: Colors.grey[400],
+          fuzzySearch: FuzzySearch.jaro,
+          itemsVisibility: ShowedItemsVisibility.toggle,
+          showSelectAllButton: false,
+          searchFieldInputDecoration: InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(12, 12, 12, 12),
+            hintText: '검색어를 입력하세요',
+            hintStyle: kStyleDefault.copyWith(
               fontSize: 13,
-              fontWeight: FontWeight.w100,
+              color: Colors.grey[400],
+            ),
+          ),
+          pickedItemsBoxDecoration: BoxDecoration(
+            color: Colors.transparent,
+          ),
+          showShowedItemsScrollbar: false,
+          noResultsWidget: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '검색된 키워드가 없습니다.',
+              style: kStyleDefault.copyWith(
+                color: Colors.grey,
+                fontSize: 13,
+                fontWeight: FontWeight.w100,
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
+  Widget _list(){
+    return Flexible(
+      child: FutureBuilder(
+        future: API.getUserBookmark(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData == false)
+            return Center(child: CircularProgressIndicator());
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+            child: SlidableAutoCloseBehavior(
+              child: ListView.separated(
+                physics: ClampingScrollPhysics(),
+                itemBuilder: (context, i) {
+                  return NewsTile.fromData(snapshot.data[i]);
+                },
+                separatorBuilder: (context, i) {
+                  return const Divider(
+                    thickness: 1.5,
+                  );
+                },
+                itemCount: snapshot.data.length,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
-List<Country> countries = List<Country>.generate(
+List<_Keyword> keywords = List<_Keyword>.generate(
   keywordList.length,
-      (index) => Country(
+  (index) => _Keyword(
     name: keywordList[index],
+    isStock: false,
   ),
 );
 
-class Country {
+class _Keyword {
   final String name;
+  final bool isStock;
 
-  const Country({
+  const _Keyword({
     required this.name,
+    required this.isStock,
   });
 }

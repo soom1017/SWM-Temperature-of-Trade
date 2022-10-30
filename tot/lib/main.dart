@@ -7,6 +7,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
+import 'package:tot/common/view/first_page_view.dart';
 import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/firebase_options.dart';
 import 'package:tot/graph.dart';
@@ -88,46 +89,26 @@ class _App extends StatelessWidget {
           );
         }
         if (snapshot.connectionState == ConnectionState.done) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: RootTab(),
-          );
-          // return MyApp();
+          if(!FirebaseAuth.instance.currentUser!.isAnonymous) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: RootTab(),
+            );
+          }else{
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: FirstPageView(),
+            );
+          }
         }
         // 로딩 페이지
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: DefaultLayout(
-            child: CircularProgressIndicator(),
+          home: Scaffold(
+            body: Center(child: CircularProgressIndicator(),),
           ),
         );
       },
     );
   }
 }
-//
-// class _AuthApp extends StatelessWidget {
-//   const _AuthApp({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return StreamBuilder(
-//       stream: FirebaseAuth.instance.authStateChanges(),
-//       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-//         if (!snapshot.hasData) {
-//           return MaterialApp(
-//             debugShowCheckedModeBanner: false,
-//             home: DefaultLayout(
-//               child: LoginScreen(),
-//             ),
-//           );
-//         } else {
-//           return MaterialApp(
-//             debugShowCheckedModeBanner: false,
-//             home: RootTab(),
-//           );
-//         }
-//       },
-//     );
-//   }
-// }

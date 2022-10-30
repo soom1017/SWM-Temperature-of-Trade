@@ -2,13 +2,10 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tot/common/data/chart_data.dart';
 import 'package:tot/common/data/news_tile_data.dart';
 
 import 'news_data.dart';
-
-Future<String> getIdToken() async {
-  return await FirebaseAuth.instance.currentUser!.getIdToken();
-}
 
 Dio dioSetting() {
   final dio = Dio();
@@ -19,15 +16,11 @@ Dio dioSetting() {
 }
 
 abstract class API {
-  static String getUid() {
-    return FirebaseAuth.instance.currentUser!.uid;
-  }
-
   static var dio = dioSetting();
 
   static changeDioToken() async {
     if (FirebaseAuth.instance.currentUser != null) {
-      String temp = await FirebaseAuth.instance.currentUser!.getIdToken();
+      String temp = await FirebaseAuth.instance.currentUser!.getIdToken(true);
       dio.options.headers['Authorization'] = 'Bearer ${temp}';
     } else {
       dio.options.headers.remove('Authorization');
@@ -131,6 +124,26 @@ abstract class API {
     try {
       final response = await dio.get("/keywords/map/$keywordName");
       return response.data;
+    } catch (e) {
+      print(e.toString());
+      await API.changeDioToken();
+      // return API.getGraphMapByKeyword(keywordName);
+      return null;
+    }
+  }
+
+  static Future<List<ChartData>?> getSentimentStats() async {
+    try {
+      final response = await dio.get("/news/stats-sentiment/");
+      Map<String, dynamic> x = response.data['data'];
+      List<ChartData>? ans = [];
+      for(var e in x.keys){
+        var neutral = x[e]![0];
+        var positive = x[e]![1];
+        var negative = x[e]![2];
+        ans.add(ChartData(DateTime.parse(e), neutral, positive, negative));
+      }
+      return ans.reversed.toList();
     } catch (e) {
       print(e.toString());
       return null;

@@ -11,7 +11,7 @@ const SMALL_FONT_COLOR = Color(0xFF646464);
 // 일반 글자색
 const NORMAL_FONT_COLOR = Color(0xFF000000);
 // 홈 배경색
-final HOME_BG_COLOR = Color(0xFF4099DD).withOpacity(0.15);
+final HOME_BG_COLOR = Color(0xFF4099DD).withOpacity(0.10);
 // 뉴스탭 배경색
 const NEWSTAB_BG_COLOR = Color(0xFFF3F8FC);
 // 뉴스 디테일 제목색

@@ -219,9 +219,12 @@ class _NewsTileState extends State<NewsTile> {
       height: 18,
       child: ElevatedButton(
         onPressed: null,
-        child: Text(
-          widget.stockName!,
-          style: TextStyle(fontSize: 13),
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            widget.stockName!,
+            style: TextStyle(fontSize: 13),
+          ),
         ),
         style: ButtonStyle(
           padding: MaterialStateProperty.all<EdgeInsets>(

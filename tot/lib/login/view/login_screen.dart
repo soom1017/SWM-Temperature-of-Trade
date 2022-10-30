@@ -135,6 +135,4 @@ class _LoginScreenState extends State<LoginScreen> {
     await getBookmarkByLoad();
     Navigator.pop(context);
   }
-
-  void _signInNaver() {}
 }

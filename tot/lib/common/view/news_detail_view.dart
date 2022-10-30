@@ -239,7 +239,8 @@ class _NewsDetailViewState extends State<NewsDetailView> {
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              // child: SizedBox(width:175, child: FittedBox(fit: BoxFit.contain, child: _SentimentStockName(news.attention_stock!)),),
               child: _SentimentStockName(news.attention_stock!),
             ),
             Text(
@@ -304,9 +305,12 @@ class _NewsDetailViewState extends State<NewsDetailView> {
   Widget _SentimentStockName(String stockName) {
     return ElevatedButton(
       onPressed: null,
-      child: Text(
-        stockName,
-        style: TextStyle(fontSize: 25),
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text(
+          stockName,
+          style: TextStyle(fontSize: 25),
+        ),
       ),
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsets>(
@@ -315,6 +319,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
         MaterialStateProperty.all<Color>(Colors.white),
         backgroundColor:
         MaterialStateProperty.all<Color>(PRIMARY_COLOR),
+        maximumSize: MaterialStateProperty.all<Size>(Size.fromWidth(175)),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
