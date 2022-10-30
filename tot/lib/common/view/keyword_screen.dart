@@ -1,5 +1,5 @@
+import 'package:circlegraph/circlegraph.dart';
 import 'package:flutter/material.dart';
-import 'package:graphview/GraphView.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
@@ -37,6 +37,24 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
           final _keywordGraphMap = snapshot.data![1];
           return Stack(
             children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleGraph(
+                    root: _nodeWithIndex(0),
+                    radius: 50,
+                    children: [
+                      for (int i = 0; i < numberOfChildren + 5; i++)
+                        _nodeWithIndex(i + 1),
+                    ],
+                    circleLayout: [
+                      Circle(50, -1),
+                    ],
+                    // circlify: true,
+                    backgroundColor: Colors.transparent,
+                  ),
+                ],
+              ),
               DraggableScrollableSheet(
                 initialChildSize: 0.5,
                 minChildSize: 0.5,
@@ -49,7 +67,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
                     decoration: BoxDecoration(
                       color: NEWSTAB_BG_COLOR,
                       borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(30)),
+                          BorderRadius.vertical(top: Radius.circular(30)),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.7),
@@ -60,8 +78,8 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
                       ],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING,
-                          20.0, HORIZONTAL_PADDING, 0.0),
+                      padding: const EdgeInsets.fromLTRB(
+                          HORIZONTAL_PADDING, 20.0, HORIZONTAL_PADDING, 0.0),
                       child: StatefulBuilder(
                         builder: (BuildContext context2, setter) {
                           return SmartRefresher(
@@ -106,13 +124,25 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
       ),
     );
   }
+
+  int numberOfChildren = 0;
+
+  TreeNodeData _nodeWithIndex(int i) {
+    return TreeNodeData<int>(
+      child: Text(
+        "child $i",
+        style: TextStyle(color: Colors.green),
+      ),
+      data: i,
+      onNodeClick: _onNodeClick,
+      backgroundColor: Colors.red,
+    );
+  }
+
+  void _onNodeClick(TreeNodeData node, int data) {
+    print("clicked on node $data");
+  }
 }
-
-
-
-
-
-
 
 // class GraphClusterViewPage extends StatefulWidget {
 //   @override

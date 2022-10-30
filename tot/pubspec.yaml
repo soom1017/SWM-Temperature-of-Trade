@@ -36,7 +36,6 @@ dependencies:
   firebase_auth:
   firebase_core:
   google_sign_in:
-  flutter_login_facebook:
   flutter_facebook_auth:
   sign_in_with_apple:
   crypto:
@@ -55,6 +54,7 @@ dependencies:
   multiple_search_selection: ^2.3.2
   pull_to_refresh: ^2.0.0
   syncfusion_flutter_charts: ^20.3.50
+  circlegraph: ^0.0.6
 
 dev_dependencies:
   flutter_test:

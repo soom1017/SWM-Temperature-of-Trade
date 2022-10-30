@@ -41,7 +41,7 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
                           height: 25,
                         ),
                         Text(
-                          widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 게재된 뉴스",
+                          widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 업데이트된 뉴스",
                           style: TextStyle(
                               fontSize: 30,
                               color: PRIMARY_COLOR,

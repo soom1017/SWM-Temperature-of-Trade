@@ -69,24 +69,34 @@ class _NewsTileState extends State<NewsTile> {
 
   @override
   Widget build(BuildContext context) {
+    // return _expansionPanel(_slidableWidget(_newsTile()));
+    return _slidableWidget(_newsTile());
+  }
+
+  Widget _expansionPanel(Widget contain) {
     return ExpansionPanelList(
       children: [
         ExpansionPanel(
           backgroundColor: Colors.transparent,
           headerBuilder: (context, isExpanded) {
-            return _newsTile();
+            return contain;
           },
           body: Container(
             decoration: BoxDecoration(
               border: Border.all(width: 1, color: Colors.grey),
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(15),),
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(15),
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("뉴스 요약", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),),
+                  Text(
+                    "뉴스 요약",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(widget.summary),
@@ -107,10 +117,9 @@ class _NewsTileState extends State<NewsTile> {
     );
   }
 
-  Widget _newsTile() {
+  Widget _slidableWidget(Widget child) {
     return Slidable(
       groupTag: "tile",
-      key: const ValueKey(0),
       endActionPane: ActionPane(
         extentRatio: 0.15,
         motion: ScrollMotion(),
@@ -169,43 +178,48 @@ class _NewsTileState extends State<NewsTile> {
           ),
         ],
       ),
-      child: GestureDetector(
-        onTap: () {
-          routeToNewsDetailPage(context);
-        },
-        child: Container(
-          color: Colors.transparent,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.newsTitle,
-                style: TextStyle(fontSize: 19),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Container(
-                height: 25,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (widget.stockName == null)
-                      SizedBox.shrink()
-                    else
-                      stockTag(),
-                    ...keywordTags(),
-                    Spacer(),
-                    Text(
-                      widget.postingDate,
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: SMALL_FONT_COLOR,
-                          fontWeight: FontWeight.w300),
+      child: _expansionPanel(_newsTile()),
+    );
+  }
+
+  Widget _newsTile() {
+    return GestureDetector(
+      onTap: () {
+        routeToNewsDetailPage(context);
+      },
+      child: Container(
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.newsTitle,
+              style: TextStyle(fontSize: 19),
+              overflow: TextOverflow.ellipsis,
+            ),
+            Container(
+              height: 25,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (widget.stockName == null)
+                    SizedBox.shrink()
+                  else
+                    stockTag(),
+                  ...keywordTags(),
+                  Spacer(),
+                  Text(
+                    widget.postingDate,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: SMALL_FONT_COLOR,
+                      fontWeight: FontWeight.w300,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
