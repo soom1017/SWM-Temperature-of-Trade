@@ -41,6 +41,8 @@ class HomeScreen extends StatelessWidget {
             height: 300,
           ),
           //HomeUserKeywords(name: "JH"),
+          // Text('기사로 보는'),
+          // Text('경제시장 흐름'),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: FutureBuilder(

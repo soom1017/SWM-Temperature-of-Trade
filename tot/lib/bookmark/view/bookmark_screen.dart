@@ -15,8 +15,6 @@ class BookmarkScreen extends StatefulWidget {
 }
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
-  bool _expanded = false;
-
   @override
   void initState() {
     super.initState();

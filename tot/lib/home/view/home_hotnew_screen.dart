@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/layout/default_layout.dart';
 
@@ -17,6 +18,8 @@ class HomeHotNewScreen extends StatefulWidget {
 }
 
 class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
+  RefreshController _controller = RefreshController();
+
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
@@ -25,49 +28,87 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
       child: FutureBuilder(
         future: widget.isHot ? API.getNewsListHot() : API.getNewsListNew(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if(snapshot.hasData == false)
-            return Center(child:CircularProgressIndicator());
+          if (snapshot.hasData == false)
+            return Center(child: CircularProgressIndicator());
           return Container(
             color: NEWSTAB_BG_COLOR,
             padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
-            child: SlidableAutoCloseBehavior(
-              child: ListView.separated(
-                itemBuilder: (context, i) {
-                  if (i == 0) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 25,
-                        ),
-                        Text(
-                          widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 업데이트된 뉴스",
-                          style: TextStyle(
-                              fontSize: 30,
-                              color: PRIMARY_COLOR,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                      ],
-                    );
-                  }
-                  // return _newsTileList[i - 1];
-                  return NewsTile.fromData(snapshot.data[i - 1]);
-                },
-                separatorBuilder: (context, i) {
-                  if (i == 0) return SizedBox.shrink();
-                  return const Divider(
-                    thickness: 1.5,
-                  );
-                },
-                // itemCount: _newsTileList.length,
-                itemCount: snapshot.data.length,
-              ),
+            child: StatefulBuilder(
+              builder: (BuildContext context2, setter) {
+                return _refresher(snapshot.data, setter);
+              },
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _refresher(data, setter) {
+    return SlidableAutoCloseBehavior(
+      child: SmartRefresher(
+        controller: _controller,
+        onRefresh: () async {
+          var _next = null;
+          if(widget.isHot){
+            _next = await API.getNewsListHot();
+          }else{
+            _next = await API.getNewsListNew();
+          }
+          _controller.refreshCompleted();
+          data = _next;
+          setter(() {});
+        },
+        onLoading: () async {
+          var _next = null;
+          if (!data.isEmpty) {
+            if(widget.isHot){
+              _next = await API.getNewsListHot(news_id: data.last.id);
+            }else{
+              _next = await API.getNewsListNew(news_id: data.last.id);
+            }
+          }
+          _controller.loadComplete();
+          if (_next != null) {
+            data.addAll(_next!);
+          }
+          setter(() {});
+        },
+        enablePullUp: true,
+        enablePullDown: true,
+        child: ListView.separated(
+          itemBuilder: (context, i) {
+            if (i == 0) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Text(
+                    widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 업데이트된 뉴스",
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: PRIMARY_COLOR,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                ],
+              );
+            }
+            return NewsTile.fromData(data[i - 1]);
+          },
+          separatorBuilder: (context, i) {
+            if (i == 0) return SizedBox.shrink();
+            return const Divider(
+              thickness: 1.5,
+            );
+          },
+          itemCount: data.length + 1,
+          physics: ClampingScrollPhysics(),
+        ),
       ),
     );
   }
