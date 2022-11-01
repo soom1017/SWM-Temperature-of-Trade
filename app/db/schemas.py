@@ -52,7 +52,7 @@ class NewsDetailParsed(NewsParsed):
         self.press = news.press
         self.body = eval(news.body)
         self.highlight_idx = eval(news.highlight_idx)
-        self.stock_prob = eval(news.stock_prob)
+        self.stock_prob = eval(news.stock_prob) if news.stock_prob != "" else None
         self.label = news.label
         self.score = news.score
         
