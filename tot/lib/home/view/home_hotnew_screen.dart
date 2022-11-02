@@ -33,6 +33,7 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
           return Container(
             color: NEWSTAB_BG_COLOR,
             padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+            // padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING, 0, 5 ,0),
             child: StatefulBuilder(
               builder: (BuildContext context2, setter) {
                 return _refresher(snapshot.data, setter);

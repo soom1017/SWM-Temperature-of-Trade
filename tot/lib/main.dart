@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +9,6 @@ import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/common/view/first_page_view.dart';
 import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/firebase_options.dart';
-import 'package:tot/graph.dart';
-import 'package:tot/login/view/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +43,6 @@ Future<void> getBookmarkByLoad() async{
   }else{
     userBookmark = [];
   }
-  print(userBookmark);
 }
 
 Future<void> getKeywordListByLoad() async{

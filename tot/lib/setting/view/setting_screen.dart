@@ -6,7 +6,6 @@ import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
-import 'package:tot/login/view/login_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);

@@ -7,7 +7,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/API.dart';
-import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/main.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
@@ -111,14 +110,26 @@ class FirstPageView extends StatelessWidget {
       accessToken: googleSignInAuthentication?.accessToken,
       idToken: googleSignInAuthentication?.idToken,
     );
-    await FirebaseAuth.instance.signInWithCredential(credential);
+    UserCredential user =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    await _authUser({
+      'uid': user.user!.uid.toString(),
+      'access_token':
+          FirebaseAuth.instance.currentUser!.getIdToken().toString(),
+    });
   }
 
   Future<void> _signInFacebook() async {
     final LoginResult result = await FacebookAuth.instance.login();
     final AuthCredential credential =
         FacebookAuthProvider.credential(result.accessToken!.token);
-    await FirebaseAuth.instance.signInWithCredential(credential);
+    UserCredential user =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    await _authUser({
+      'uid': user.user!.uid.toString(),
+      'access_token':
+          FirebaseAuth.instance.currentUser!.getIdToken().toString(),
+    });
   }
 
   Future<void> _signInApple() async {
@@ -129,22 +140,18 @@ class FirstPageView extends StatelessWidget {
       ],
     );
 
-    final oauthCredential = OAuthProvider("apple.com").credential(
+    final credential = OAuthProvider("apple.com").credential(
       idToken: appleCredential.identityToken,
       accessToken: appleCredential.authorizationCode,
     );
-    await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-  }
-
-  Future<String?> createCustomToken(Map<String, dynamic> user) async {
-    try {
-      final String url = '/users/auth/kakao';
-      final customTokenResponse = await API.dio.post(url, data: user);
-      return customTokenResponse.data;
-    } catch (e) {
-      print(e);
-      return null;
-    }
+    UserCredential user =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    await _authUser({
+      'access_token':
+          FirebaseAuth.instance.currentUser!.getIdToken().toString(),
+    });
+    await API.changeDioToken();
+    await getBookmarkByLoad();
   }
 
   Future<void> _signInKakao() async {
@@ -157,17 +164,28 @@ class FirstPageView extends StatelessWidget {
       final temp = await kakao.UserApi.instance.loginWithKakaoAccount();
       token = temp.accessToken;
     }
-
+    print(FirebaseAuth.instance.currentUser);
     final user = await kakao.UserApi.instance.me();
-    final customToken = await createCustomToken({
+    final customToken = await _authUser({
+      'isKakao': true,
       'uid': user.id.toString(),
-      // 'displayName' : user!.kakaoAccount!.name,
       'access_token': token.toString(),
     });
 
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);
     await API.changeDioToken();
     await getBookmarkByLoad();
+  }
+
+  Future<String?> _authUser(Map<String, dynamic> user) async {
+    try {
+      final String url = '/users/auth';
+      final customTokenResponse = await API.dio.post(url, data: user);
+      return customTokenResponse.data;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   void _naviToRootTab(BuildContext context) {

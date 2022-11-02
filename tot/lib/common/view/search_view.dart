@@ -147,7 +147,7 @@ class _SearchViewState extends State<SearchView> {
           showItemsButton: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
-              '키워드 찾기',
+              '찾기',
               style: TextStyle(fontSize: 17, color: Colors.blueAccent),
             ),
           ),

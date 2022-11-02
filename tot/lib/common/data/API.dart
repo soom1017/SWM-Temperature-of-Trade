@@ -31,6 +31,7 @@ abstract class API {
   static Future<NewsData?> getNewsById(int newsId) async {
     try {
       final response = await dio.get("/news/${newsId}");
+      print(response.data);
       return NewsData.fromResponse(response.data);
     } catch (e) {
       print(e);
@@ -126,7 +127,7 @@ abstract class API {
       return response.data;
     } catch (e) {
       print(e.toString());
-      await API.changeDioToken();
+      // await API.changeDioToken();
       // return API.getGraphMapByKeyword(keywordName);
       return null;
     }

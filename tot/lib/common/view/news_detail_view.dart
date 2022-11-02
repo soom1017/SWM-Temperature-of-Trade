@@ -228,6 +228,10 @@ class _NewsDetailViewState extends State<NewsDetailView> {
   }
 
   Widget _Sentiment(NewsData news) {
+    Widget te = news.attention_stock != null ? _SentimentStockName(news.attention_stock!) : Container(child: Text("asdfasdf"),);
+    if(news.attention_stock == null){
+      print("ck");
+    }
     return Column(
       children: [
         Row(
@@ -241,7 +245,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               // child: SizedBox(width:175, child: FittedBox(fit: BoxFit.contain, child: _SentimentStockName(news.attention_stock!)),),
-              child: _SentimentStockName(news.attention_stock!),
+              child: te,
             ),
             Text(
               "에 대해",
@@ -308,7 +312,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
       child: FittedBox(
         fit: BoxFit.fitWidth,
         child: Text(
-          stockName,
+          stockName == "종합" ? "다양한 종목" : stockName,
           style: TextStyle(fontSize: 25),
         ),
       ),

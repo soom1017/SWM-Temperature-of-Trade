@@ -18,6 +18,7 @@ class MyfilterScreen extends StatefulWidget {
 
 class _MyfilterScreenState extends State<MyfilterScreen> {
   List<_Keyword> _keylist = [];
+
   // 가운뎃점 쓰는 경우가 있음
   final _newsTileList = <NewsTile>[
     NewsTile(
@@ -36,34 +37,37 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
   void initState() {
     super.initState();
     for (int i = 0; i < 29; i++)
-      _newsTileList.add(NewsTile(
-        summary: "asdf",
-        newsTitle: "${i + 2}",
-        stockName: "이화전기",
-        tagList: ["#인수", "#코스닥", "#위스키"],
-        postingDate: "2022.07.29",
-        id: 10,
-      ));
+      _newsTileList.add(
+        NewsTile(
+          summary: "asdf",
+          newsTitle: "${i + 2}",
+          stockName: "이화전기",
+          tagList: ["#인수", "#코스닥", "#위스키"],
+          postingDate: "2022.07.29",
+          id: 10,
+        ),
+      );
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       Future.delayed(
-          Duration.zero,
-          () => showPlatformDialog(
-                context: context,
-                builder: (_) => PlatformAlertDialog(
-                  title: Text('회원가입 후 이용 할 수 있습니다.'),
-                  content: Text('비회원은 이용 할 수 없는 기능입니다.\n회원가입 하시겠습니까?'),
-                  actions: <Widget>[
-                    PlatformDialogAction(
-                      child: PlatformText("네"),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    PlatformDialogAction(
-                      child: PlatformText("아니오"),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              ));
+        Duration.zero,
+        () => showPlatformDialog(
+          context: context,
+          builder: (_) => PlatformAlertDialog(
+            title: Text('회원가입 후 이용 할 수 있습니다.'),
+            content: Text('비회원은 이용 할 수 없는 기능입니다.\n회원가입 하시겠습니까?'),
+            actions: <Widget>[
+              PlatformDialogAction(
+                child: PlatformText("네"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              PlatformDialogAction(
+                child: PlatformText("아니오"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      );
     }
   }
 
@@ -74,11 +78,17 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
     }
     return Stack(
       children: [
-        Container(child: Column(children: [
-          _search(' 관심종목'),
-          Divider(thickness: 1,),
-          _search(' 관심키워드'),
-        ],),),
+        Container(
+          child: Column(
+            children: [
+              _search(' 관심종목'),
+              Divider(
+                thickness: 1,
+              ),
+              _search(' 관심키워드'),
+            ],
+          ),
+        ),
         DraggableScrollableSheet(
           initialChildSize: 0.5,
           minChildSize: 0.5,
@@ -87,11 +97,24 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
             return _Bottom(Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 40,),
-                Icon(Icons.filter_alt_off_outlined,size: 100,),
-                Text("조건에 맞는 뉴스가",style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
-                SizedBox(height: 10,),
-                Text("존재하지 않습니다.",style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
+                SizedBox(
+                  height: 40,
+                ),
+                Icon(
+                  Icons.filter_alt_off_outlined,
+                  size: 100,
+                ),
+                Text(
+                  "조건에 맞는 뉴스가",
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "존재하지 않습니다.",
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+                ),
               ],
             ));
             // return _Bottom(_list(scrollController));
@@ -281,7 +304,8 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
             style: TextStyle(
               color: Colors.grey,
               fontSize: 13,
-              fontWeight: FontWeight.w100,),
+              fontWeight: FontWeight.w100,
+            ),
           ),
         ),
       ),
@@ -291,7 +315,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
 
 List<_Keyword> keywords = List<_Keyword>.generate(
   keywordList.length,
-      (index) => _Keyword(
+  (index) => _Keyword(
     name: keywordList[index],
     isStock: false,
   ),

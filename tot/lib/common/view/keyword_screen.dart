@@ -36,15 +36,17 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
             return Center(child: CircularProgressIndicator());
           final List<NewsTileData> _newsTileData = snapshot.data![0];
           final _keywordGraphMap = snapshot.data![1];
+          print(snapshot.data!);
           return Stack(
             children: [
               Container(
                 width: double.infinity,
                 child: Column(
                   children: [
-                    if (_keywordGraphMap != {})
+                    if (_keywordGraphMap != {} && _keywordGraphMap != null)
                       _keywordGraph(_keywordGraphMap['graph'].keys.toList()),
-                    if (_keywordGraphMap == {}) _keywordEmpty(),
+                    if (_keywordGraphMap == {} || _keywordGraphMap == null)
+                      _keywordEmpty(),
                   ],
                 ),
               ),
