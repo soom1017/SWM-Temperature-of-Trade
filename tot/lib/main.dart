@@ -1,7 +1,9 @@
 import 'dart:collection';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
@@ -18,10 +20,28 @@ void main() async {
   );
 }
 
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   print("Handling a background message: ${message.messageId}");
+// }
+
 Future<FirebaseApp> _load() async{
   var temp = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // final fcmToken = await FirebaseMessaging.instance.getToken();
+  // print(fcmToken);
+
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // await messaging.setAutoInitEnabled(true);
+  // final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  // await messaging.setForegroundNotificationPresentationOptions(
+  //   alert: true,
+  //   badge: true,
+  //   sound: true,
+  // );
+
   if(FirebaseAuth.instance.currentUser != null && !FirebaseAuth.instance.currentUser!.isAnonymous) {
     await getBookmarkByLoad();
   }

@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tot/common/const/colors.dart';
@@ -120,12 +122,15 @@ class FirstPageView extends StatelessWidget {
   }
 
   Future<void> _signInFacebook() async {
-    final LoginResult result = await FacebookAuth.instance.login();
+    // final LoginResult result = await FacebookAuth.instance.login();
+    print("test");
+    final FacebookLoginResult result = await FacebookLogin().logIn();
     final AuthCredential credential =
         FacebookAuthProvider.credential(result.accessToken!.token);
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
     await _authUser({
+      'isKakao': false,
       'uid': user.user!.uid.toString(),
       'access_token':
           FirebaseAuth.instance.currentUser!.getIdToken().toString(),
@@ -166,10 +171,25 @@ class FirstPageView extends StatelessWidget {
     }
     print(FirebaseAuth.instance.currentUser);
     final user = await kakao.UserApi.instance.me();
+
+    // await FirebaseMessaging.instance.requestPermission(
+    //   alert: true,
+    //   announcement: false,
+    //   badge: true,
+    //   carPlay: false,
+    //   criticalAlert: false,
+    //   provisional: false,
+    //   sound: true,
+    // );
+    //
+    // final fcmToken = await FirebaseMessaging.instance.getToken();
+    // print(fcmToken);
+
     final customToken = await _authUser({
       'isKakao': true,
       'uid': user.id.toString(),
       'access_token': token.toString(),
+      // 'fcm_token': fcmToken.toString(),
     });
 
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);
