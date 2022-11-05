@@ -47,12 +47,18 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: FutureBuilder(
               future: API.getSentimentStats(),
-                builder: (BuildContext context, AsyncSnapshot<List<ChartData>?> snapshot){
-                if(!snapshot.hasData){
-                  return Center(child: CircularProgressIndicator(),);
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<ChartData>?> snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
-                return _WeeklyGraph(data: snapshot.data!,);
-                },),
+                return _WeeklyGraph(
+                  data: snapshot.data!,
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -62,6 +68,7 @@ class HomeScreen extends StatelessWidget {
 
 class _WeeklyGraph extends StatefulWidget {
   final List<ChartData> data;
+
   const _WeeklyGraph({Key? key, required this.data}) : super(key: key);
 
   @override
@@ -86,22 +93,35 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
-      primaryXAxis: CategoryAxis(labelPlacement: LabelPlacement.onTicks),
+      primaryXAxis: CategoryAxis(
+        labelPlacement: LabelPlacement.onTicks,
+        placeLabelsNearAxisLine: false,
+        crossesAt: 0,
+      ),
+      primaryYAxis: NumericAxis(
+        minimum: -1,
+        maximum: 1,
+        crossesAt: 0,
+        interval: 0.1,
+        placeLabelsNearAxisLine: false,
+        plotBands: [
+          PlotBand(
+            start: 0,
+            end: 0,
+            borderColor: Colors.red,
+            borderWidth: 2,
+          ),
+        ],
+      ),
       trackballBehavior: _trackballBehavior,
       series: <LineSeries<ChartData, String>>[
         LineSeries<ChartData, String>(
           dataSource: widget.data,
-          color: Colors.red,
-          name: '긍정',
-          xValueMapper: (ChartData sales, _) => '${sales.date.month}/${sales.date.day}',
-          yValueMapper: (ChartData sales, _) => sales.positive,
-        ),
-        LineSeries<ChartData, String>(
-          dataSource: widget.data,
+          name: '긍부정 비율',
           color: Colors.blue,
-          name: '부정',
-          xValueMapper: (ChartData sales, _) => '${sales.date.month}/${sales.date.day}',
-          yValueMapper: (ChartData sales, _) => sales.negative,
+          xValueMapper: (ChartData sales, _) =>
+              '${sales.date.month}/${sales.date.day}',
+          yValueMapper: (ChartData sales, _) => sales.t,
         ),
       ],
     );

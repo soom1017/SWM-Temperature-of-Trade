@@ -276,13 +276,13 @@ class _NewsDetailViewState extends State<NewsDetailView> {
     Color color;
     if(val == 0) {
       sname = '중립';
-      color = Color(0xFF9C9934);
+      color = Color(0xFF909090);
     } else if(val == 1) {
       sname = '긍정';
-      color = Color(0xFFEA4242);
+      color = Color(0xFF29ab23);
     } else {
       sname = '부정';
-      color = Color(0xFF375FCA);
+      color = Color(0xFFedcc15);
     }
     return ElevatedButton(
       onPressed: null,

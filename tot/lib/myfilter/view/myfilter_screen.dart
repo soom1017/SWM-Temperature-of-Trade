@@ -17,6 +17,7 @@ class MyfilterScreen extends StatefulWidget {
 }
 
 class _MyfilterScreenState extends State<MyfilterScreen> {
+  Map<String, _Keyword> _searchList = {};
   List<_Keyword> _keylist = [];
 
   // 가운뎃점 쓰는 경우가 있음
@@ -76,6 +77,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       return Container();
     }
+    print("test");
     return Stack(
       children: [
         Container(
@@ -94,35 +96,37 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
           minChildSize: 0.5,
           maxChildSize: 0.9,
           builder: (BuildContext context, ScrollController scrollController) {
-            return _Bottom(Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 40,
-                ),
-                Icon(
-                  Icons.filter_alt_off_outlined,
-                  size: 100,
-                ),
-                Text(
-                  "조건에 맞는 뉴스가",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "존재하지 않습니다.",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ));
-            // return _Bottom(_list(scrollController));
+            // return _Bottom(Column(
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     SizedBox(
+            //       height: 40,
+            //     ),
+            //     Icon(
+            //       Icons.filter_alt_off_outlined,
+            //       size: 100,
+            //     ),
+            //     Text(
+            //       "조건에 맞는 뉴스가",
+            //       style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+            //     ),
+            //     SizedBox(
+            //       height: 10,
+            //     ),
+            //     Text(
+            //       "존재하지 않습니다.",
+            //       style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+            //     ),
+            //   ],
+            // ));
+            return _Bottom(_list(scrollController));
           },
         ),
       ],
     );
   }
+
+  // Widget _noData
 
   Widget _Bottom(Widget inner) {
     return Container(

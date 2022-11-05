@@ -115,10 +115,15 @@ class FirstPageView extends StatelessWidget {
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
     await _authUser({
-      'uid': user.user!.uid.toString(),
+      // 'uid': user.user!.uid.toString(),
+      'isKakao': false,
       'access_token':
           FirebaseAuth.instance.currentUser!.getIdToken().toString(),
+      'fcm_token': 'asdf',
+      'uid':user.user!.uid,
     });
+    await API.changeDioToken();
+    await getBookmarkByLoad();
   }
 
   Future<void> _signInFacebook() async {
@@ -129,12 +134,15 @@ class FirstPageView extends StatelessWidget {
         FacebookAuthProvider.credential(result.accessToken!.token);
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
+    final _token = await user.user!.getIdToken();
     await _authUser({
       'isKakao': false,
-      'uid': user.user!.uid.toString(),
-      'access_token':
-          FirebaseAuth.instance.currentUser!.getIdToken().toString(),
+      'access_token': _token.toString(),
+      'fcm_token': 'asdf',
+      'uid':user.user!.uid,
     });
+    await API.changeDioToken();
+    await getBookmarkByLoad();
   }
 
   Future<void> _signInApple() async {
@@ -154,6 +162,9 @@ class FirstPageView extends StatelessWidget {
     await _authUser({
       'access_token':
           FirebaseAuth.instance.currentUser!.getIdToken().toString(),
+      'fcm_token': 'asdf',
+      'isKakao': false,
+      'uid' : user.user!.uid,
     });
     await API.changeDioToken();
     await getBookmarkByLoad();
@@ -172,24 +183,11 @@ class FirstPageView extends StatelessWidget {
     print(FirebaseAuth.instance.currentUser);
     final user = await kakao.UserApi.instance.me();
 
-    // await FirebaseMessaging.instance.requestPermission(
-    //   alert: true,
-    //   announcement: false,
-    //   badge: true,
-    //   carPlay: false,
-    //   criticalAlert: false,
-    //   provisional: false,
-    //   sound: true,
-    // );
-    //
-    // final fcmToken = await FirebaseMessaging.instance.getToken();
-    // print(fcmToken);
-
     final customToken = await _authUser({
       'isKakao': true,
       'uid': user.id.toString(),
       'access_token': token.toString(),
-      // 'fcm_token': fcmToken.toString(),
+      'fcm_token': 'asdf',
     });
 
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);

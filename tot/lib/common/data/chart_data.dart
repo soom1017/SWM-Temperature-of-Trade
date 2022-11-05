@@ -1,8 +1,9 @@
 class ChartData {
-  ChartData(this.date, this.neutral, this.positive, this.negative);
+  ChartData(this.date, this.neutral, this.positive, this.negative, this.t);
 
   final DateTime date;
-  final int neutral;
-  final int positive;
-  final int negative;
+  final double neutral;
+  final double positive;
+  final double negative;
+  final double t;
 }

@@ -60,6 +60,8 @@ class _NewsTileState extends State<NewsTile> {
   }
 
   routeToNewsDetailPage(BuildContext context) {
+    print(widget.id);
+    print(widget.newsTitle);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => NewsDetailView.fromNewsTile(widget),
@@ -87,16 +89,21 @@ class _NewsTileState extends State<NewsTile> {
               borderRadius: BorderRadius.vertical(
                 bottom: Radius.circular(15),
               ),
+              color: Colors.white,
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "뉴스 요약",
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      widget.newsTitle,
+                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    ),
                   ),
+                  SizedBox(height: 5,),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(widget.summary),
@@ -205,7 +212,7 @@ class _NewsTileState extends State<NewsTile> {
                   if (widget.stockName == null)
                     SizedBox.shrink()
                   else
-                    stockTag(),
+                    stockTag(0),
                   ...keywordTags(),
                   Spacer(),
                   Text(
@@ -225,7 +232,15 @@ class _NewsTileState extends State<NewsTile> {
     );
   }
 
-  Widget stockTag() {
+  Widget stockTag(int val) {
+    Color color;
+    if(val == 0) {
+      color = Color(0xFF909090);
+    } else if(val == 1) {
+      color = Color(0xFF29ab23);
+    } else {
+      color = Color(0xFFedcc15);
+    }
     return Container(
       padding: const EdgeInsets.all(0.0),
       margin: const EdgeInsets.fromLTRB(0, 0, 7, 0),
@@ -246,7 +261,7 @@ class _NewsTileState extends State<NewsTile> {
           // minimumSize: MaterialStateProperty.all<Size>(Size(66, 16)),
           // maximumSize: MaterialStateProperty.all<Size>(Size(66, 16)),
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          backgroundColor: MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
+          backgroundColor: MaterialStateProperty.all<Color>(color),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

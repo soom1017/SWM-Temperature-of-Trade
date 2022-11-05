@@ -139,15 +139,24 @@ abstract class API {
       Map<String, dynamic> x = response.data['data'];
       List<ChartData>? ans = [];
       for(var e in x.keys){
-        var neutral = x[e]![0];
-        var positive = x[e]![1];
-        var negative = x[e]![2];
-        ans.add(ChartData(DateTime.parse(e), neutral, positive, negative));
+        double neutral = x[e]![0].toDouble();
+        double positive = x[e]![1].toDouble();
+        double negative = x[e]![2].toDouble();
+        double t = (positive + negative) == 0.0 ? 0.0 : (positive - negative) / (positive + negative);
+        print(t);
+        ans.add(ChartData(DateTime.parse(e), neutral, positive, negative, t));
       }
       return ans.reversed.toList();
     } catch (e) {
       print(e.toString());
       return null;
     }
+  }
+}
+
+dynamic tokenCheck(func){
+  try{
+
+  } catch (e) {
   }
 }
