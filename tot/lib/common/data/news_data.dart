@@ -38,7 +38,11 @@ class NewsData {
     final press = data['press'];
     final body = List<List<dynamic>>.from(data['body']).map((e) => e.map((x) => x.toString()).toList()).toList();
     final summary = data['summary'];
-    final highlight_idx = List<int>.from(data['highlight_idx']);
+    var highlight_idx;
+    if(data['highlight_idx'] == null)
+      highlight_idx = List<int>.from([]);
+    else
+      highlight_idx = List<int>.from(data['highlight_idx']);
     final label = data['label'];
     final score = data['score'];
 
