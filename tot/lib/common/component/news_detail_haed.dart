@@ -53,7 +53,7 @@ class NewsDetailHead extends StatelessWidget {
                 Row(children: [
                   Text(press, style: TextStyle(fontSize: 15),),
                   SizedBox(width: 15,),
-                  Text("$reporter 기자", style: TextStyle(fontSize: 12),),
+                  Text("$reporter", style: TextStyle(fontSize: 12),),
                 ],),
                 SizedBox(height: 5,),
                 Text("입력 : " + postingDate.toString(), style: TextStyle(color: SMALL_FONT_COLOR, fontSize: 10)),

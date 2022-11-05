@@ -53,11 +53,11 @@ class NewsFullTextView extends StatelessWidget {
           temp.add(TextSpan(
               text: line.toString(),
               style: const TextStyle(
-                backgroundColor: Colors.yellow,
-                fontSize: 15,
+                backgroundColor: Color(0xFFF8E606),
+                fontSize: 17,
               )));
         } else {
-          temp.add(TextSpan(text: line.toString(), style: TextStyle(fontSize: 15)));
+          temp.add(TextSpan(text: line.toString(), style: TextStyle(fontSize: 17)));
         }
         x++;
         cnt++;

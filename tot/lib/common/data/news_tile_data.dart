@@ -1,5 +1,6 @@
 class NewsTileData {
   final int id;
+  final int label;
   final String title;
   final String created_at;
   final String summary;
@@ -13,6 +14,7 @@ class NewsTileData {
     required this.summary,
     required this.attention_stock,
     required this.keywords,
+    required this.label,
   });
 
   factory NewsTileData.fromResponse(Map<String, dynamic> response) {
@@ -23,6 +25,7 @@ class NewsTileData {
     final summary = data['summary'];
     final attention_stock = data['attention_stock'];
     final keywords = List<String>.from(data['keyword']);
+    final label = data['label'];
 
     return NewsTileData(
         id: id,
@@ -30,6 +33,7 @@ class NewsTileData {
         created_at: created_at,
         summary: summary,
         attention_stock: attention_stock,
-        keywords: keywords,);
+        keywords: keywords,
+        label:label,);
   }
 }

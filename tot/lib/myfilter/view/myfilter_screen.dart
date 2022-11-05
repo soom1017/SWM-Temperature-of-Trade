@@ -29,6 +29,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
       tagList: ["#인수", "#코스닥", "#위스키"],
       postingDate: "2022.07.29",
       id: 10,
+      label: 0,
     ),
   ];
 
@@ -46,6 +47,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
           tagList: ["#인수", "#코스닥", "#위스키"],
           postingDate: "2022.07.29",
           id: 10,
+          label: 0,
         ),
       );
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
@@ -181,6 +183,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
                 tagList: ["#인수", "#코스닥", "#위스키"],
                 postingDate: "2022.07.29",
                 id: 10,
+                label: 0,
               ));
             }
             setter(() {});

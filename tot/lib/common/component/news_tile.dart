@@ -13,20 +13,22 @@ class NewsTile extends StatefulWidget {
   final String newsTitle;
   final String summary;
   final int id;
+  final int label;
   final List<String> tagList;
 
-  const NewsTile(
-      {required this.tagList,
-      required this.postingDate,
-      required this.newsTitle,
-      required this.id,
-      required this.summary,
-      this.stockName,
-      Key? key})
+  const NewsTile({required this.tagList,
+    required this.postingDate,
+    required this.newsTitle,
+    required this.id,
+    required this.summary,
+    required this.label,
+    this.stockName,
+    Key? key})
       : super(key: key);
 
   factory NewsTile.fromData(NewsTileData data) {
     return NewsTile(
+      label: data.label,
       tagList: data.keywords,
       postingDate: data.created_at,
       newsTitle: data.title,
@@ -100,7 +102,8 @@ class _NewsTileState extends State<NewsTile> {
                     fit: BoxFit.fitWidth,
                     child: Text(
                       widget.newsTitle,
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ),
                   SizedBox(height: 5,),
@@ -212,7 +215,7 @@ class _NewsTileState extends State<NewsTile> {
                   if (widget.stockName == null)
                     SizedBox.shrink()
                   else
-                    stockTag(0),
+                    stockTag(widget.label),
                   ...keywordTags(),
                   Spacer(),
                   Text(
@@ -234,9 +237,9 @@ class _NewsTileState extends State<NewsTile> {
 
   Widget stockTag(int val) {
     Color color;
-    if(val == 0) {
+    if (val == 0) {
       color = Color(0xFF909090);
-    } else if(val == 1) {
+    } else if (val == 1) {
       color = Color(0xFF29ab23);
     } else {
       color = Color(0xFFedcc15);
@@ -275,9 +278,10 @@ class _NewsTileState extends State<NewsTile> {
   List<Widget> keywordTags() {
     return List.from(
       widget.tagList.map(
-        (keyword) => KeywordTag(
-          keywordName: ("#$keyword"),
-        ),
+            (keyword) =>
+            KeywordTag(
+              keywordName: ("#$keyword"),
+            ),
       ),
     );
   }
