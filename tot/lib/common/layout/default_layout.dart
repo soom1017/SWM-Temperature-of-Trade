@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/custom_icons_icons.dart';
 import 'package:tot/common/view/root_tab.dart';
@@ -36,17 +37,23 @@ class DefaultLayout extends StatelessWidget {
     return AppBar(
       backgroundColor: Colors.white,
       // toolbarHeight: 62,
-      title: const Text('ToT',
-          style: TextStyle(
-              // fontSize: 28.0,
-              fontSize: 32.0,
-              fontWeight: FontWeight.w500,
-              color: PRIMARY_COLOR,)),
+      title: Text(
+        'ToT',
+        style: TextStyle(
+          fontSize: 32.0.sp,
+          fontWeight: FontWeight.w500,
+          color: PRIMARY_COLOR,
+        ),
+      ),
       // centerTitle: true,
-      leadingWidth: 30,
-      leading: const Padding(
-        padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-        child: Icon(CustomIcons.icon1, color: KEYWORD_BG_COLOR, size: 30,),
+      leadingWidth: 30.w,
+      leading: Padding(
+        padding: EdgeInsets.fromLTRB(15.w, 0, 10.w, 0),
+        child: Icon(
+          CustomIcons.icon1,
+          color: KEYWORD_BG_COLOR,
+          size: 30.sp,
+        ),
       ),
       // foregroundColor: Colors.black,
       elevation: 0,
@@ -55,21 +62,15 @@ class DefaultLayout extends StatelessWidget {
           onPressed: () {
             routeToSearchPage(context);
           },
-          icon: Icon(
-            Icons.search_outlined,
-            color: PRIMARY_COLOR,
-            size: 30,
-          ),
+          icon: Image.asset("assets/image/search.png"),
+          iconSize: 30.sp,
         ),
         IconButton(
           onPressed: () {
             routeToNotifyPage(context);
           },
-          icon: Icon(
-            Icons.notifications_outlined,
-            color: PRIMARY_COLOR,
-            size: 30,
-          ),
+          icon: Image.asset("assets/image/alert.png"),
+          iconSize: 30.sp,
         ),
       ],
     );
@@ -78,7 +79,7 @@ class DefaultLayout extends StatelessWidget {
   AppBar renderExtraPageAppBar(BuildContext context) {
     return AppBar(
       title: Text(pageName!,
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600)),
+          style: TextStyle(fontSize: 28.0.sp, fontWeight: FontWeight.w600)),
       foregroundColor: Colors.black,
       backgroundColor: Colors.white,
       elevation: 5,
@@ -90,7 +91,7 @@ class DefaultLayout extends StatelessWidget {
           icon: Icon(
             Icons.home_outlined,
             color: PRIMARY_COLOR,
-            size: 30,
+            size: 30.sp,
           ),
         ),
       ],

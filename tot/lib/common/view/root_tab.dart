@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/bookmark/view/bookmark_screen.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/layout/default_layout.dart';
@@ -44,8 +45,8 @@ class _RootTabState extends State<RootTab>
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: KEYWORD_BG_COLOR,
         unselectedItemColor: SMALL_FONT_COLOR,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
+        selectedFontSize: 11.sp,
+        unselectedFontSize: 11.sp,
         type: BottomNavigationBarType.fixed,
         onTap: (int index){
           controller.animateTo(index);
@@ -53,19 +54,19 @@ class _RootTabState extends State<RootTab>
         currentIndex: index,
         items: [
           BottomNavigationBarItem(
-            icon: index == 0 ? Icon(Icons.home, size: 30) : Icon(Icons.home_outlined, size: 30,),
+            icon: index == 0 ? Icon(Icons.home, size: 30.sp) : Icon(Icons.home_outlined, size: 30.sp,),
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: index == 1 ? Icon(Icons.filter_alt, size:30,) : Icon(Icons.filter_alt_outlined, size: 30,),
+            icon: index == 1 ? Icon(Icons.filter_alt, size:30.sp,) : Icon(Icons.filter_alt_outlined, size: 30.sp,),
             label: '마이필터',
           ),
           BottomNavigationBarItem(
-            icon: index == 2 ? Icon(Icons.bookmark, size:30,) : Icon(Icons.bookmark_border, size: 30,),
+            icon: index == 2 ? Icon(Icons.bookmark, size:30.sp,) : Icon(Icons.bookmark_border, size: 30.sp,),
             label: '북마크',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 30,),
+            icon: Icon(Icons.settings, size: 30.sp,),
             label: '설정',
           )
         ],

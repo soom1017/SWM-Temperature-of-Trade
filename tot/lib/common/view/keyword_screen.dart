@@ -1,5 +1,6 @@
 import 'package:circlegraph/circlegraph.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
@@ -50,7 +51,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
                   ],
                 ),
               ),
-              _dragableWidget(_newsTileData),
+              _draggableWidget(_newsTileData),
             ],
           );
         },
@@ -61,9 +62,9 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   Widget _keywordEmpty() {
     return Column(
       children: [
-        SizedBox(height: 160,),
+        SizedBox(height: 160.h,),
         Container(
-          width: 260,
+          width: 260.w,
           child: Row(
             children: [
               Expanded(
@@ -76,17 +77,17 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
               ),
               Text(
                 '관련',
-                style: TextStyle(fontSize: 30),
+                style: TextStyle(fontSize: 30.sp),
               ),
             ],
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 10.h,
         ),
         Text(
           '키워드 맵이 없습니다.',
-          style: TextStyle(fontSize: 30),
+          style: TextStyle(fontSize: 30.sp),
         ),
       ],
     );
@@ -104,7 +105,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
     );
   }
 
-  Widget _dragableWidget(List<NewsTileData> data) {
+  Widget _draggableWidget(List<NewsTileData> data) {
     return DraggableScrollableSheet(
       initialChildSize: 0.5,
       minChildSize: 0.5,
@@ -126,8 +127,8 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-                HORIZONTAL_PADDING, 20.0, HORIZONTAL_PADDING, 0.0),
+            padding: EdgeInsets.fromLTRB(
+                HORIZONTAL_PADDING.w, 20.0.h, HORIZONTAL_PADDING.w, 0.0.h),
             child: StatefulBuilder(
               builder: (BuildContext context2, setter) {
                 return _refresher(data, scrollController, setter);
@@ -177,7 +178,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
 
   TreeNodeData _nodeWithKeyword(String name, bool isRoot) {
     return TreeNodeData<String>(
-      width: 130,
+      width: 130.w,
       child: _keywordButton(name, isRoot),
       data: name,
       onNodeClick: isRoot ? null : _onNodeClick,
@@ -194,11 +195,11 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
           borderRadius: BorderRadius.circular(isRoot ? 10 : 30),
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 5, 12, 5),
+          padding: EdgeInsets.fromLTRB(12.w, 5.h, 12.w, 5.h),
           child: Text(
             isRoot ? '#$name' : name,
             style: TextStyle(
-                color: isRoot ? Colors.white : Colors.black, fontSize: 28),
+                color: isRoot ? Colors.white : Colors.black, fontSize: 28.sp),
           ),
         ),
       ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/component/news_detail_pie_chart.dert.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
-import 'package:tot/common/component/news_detail_haed.dart';
+import 'package:tot/common/component/news_detail_head.dart';
 import 'package:tot/common/data/news_data.dart';
 import 'package:tot/common/jsonParser.dart';
 import 'package:tot/home/component/home_user_keywords.dart';
@@ -27,8 +28,8 @@ class NewsFullTextView extends StatelessWidget {
           children: [
             NewsDetailHead.fromNewsData(news),
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  HORIZONTAL_PADDING, 30, HORIZONTAL_PADDING, 0),
+              padding: EdgeInsets.fromLTRB(
+                  HORIZONTAL_PADDING.w, 30.h, HORIZONTAL_PADDING.w, 0.h),
               child: Text.rich(
                 TextSpan(
                   children: _getHighlighting(),
@@ -47,17 +48,18 @@ class NewsFullTextView extends StatelessWidget {
     for (var paragraph in news.body) {
       var x = 0;
       for (var line in paragraph) {
-        if(x != 0)
-          line = ' ' + line;
+        if(x != 0) {
+          line = ' $line';
+        }
         if (news.highlight_idx.indexWhere((element) => element == cnt) >= 0) {
           temp.add(TextSpan(
               text: line.toString(),
-              style: const TextStyle(
+              style: TextStyle(
                 backgroundColor: Color(0xFFF8E606),
-                fontSize: 17,
+                fontSize: 17.sp,
               )));
         } else {
-          temp.add(TextSpan(text: line.toString(), style: TextStyle(fontSize: 17)));
+          temp.add(TextSpan(text: line.toString(), style: TextStyle(fontSize: 17.sp)));
         }
         x++;
         cnt++;

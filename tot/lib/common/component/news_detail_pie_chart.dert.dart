@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 class NewsDetailPieChart extends StatelessWidget {
@@ -24,11 +25,11 @@ class NewsDetailPieChart extends StatelessWidget {
       initialAngleInDegree: 270,
       chartType: ChartType.ring,
       colorList: colorList,
-      ringStrokeWidth: 32,
+      ringStrokeWidth: 32.w,
       centerText: centerText,
       legendLabels: legendLabels,
-      chartLegendSpacing: 25,
-      centerTextStyle: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.w500),
+      chartLegendSpacing: 25.w,
+      centerTextStyle: TextStyle(fontSize: 25.sp, color: Colors.black, fontWeight: FontWeight.w500),
       legendOptions: LegendOptions(
         showLegendsInRow: false,
         legendPosition: LegendPosition.left,

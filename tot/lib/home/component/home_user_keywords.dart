@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 
@@ -15,14 +16,14 @@ class HomeUserKeywords extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+          padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
           child: Align(
             alignment: Alignment.topLeft,
             child: Text(
               "$name님의 관심키워드",
               style: TextStyle(
                 color: PRIMARY_COLOR,
-                fontSize: 26,
+                fontSize: 26.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -47,8 +48,8 @@ class HomeUserKeywordList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          HORIZONTAL_PADDING + 2, 5, HORIZONTAL_PADDING + 2, 5),
+      padding: EdgeInsets.fromLTRB(
+          (HORIZONTAL_PADDING + 2).w, 5.h, (HORIZONTAL_PADDING + 2).w, 5.h),
       child: Wrap(
         spacing: 8,
         runSpacing: -6,

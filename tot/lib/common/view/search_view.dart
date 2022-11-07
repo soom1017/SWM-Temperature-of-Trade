@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:graphview/GraphView.dart';
 import 'package:multiple_search_selection/helpers/create_options.dart';
@@ -19,9 +20,9 @@ class SearchView extends StatefulWidget {
   State<SearchView> createState() => _SearchViewState();
 }
 
-TextStyle kStyleDefault = const TextStyle(
+TextStyle kStyleDefault = TextStyle(
   color: Colors.black,
-  fontSize: 16,
+  fontSize: 16.sp,
   fontWeight: FontWeight.bold,
 );
 
@@ -37,18 +38,23 @@ class _SearchViewState extends State<SearchView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _search(),
-          Divider(
+          const Divider(
             thickness: 1,
             color: Colors.grey,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text("필터 뉴스", style: TextStyle(
-                fontSize: 26,
-                color: PRIMARY_COLOR,
-                fontWeight: FontWeight.w600),),
+            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
+            child: Text(
+              "필터 뉴스",
+              style: TextStyle(
+                  fontSize: 26.sp,
+                  color: PRIMARY_COLOR,
+                  fontWeight: FontWeight.w600),
+            ),
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20.h,
+          ),
           _list(),
         ],
       ),
@@ -59,19 +65,19 @@ class _SearchViewState extends State<SearchView> {
     return Container(
       color: HOME_BG_COLOR,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: EdgeInsets.symmetric(horizontal: 15.w),
         child: MultipleSearchSelection<_Keyword>(
           clearSearchFieldOnSelect: true,
-          pickedItemsContainerMaxHeight: 100,
+          pickedItemsContainerMaxHeight: 100.h,
           title: Container(
             color: Colors.transparent,
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(5, 12, 12, 5),
+              padding: EdgeInsets.fromLTRB(5.w, 12.h, 12.w, 5.h),
               child: Text(
                 '필터',
                 style: TextStyle(
-                    fontSize: 26,
+                    fontSize: 26.sp,
                     color: PRIMARY_COLOR,
                     fontWeight: FontWeight.w600),
               ),
@@ -90,20 +96,21 @@ class _SearchViewState extends State<SearchView> {
           },
           itemBuilder: (_Keyword) {
             return Padding(
-              padding: const EdgeInsets.all(6.0),
+              padding: EdgeInsets.fromLTRB(6.w, 6.h, 6.w, 6.h),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
                   color: HOME_BG_COLOR,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 12,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.0.h,
+                    horizontal: 12.w,
                   ),
                   child: Text(
                     _Keyword.name,
                     style: TextStyle(
+                      fontSize: 15.sp,
                       color: SMALL_FONT_COLOR,
                     ),
                   ),
@@ -119,18 +126,18 @@ class _SearchViewState extends State<SearchView> {
                 borderRadius: BorderRadius.circular(30),
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       _Keyword.name,
-                      style: TextStyle(fontSize: 21, color: PRIMARY_COLOR),
+                      style: TextStyle(fontSize: 21.sp, color: PRIMARY_COLOR),
                     ),
                     Text(
                       '  ×',
-                      style: TextStyle(fontSize: 15, color: SMALL_FONT_COLOR),
+                      style: TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
                     ),
                   ],
                 ),
@@ -138,41 +145,41 @@ class _SearchViewState extends State<SearchView> {
             );
           },
           clearAllButton: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
             child: Text(
               '필터 초기화',
-              style: TextStyle(fontSize: 17, color: Colors.redAccent),
+              style: TextStyle(fontSize: 17.sp, color: Colors.redAccent),
             ),
           ),
           showItemsButton: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
             child: Text(
               '찾기',
-              style: TextStyle(fontSize: 17, color: Colors.blueAccent),
+              style: TextStyle(fontSize: 17.sp, color: Colors.blueAccent),
             ),
           ),
           fuzzySearch: FuzzySearch.jaro,
           itemsVisibility: ShowedItemsVisibility.toggle,
           showSelectAllButton: false,
           searchFieldInputDecoration: InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(12, 12, 12, 12),
+            contentPadding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
             hintText: '검색어를 입력하세요',
             hintStyle: kStyleDefault.copyWith(
-              fontSize: 13,
+              fontSize: 13.sp,
               color: Colors.grey[400],
             ),
           ),
-          pickedItemsBoxDecoration: BoxDecoration(
+          pickedItemsBoxDecoration: const BoxDecoration(
             color: Colors.transparent,
           ),
           showShowedItemsScrollbar: false,
           noResultsWidget: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
             child: Text(
               '검색된 키워드가 없습니다.',
               style: kStyleDefault.copyWith(
                 color: Colors.grey,
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w100,
               ),
             ),
@@ -182,15 +189,16 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  Widget _list(){
+  Widget _list() {
     return Flexible(
       child: FutureBuilder(
         future: API.getUserBookmark(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData == false)
-            return Center(child: CircularProgressIndicator());
+          if (snapshot.hasData == false) {
+            return const Center(child: CircularProgressIndicator());
+          }
           return Container(
-            padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+            padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
             child: SlidableAutoCloseBehavior(
               child: ListView.separated(
                 physics: ClampingScrollPhysics(),

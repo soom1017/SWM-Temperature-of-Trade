@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/API.dart';
@@ -16,15 +17,15 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 65,
+            height: 65.h,
             child: Row(
               children: [
                 SizedBox(
-                  width: HORIZONTAL_PADDING,
+                  width: HORIZONTAL_PADDING.w,
                 ),
                 HomeHotNewButton(text: "NEW"),
                 SizedBox(
-                  width: 12.0,
+                  width: 12.0.w,
                 ),
                 HomeHotNewButton(text: "HOT"),
               ],
@@ -38,13 +39,13 @@ class HomeScreen extends StatelessWidget {
               end: Alignment.topCenter,
             )),
             child: HomeMainKeywordList(),
-            height: 300,
+            height: 300.h,
           ),
           //HomeUserKeywords(name: "JH"),
           // Text('기사로 보는'),
           // Text('경제시장 흐름'),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.fromLTRB(10.0.w,10.h,10.w,10.h),
             child: FutureBuilder(
               future: API.getSentimentStats(),
               builder: (BuildContext context,
@@ -102,7 +103,7 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
         minimum: -1,
         maximum: 1,
         crossesAt: 0,
-        interval: 0.1,
+        interval: 0.2,
         placeLabelsNearAxisLine: false,
         plotBands: [
           PlotBand(

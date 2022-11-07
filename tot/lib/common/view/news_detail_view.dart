@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/component/news_detail_pie_chart.dert.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
-import 'package:tot/common/component/news_detail_haed.dart';
+import 'package:tot/common/component/news_detail_head.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/news_data.dart';
 import 'package:tot/common/view/news_full_text_view.dart';
@@ -62,8 +63,9 @@ class _NewsDetailViewState extends State<NewsDetailView> {
   routeToNewsFullTextView(BuildContext context, NewsData news) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) =>
-            NewsFullTextView(news: news,),
+        builder: (_) => NewsFullTextView(
+          news: news,
+        ),
       ),
     );
   }
@@ -76,7 +78,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
       child: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
         scrollDirection: Axis.vertical,
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 50.h),
         child: FutureBuilder(
           future: API.getNewsById(widget.id!),
           builder: (BuildContext context, AsyncSnapshot<NewsData?> snapshot) {
@@ -98,16 +100,16 @@ class _NewsDetailViewState extends State<NewsDetailView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 20,
+                      height: 20.h,
                     ),
                     if (news.attention_stock != null)
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: HORIZONTAL_PADDING),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: (HORIZONTAL_PADDING - 5).w),
                         child: _Sentiment(news),
                       ),
                     SizedBox(
-                      height: 15,
+                      height: 15.h,
                     ),
                     if (news.attention_stock != null)
                       Divider(
@@ -115,11 +117,11 @@ class _NewsDetailViewState extends State<NewsDetailView> {
                         color: Color(0xFF9BACBC).withOpacity(0.4),
                       ),
                     SizedBox(
-                      height: 15,
+                      height: 15.h,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: HORIZONTAL_PADDING),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: HORIZONTAL_PADDING.w),
                       child: _Graph(news),
                     ),
                   ],
@@ -134,11 +136,11 @@ class _NewsDetailViewState extends State<NewsDetailView> {
 
   Widget _Information(NewsData news) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+      padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
       child: Column(
         children: [
           SizedBox(
-            height: 10,
+            height: 10.h,
           ),
           Row(
             children: [
@@ -147,7 +149,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
                 HomeUserKeyword(
                   keyword: keyword,
                   textStyle: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     color: PRIMARY_COLOR,
                     fontWeight: FontWeight.w600,
                   ),
@@ -155,28 +157,24 @@ class _NewsDetailViewState extends State<NewsDetailView> {
             ],
           ),
           SizedBox(
-            height: 5,
+            height: 5.h,
           ),
           Text(
             news.summary,
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16.sp, height: 1.5),
           ),
           SizedBox(
-            height: 15,
+            height: 15.h,
           ),
           Container(
-            height: 27,
+            height: 27.h,
             child: ElevatedButton(
               onPressed: () {
                 routeToNewsFullTextView(context, news);
               },
-              child: Text(
-                "전문 보기 〉",
-                style: TextStyle(fontSize: 17),
-              ),
               style: ButtonStyle(
                 padding: MaterialStateProperty.all<EdgeInsets>(
-                    EdgeInsets.symmetric(horizontal: 17)),
+                    EdgeInsets.symmetric(horizontal: 17.w)),
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                 backgroundColor:
                     MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
@@ -186,10 +184,14 @@ class _NewsDetailViewState extends State<NewsDetailView> {
                   ),
                 ),
               ),
+              child: Text(
+                "전문 보기 〉",
+                style: TextStyle(fontSize: 17.sp),
+              ),
             ),
           ),
           SizedBox(
-            height: 15,
+            height: 15.h,
           ),
         ],
       ),
@@ -202,10 +204,10 @@ class _NewsDetailViewState extends State<NewsDetailView> {
       children: [
         Text(
           "관련된 종목들은 아래와 같아요",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+          style: TextStyle(fontSize: 28.sp, fontWeight: FontWeight.w700),
         ),
         SizedBox(
-          height: 35,
+          height: 35.h,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -219,7 +221,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
               centerText: "현대카드\n56%",
             ),
             SizedBox(
-              width: 20,
+              width: 20.w,
             ),
           ],
         ),
@@ -228,10 +230,6 @@ class _NewsDetailViewState extends State<NewsDetailView> {
   }
 
   Widget _Sentiment(NewsData news) {
-    Widget te = news.attention_stock != null ? _SentimentStockName(news.attention_stock!) : Container(child: Text("asdfasdf"),);
-    if(news.attention_stock == null){
-      print("ck");
-    }
     return Column(
       children: [
         Row(
@@ -240,16 +238,15 @@ class _NewsDetailViewState extends State<NewsDetailView> {
           children: [
             Text(
               " 해당뉴스는",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.w600),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              // child: SizedBox(width:175, child: FittedBox(fit: BoxFit.contain, child: _SentimentStockName(news.attention_stock!)),),
-              child: te,
+              padding: EdgeInsets.symmetric(horizontal: 8.0.w),
+              child: _SentimentStockName(news.attention_stock!),
             ),
             Text(
               "에 대해",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -258,12 +255,12 @@ class _NewsDetailViewState extends State<NewsDetailView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: EdgeInsets.symmetric(horizontal: 8.0.w),
               child: _SentimentButton(news.label),
             ),
             Text(
               "적인 내용을 다루고 있어요",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -271,13 +268,13 @@ class _NewsDetailViewState extends State<NewsDetailView> {
     );
   }
 
-  Widget _SentimentButton(int val){
+  Widget _SentimentButton(int val) {
     String sname;
     Color color;
-    if(val == 0) {
+    if (val == 0) {
       sname = '중립';
       color = Color(0xFF909090);
-    } else if(val == 1) {
+    } else if (val == 1) {
       sname = '긍정';
       color = Color(0xFF29ab23);
     } else {
@@ -288,11 +285,9 @@ class _NewsDetailViewState extends State<NewsDetailView> {
       onPressed: null,
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsets>(
-            EdgeInsets.symmetric(horizontal: 15.0)),
-        foregroundColor:
-        MaterialStateProperty.all<Color>(Colors.white),
-        backgroundColor:
-        MaterialStateProperty.all<Color>(color),
+            EdgeInsets.symmetric(horizontal: 15.0.w)),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        backgroundColor: MaterialStateProperty.all<Color>(color),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -301,7 +296,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
       ),
       child: Text(
         sname,
-        style: TextStyle(fontSize: 25),
+        style: TextStyle(fontSize: 25.sp),
       ),
     );
   }
@@ -309,25 +304,23 @@ class _NewsDetailViewState extends State<NewsDetailView> {
   Widget _SentimentStockName(String stockName) {
     return ElevatedButton(
       onPressed: null,
-      child: FittedBox(
-        fit: BoxFit.fitWidth,
-        child: Text(
-          stockName == "종합" ? "다양한 종목" : stockName,
-          style: TextStyle(fontSize: 25),
-        ),
-      ),
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsets>(
-            EdgeInsets.symmetric(horizontal: 15.0)),
-        foregroundColor:
-        MaterialStateProperty.all<Color>(Colors.white),
-        backgroundColor:
-        MaterialStateProperty.all<Color>(PRIMARY_COLOR),
-        maximumSize: MaterialStateProperty.all<Size>(Size.fromWidth(175)),
+            EdgeInsets.symmetric(horizontal: 15.0.w)),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        backgroundColor: MaterialStateProperty.all<Color>(PRIMARY_COLOR),
+        maximumSize: MaterialStateProperty.all<Size>(Size.fromWidth(175.w)),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
+        ),
+      ),
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text(
+          stockName,
+          style: TextStyle(fontSize: 25.sp),
         ),
       ),
     );

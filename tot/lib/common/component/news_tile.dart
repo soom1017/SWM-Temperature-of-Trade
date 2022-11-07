@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
@@ -16,14 +17,15 @@ class NewsTile extends StatefulWidget {
   final int label;
   final List<String> tagList;
 
-  const NewsTile({required this.tagList,
-    required this.postingDate,
-    required this.newsTitle,
-    required this.id,
-    required this.summary,
-    required this.label,
-    this.stockName,
-    Key? key})
+  const NewsTile(
+      {required this.tagList,
+      required this.postingDate,
+      required this.newsTitle,
+      required this.id,
+      required this.summary,
+      required this.label,
+      this.stockName,
+      Key? key})
       : super(key: key);
 
   factory NewsTile.fromData(NewsTileData data) {
@@ -73,7 +75,6 @@ class _NewsTileState extends State<NewsTile> {
 
   @override
   Widget build(BuildContext context) {
-    // return _expansionPanel(_slidableWidget(_newsTile()));
     return _slidableWidget(_newsTile());
   }
 
@@ -87,14 +88,14 @@ class _NewsTileState extends State<NewsTile> {
           },
           body: Container(
             decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Colors.grey),
+              border: Border.all(width: 1.w, color: Colors.grey),
               borderRadius: BorderRadius.vertical(
                 bottom: Radius.circular(15),
               ),
               color: Colors.white,
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -102,14 +103,16 @@ class _NewsTileState extends State<NewsTile> {
                     fit: BoxFit.fitWidth,
                     child: Text(
                       widget.newsTitle,
-                      style: TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
                     ),
                   ),
-                  SizedBox(height: 5,),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(widget.summary),
+                    padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
+                    child: Text(widget.summary, style: TextStyle(fontSize: 14.sp),),
                   ),
                 ],
               ),
@@ -131,11 +134,10 @@ class _NewsTileState extends State<NewsTile> {
     return Slidable(
       groupTag: "tile",
       endActionPane: ActionPane(
-        extentRatio: 0.15,
+        extentRatio: 0.2,
         motion: ScrollMotion(),
         children: [
           SlidableAction(
-            // autoClose: false,
             onPressed: (BuildContext context) {
               var snackbar;
               if (toggle == 0) {
@@ -183,7 +185,7 @@ class _NewsTileState extends State<NewsTile> {
             foregroundColor: PRIMARY_COLOR,
             icon: toggleIcon[toggle],
             label: '북마크',
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             borderRadius: BorderRadius.circular(30),
           ),
         ],
@@ -204,11 +206,11 @@ class _NewsTileState extends State<NewsTile> {
           children: [
             Text(
               widget.newsTitle,
-              style: TextStyle(fontSize: 19),
+              style: TextStyle(fontSize: 19.sp),
               overflow: TextOverflow.ellipsis,
             ),
             Container(
-              height: 25,
+              height: 25.h,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -221,7 +223,7 @@ class _NewsTileState extends State<NewsTile> {
                   Text(
                     widget.postingDate,
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       color: SMALL_FONT_COLOR,
                       fontWeight: FontWeight.w300,
                     ),
@@ -246,21 +248,21 @@ class _NewsTileState extends State<NewsTile> {
     }
     return Container(
       padding: const EdgeInsets.all(0.0),
-      margin: const EdgeInsets.fromLTRB(0, 0, 7, 0),
-      width: 70,
-      height: 18,
+      margin: EdgeInsets.fromLTRB(0, 0, 7.w, 0),
+      width: 70.w,
+      height: 18.h,
       child: ElevatedButton(
         onPressed: null,
         child: FittedBox(
           fit: BoxFit.fitWidth,
           child: Text(
             widget.stockName!,
-            style: TextStyle(fontSize: 13),
+            style: TextStyle(fontSize: 13.sp),
           ),
         ),
         style: ButtonStyle(
           padding: MaterialStateProperty.all<EdgeInsets>(
-              EdgeInsets.symmetric(horizontal: 5)),
+              EdgeInsets.symmetric(horizontal: 5.w)),
           // minimumSize: MaterialStateProperty.all<Size>(Size(66, 16)),
           // maximumSize: MaterialStateProperty.all<Size>(Size(66, 16)),
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -278,10 +280,9 @@ class _NewsTileState extends State<NewsTile> {
   List<Widget> keywordTags() {
     return List.from(
       widget.tagList.map(
-            (keyword) =>
-            KeywordTag(
-              keywordName: ("#$keyword"),
-            ),
+        (keyword) => KeywordTag(
+          keywordName: ("#$keyword"),
+        ),
       ),
     );
   }
@@ -295,9 +296,9 @@ class KeywordTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      keywordName + " ",
+      "$keywordName ",
       style: TextStyle(
-        fontSize: 13,
+        fontSize: 13.sp,
         color: SMALL_FONT_COLOR,
       ),
     );

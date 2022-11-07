@@ -109,9 +109,9 @@ abstract class API {
     }
   }
 
-  static Future<List<String>?> getKeywordRank(int pageOffset) async {
+  static Future<List<String>?> getKeywordRank() async {
     try {
-      final response = await dio.get("/keywords/rank/$pageOffset");
+      final response = await dio.get("/keywords/rank");
       return List<String>.from(response.data['data'])
           .map((e) => e.toString())
           .toList();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/view/keyword_screen.dart';
@@ -39,22 +40,22 @@ class KeywordRankTile extends StatelessWidget {
               Container(
                 child: Text(
                   "$rank",
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 20.sp),
                   textAlign: TextAlign.right,
                 ),
-                width: 30,
+                width: 30.w,
               ),
               SizedBox(
-                width: 20,
+                width: 20.w,
               ),
               Text(
                 "#$keyword",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20.sp),
               ),
             ],
           ),
           SizedBox(
-            height: 40,
+            height: 40.h,
           ),
         ],
       ),
@@ -73,20 +74,20 @@ class HomeKeywordRankView extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-              HORIZONTAL_PADDING, 20, HORIZONTAL_PADDING, 0),
+          padding: EdgeInsets.fromLTRB(
+              HORIZONTAL_PADDING.w, 20.h, HORIZONTAL_PADDING.w, 0.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "키워드 순위",
                 style: TextStyle(
-                    fontSize: 25,
+                    fontSize: 25.sp,
                     color: PRIMARY_COLOR,
                     fontWeight: FontWeight.w600),
               ),
               SizedBox(
-                height: 20,
+                height: 20.h,
               ),
               for (var i = 0; i < keywordList.length; i++)
                 KeywordRankTile(keyword: keywordList[i], rank: i+1),

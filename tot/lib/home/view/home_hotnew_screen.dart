@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/data/API.dart';
@@ -32,7 +33,7 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
             return Center(child: CircularProgressIndicator());
           return Container(
             color: NEWSTAB_BG_COLOR,
-            padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+            padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
             // padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING, 0, 5 ,0),
             child: StatefulBuilder(
               builder: (BuildContext context2, setter) {
@@ -84,17 +85,17 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 25,
+                    height: 25.h,
                   ),
                   Text(
                     widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 업데이트된 뉴스",
                     style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 30.sp,
                         color: PRIMARY_COLOR,
                         fontWeight: FontWeight.w600),
                   ),
                   SizedBox(
-                    height: 15,
+                    height: 15.h,
                   ),
                 ],
               );

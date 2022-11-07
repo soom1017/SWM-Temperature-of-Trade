@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tot/common/const/colors.dart';
@@ -23,28 +23,28 @@ class FirstPageView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 250,
+            height: 250.h,
           ),
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.fromLTRB(10.w,10.h,10.w,10.h),
             child: Container(
-              width: 110,
+              width: 110.w,
               child: Image.asset('assets/image/asset6.png'),
             ),
           ),
-          SizedBox(height: 100),
+          SizedBox(height: 100.h),
           Text(
             '다른 계정으로 로그인',
             style: TextStyle(
-                fontSize: 24,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.w400,
                 color: PRIMARY_COLOR),
           ),
           SizedBox(
-            height: 20,
+            height: 20.h,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: EdgeInsets.symmetric(horizontal: 30.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -79,12 +79,12 @@ class FirstPageView extends StatelessWidget {
           Text(
             "또는",
             style: TextStyle(
-                fontSize: 24,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.w400,
                 color: PRIMARY_COLOR),
           ),
           SizedBox(
-            height: 20,
+            height: 20.h,
           ),
           GestureDetector(
             onTap: () {
@@ -93,7 +93,7 @@ class FirstPageView extends StatelessWidget {
             child: Text(
               "게스트로 로그인",
               style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.w400,
                   color: PRIMARY_COLOR),
             ),
@@ -182,12 +182,14 @@ class FirstPageView extends StatelessWidget {
     }
     print(FirebaseAuth.instance.currentUser);
     final user = await kakao.UserApi.instance.me();
+    final fcmToken = await FirebaseMessaging.instance.getToken();
 
     final customToken = await _authUser({
       'isKakao': true,
       'uid': user.id.toString(),
       'access_token': token.toString(),
-      'fcm_token': 'asdf',
+      'fcm_token': fcmToken,
+      // 'fcm_token':'asdf',
     });
 
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);
@@ -227,10 +229,10 @@ class _RoundedButton extends StatelessWidget {
     return GestureDetector(
       onTap: press,
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.fromLTRB(10.w,10.h,10.w,10.h),
         child: Container(
-          width: 65,
-          height: 65,
+          width: 65.w,
+          height: 65.h,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
           ),
