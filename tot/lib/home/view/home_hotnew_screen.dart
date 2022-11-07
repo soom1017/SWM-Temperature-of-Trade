@@ -27,7 +27,9 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
       pageName: widget.isHot ? "HOT" : "NEW",
       isExtraPage: true,
       child: FutureBuilder(
-        future: widget.isHot ? API.getNewsListHot() : API.getNewsListNew(),
+        future: widget.isHot
+            ? tokenCheck(() => API.getNewsListHot())
+            : tokenCheck(() => API.getNewsListNew()),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData == false)
             return Center(child: CircularProgressIndicator());
@@ -52,10 +54,10 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
         controller: _controller,
         onRefresh: () async {
           var _next = null;
-          if(widget.isHot){
-            _next = await API.getNewsListHot();
-          }else{
-            _next = await API.getNewsListNew();
+          if (widget.isHot) {
+            _next = await tokenCheck(() => API.getNewsListHot());
+          } else {
+            _next = await tokenCheck(() => API.getNewsListNew());
           }
           _controller.refreshCompleted();
           data = _next;
@@ -64,10 +66,12 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
         onLoading: () async {
           var _next = null;
           if (!data.isEmpty) {
-            if(widget.isHot){
-              _next = await API.getNewsListHot(news_id: data.last.id);
-            }else{
-              _next = await API.getNewsListNew(news_id: data.last.id);
+            if (widget.isHot) {
+              _next = await tokenCheck(
+                  () => API.getNewsListHot(news_id: data.last.id));
+            } else {
+              _next = await tokenCheck(
+                  () => API.getNewsListNew(news_id: data.last.id));
             }
           }
           _controller.loadComplete();

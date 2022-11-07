@@ -192,7 +192,7 @@ class _SearchViewState extends State<SearchView> {
   Widget _list() {
     return Flexible(
       child: FutureBuilder(
-        future: API.getUserBookmark(),
+        future: tokenCheck(() => API.getUserBookmark()),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData == false) {
             return const Center(child: CircularProgressIndicator());

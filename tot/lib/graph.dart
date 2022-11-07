@@ -101,8 +101,6 @@ class _GraphClusterViewPageState extends State<GraphClusterViewPage> {
     return GestureDetector(
       onTap: (){
         print(i);
-        // API.getNewsById(892287);
-        // API.getNewsListNew();
       },
       child: Container(
           padding: EdgeInsets.all(16),

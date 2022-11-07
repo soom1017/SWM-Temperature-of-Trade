@@ -55,7 +55,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       return Container();
     }
     return FutureBuilder(
-      future: API.getUserBookmark(),
+      future: tokenCheck(() => API.getUserBookmark()),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData == false)
           return Center(child: CircularProgressIndicator());

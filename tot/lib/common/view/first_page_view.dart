@@ -114,35 +114,32 @@ class FirstPageView extends StatelessWidget {
     );
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
+    final fcmToken = await FirebaseMessaging.instance.getToken();
     await _authUser({
-      // 'uid': user.user!.uid.toString(),
       'isKakao': false,
       'access_token':
           FirebaseAuth.instance.currentUser!.getIdToken().toString(),
-      'fcm_token': 'asdf',
+      'fcm_token': fcmToken,
       'uid':user.user!.uid,
     });
-    await API.changeDioToken();
-    await getBookmarkByLoad();
+    await tokenCheck(() => getBookmarkByLoad());
   }
 
   Future<void> _signInFacebook() async {
-    // final LoginResult result = await FacebookAuth.instance.login();
-    print("test");
     final FacebookLoginResult result = await FacebookLogin().logIn();
     final AuthCredential credential =
         FacebookAuthProvider.credential(result.accessToken!.token);
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
     final _token = await user.user!.getIdToken();
+    final fcmToken = await FirebaseMessaging.instance.getToken();
     await _authUser({
       'isKakao': false,
       'access_token': _token.toString(),
-      'fcm_token': 'asdf',
+      'fcm_token': fcmToken,
       'uid':user.user!.uid,
     });
-    await API.changeDioToken();
-    await getBookmarkByLoad();
+    await tokenCheck(() => getBookmarkByLoad());
   }
 
   Future<void> _signInApple() async {
@@ -159,15 +156,15 @@ class FirstPageView extends StatelessWidget {
     );
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
+    final fcmToken = await FirebaseMessaging.instance.getToken();
     await _authUser({
       'access_token':
           FirebaseAuth.instance.currentUser!.getIdToken().toString(),
-      'fcm_token': 'asdf',
+      'fcm_token': fcmToken,
       'isKakao': false,
       'uid' : user.user!.uid,
     });
-    await API.changeDioToken();
-    await getBookmarkByLoad();
+    await tokenCheck(() => getBookmarkByLoad());
   }
 
   Future<void> _signInKakao() async {
@@ -180,7 +177,6 @@ class FirstPageView extends StatelessWidget {
       final temp = await kakao.UserApi.instance.loginWithKakaoAccount();
       token = temp.accessToken;
     }
-    print(FirebaseAuth.instance.currentUser);
     final user = await kakao.UserApi.instance.me();
     final fcmToken = await FirebaseMessaging.instance.getToken();
 
@@ -189,12 +185,10 @@ class FirstPageView extends StatelessWidget {
       'uid': user.id.toString(),
       'access_token': token.toString(),
       'fcm_token': fcmToken,
-      // 'fcm_token':'asdf',
     });
 
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);
-    await API.changeDioToken();
-    await getBookmarkByLoad();
+    await tokenCheck(() => getBookmarkByLoad());
   }
 
   Future<String?> _authUser(Map<String, dynamic> user) async {

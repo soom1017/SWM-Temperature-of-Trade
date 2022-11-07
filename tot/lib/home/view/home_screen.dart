@@ -47,9 +47,9 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(10.0.w,10.h,10.w,10.h),
             child: FutureBuilder(
-              future: API.getSentimentStats(),
+              future: tokenCheck(() => API.getSentimentStats()),
               builder: (BuildContext context,
-                  AsyncSnapshot<List<ChartData>?> snapshot) {
+                  AsyncSnapshot snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
                     child: CircularProgressIndicator(),

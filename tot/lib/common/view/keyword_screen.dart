@@ -29,8 +29,8 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
       isExtraPage: true,
       child: FutureBuilder(
         future: Future.wait([
-          API.getNewsListByKeyword(widget.keyword),
-          API.getGraphMapByKeyword(widget.keyword)
+          tokenCheck(() => API.getNewsListByKeyword(widget.keyword)),
+          tokenCheck(() => API.getGraphMapByKeyword(widget.keyword)),
         ]),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.hasData == false)
@@ -148,8 +148,8 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
         onLoading: () async {
           var _next = null;
           if (data.isNotEmpty) {
-            _next = await API.getNewsListByKeyword(widget.keyword,
-                news_id: data.last.id);
+            _next = await tokenCheck(() => API.getNewsListByKeyword(widget.keyword,
+                news_id: data.last.id));
           }
           _controller.loadComplete();
           if (_next != null) {

@@ -142,7 +142,7 @@ class _NewsTileState extends State<NewsTile> {
               var snackbar;
               if (toggle == 0) {
                 userBookmark.add(widget.id);
-                API.createBookmarkById(widget.id);
+                tokenCheck(() => API.createBookmarkById(widget.id));
                 snackbar = SnackBar(
                   content: Text("북마크에 추가했습니다."),
                   duration: Duration(milliseconds: 1500),
@@ -150,7 +150,7 @@ class _NewsTileState extends State<NewsTile> {
                     label: '취소',
                     onPressed: () {
                       userBookmark.remove(widget.id);
-                      API.deleteBookmarkById(widget.id);
+                      tokenCheck(() => API.deleteBookmarkById(widget.id));
                       setState(() {
                         toggle ^= 1;
                       });
@@ -160,7 +160,7 @@ class _NewsTileState extends State<NewsTile> {
               }
               if (toggle == 1) {
                 userBookmark.remove(widget.id);
-                API.deleteBookmarkById(widget.id);
+                tokenCheck(() => API.deleteBookmarkById(widget.id));
                 snackbar = SnackBar(
                   content: Text("북마크에서 삭제했습니다."),
                   duration: Duration(milliseconds: 1500),
@@ -168,7 +168,7 @@ class _NewsTileState extends State<NewsTile> {
                     label: '취소',
                     onPressed: () {
                       userBookmark.add(widget.id);
-                      API.createBookmarkById(widget.id);
+                      tokenCheck(() => API.createBookmarkById(widget.id));
                       setState(() {
                         toggle ^= 1;
                       });

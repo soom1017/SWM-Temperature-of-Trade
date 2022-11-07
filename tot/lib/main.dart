@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
@@ -28,32 +28,76 @@ Future<FirebaseApp> _load() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  if(Platform.isAndroid) {
+  NotificationSettings authStatus =
+      await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
+    sound: true,
+  );
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage rm) {
+    print(rm.toString());
+  });
+
+  const AndroidNotificationChannel androidNotificationChannel =
+      AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // name
+    importance: Importance.max,
+    description: 'This channel is used for important notifications.',
+  );
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(androidNotificationChannel);
+
     final fcmToken = await FirebaseMessaging.instance.getToken();
     print(fcmToken);
-  }else if(Platform.isIOS){
-    final authStatus = await FirebaseMessaging.instance.requestPermission();
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    print(fcmToken);
-  }
+
+  // if (authStatus.authorizationStatus == AuthorizationStatus.authorized) {
+  //   FirebaseMessaging.instance.isSupported()
+  //
+  // }
+  //
+  // if (Platform.isAndroid) {
+  //   final fcmToken = await FirebaseMessaging.instance.getToken();
+  //   print(fcmToken);
+  // } else if (Platform.isIOS) {
+  //   final fcmToken = await FirebaseMessaging.instance.getToken();
+  //   print(fcmToken);
+  // }
 
   if (FirebaseAuth.instance.currentUser != null &&
       !FirebaseAuth.instance.currentUser!.isAnonymous) {
+    await API.changeDioToken();
     await getBookmarkByLoad();
+    await getKeywordRankByLoad();
+    print("is Anonymous? : ${FirebaseAuth.instance.currentUser!.isAnonymous}");
   }
-  if (FirebaseAuth.instance.currentUser == null) {
+  if (FirebaseAuth.instance.currentUser == null ||
+      FirebaseAuth.instance.currentUser!.isAnonymous) {
     await FirebaseAuth.instance.signInAnonymously();
-    print(FirebaseAuth.instance.currentUser!.isAnonymous);
+    await API.changeDioToken();
+    await getKeywordRankByLoad();
+    print("is Anonymous? : ${FirebaseAuth.instance.currentUser!.isAnonymous}");
   }
-  // print(API.dio.options.headers);
-  // await getKeywordListByLoad();
-  await getKeywordRankByLoad();
   return temp;
 }
 
 Future<void> getBookmarkByLoad() async {
-  await API.changeDioToken();
-  final bookmark = await API.getUserBookmark();
+  final bookmark = await tokenCheck(() => API.getUserBookmark());
   if (bookmark != null) {
     userBookmark = bookmark.map((e) => e.id).toList();
   } else {
@@ -62,31 +106,9 @@ Future<void> getBookmarkByLoad() async {
 }
 
 Future<void> getKeywordRankByLoad() async {
-  final temp = await API.getKeywordRank();
+  final temp = List<String>.from(await tokenCheck(() => API.getKeywordRank()));
   keywordList.addAll(temp!);
 }
-
-// Future<void> getKeywordListByLoad() async {
-//   final temp = await Future.wait(
-//       [_getKeywordListPage(2), _getKeywordListPage(1), _getKeywordListPage(0)]);
-//   temp[0].addAll(temp[1]);
-//   temp[0].addAll(temp[2]);
-//   var _keywordList = SplayTreeMap<int, List<String>?>.from(temp[0]);
-//   keywordList = [];
-//   for (final int key in _keywordList.keys) {
-//     if (_keywordList != null) {
-//       keywordList.addAll(_keywordList[key]!);
-//     }
-//   }
-// }
-//
-// Future<Map<int, List<String>?>> _getKeywordListPage(int page) async {
-//   List<String>? temp = await API.getKeywordRank(page);
-//   if (temp!.isEmpty) return {page: []};
-//   Map<int, List<String>?> val = await _getKeywordListPage(page + 3);
-//   val[page] = temp;
-//   return val;
-// }
 
 class _App extends StatelessWidget {
   const _App({Key? key}) : super(key: key);
@@ -108,7 +130,7 @@ class _App extends StatelessWidget {
               ),
             );
           }
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               home: FirebaseAuth.instance.currentUser!.isAnonymous

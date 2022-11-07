@@ -55,6 +55,7 @@ dependencies:
   syncfusion_flutter_charts: ^20.3.50
   circlegraph: ^0.0.6
   firebase_messaging: ^14.0.4
+  flutter_local_notifications:
   flutter_screenutil: ^5.6.0
 
 dev_dependencies:

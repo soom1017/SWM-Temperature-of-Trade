@@ -80,8 +80,8 @@ class _NewsDetailViewState extends State<NewsDetailView> {
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.fromLTRB(0, 0, 0, 50.h),
         child: FutureBuilder(
-          future: API.getNewsById(widget.id!),
-          builder: (BuildContext context, AsyncSnapshot<NewsData?> snapshot) {
+          future: tokenCheck(() => API.getNewsById(widget.id!)),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
