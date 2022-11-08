@@ -83,10 +83,36 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
   void initState() {
     _trackballBehavior = TrackballBehavior(
       enable: true,
-      tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
-      markerSettings: TrackballMarkerSettings(
-        markerVisibility: TrackballVisibilityMode.visible,
-      ),
+      builder: (BuildContext context, TrackballDetails trackballDetails) {
+        return Container(
+          height: 40.h,
+          width: 80.w,
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(0, 8, 22, 0.75),
+            borderRadius: BorderRadius.all(Radius.circular(6.0)),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                  '긍정 : ${widget.data[trackballDetails.pointIndex!].positive.toInt()}건',
+                  style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Color.fromRGBO(255, 255, 255, 1)
+                  )
+              ),
+              Text(
+                  '부정 : ${widget.data[trackballDetails.pointIndex!].negative.toInt()}건',
+                  style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Color.fromRGBO(255, 255, 255, 1)
+                  )
+              ),
+            ],
+          ),
+        );
+      },
     );
     super.initState();
   }

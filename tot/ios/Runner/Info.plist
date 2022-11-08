@@ -63,6 +63,8 @@
 	<string>Temperature of Trade</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>https</string>
+		<string>http</string>
 		<string>fbapi</string>
 		<string>fb-messenger-share-api</string>
 		<string>kakaokompassauth</string>

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/news_data.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../layout/default_layout.dart';
 import 'package:tot/common/const/padding.dart';
 import '../view/news_detail_view.dart';
@@ -14,6 +15,7 @@ class NewsDetailHead extends StatelessWidget {
   late List<String> tagList;
   final String reporter;
   final String press;
+  final int id;
 
   NewsDetailHead(
       {required this.tagList,
@@ -21,6 +23,7 @@ class NewsDetailHead extends StatelessWidget {
         required this.newsTitle,
         required this.reporter,
         required this.press,
+        required this.id,
         this.stockName,
         Key? key})
       : super(key: key);
@@ -33,6 +36,7 @@ class NewsDetailHead extends StatelessWidget {
       stockName: head.attention_stock,
       reporter: head.reporter,
       press: head.press,
+      id: head.id,
     );
   }
 
@@ -59,7 +63,9 @@ class NewsDetailHead extends StatelessWidget {
                 Text("입력 : $postingDate", style: TextStyle(color: SMALL_FONT_COLOR, fontSize: 10.sp)),
               ],),
               Spacer(),
-              Icon(Icons.share_outlined, size: 30.sp,),
+              GestureDetector(onTap: () {
+                launchUrl(Uri.parse('https://www.mk.co.kr/news/economy/$id'));
+              },child: Icon(Icons.link, size: 30.sp,)),
               SizedBox(width: 10.w,),
               Icon(Icons.bookmark_border, size: 30.sp,),
             ],
