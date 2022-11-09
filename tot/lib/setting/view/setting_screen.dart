@@ -7,6 +7,7 @@ import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
+import 'package:tot/common/view/first_page_view.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -53,27 +54,33 @@ class _SettingScreenState extends State<SettingScreen> {
               description: Text('앱이 최신버전입니다.'),
             ),
             SettingsTile.navigation(
-              title: Text(!FirebaseAuth.instance.currentUser!.isAnonymous ? '로그아웃' : '로그인'),
+              title: Text(!FirebaseAuth.instance.currentUser!.isAnonymous
+                  ? '로그아웃'
+                  : '로그인'),
               onPressed: (value) async {
-                if(FirebaseAuth.instance.currentUser!.isAnonymous){
-
-                }else{
-                  // pd.show(max : 100, msg: '로그아웃 하는 중...');
-                  // pd.update(value: 25);
+                if (FirebaseAuth.instance.currentUser!.isAnonymous) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => FirstPageView()),
+                      (route) => false);
+                } else {
+                  pd.show(max : 100, msg: '로그아웃 하는 중...');
+                  pd.update(value: 25);
                   await FirebaseAuth.instance.signOut();
-                  // pd.update(value: 50);
+                  pd.update(value: 50);
                   await FirebaseAuth.instance.signInAnonymously();
-                  // pd.update(value: 75);
+                  pd.update(value: 75);
                   await API.changeDioToken();
-                  // pd.update(value: 100);
+                  pd.update(value: 100);
                   userBookmark = [];
                   userFilterKey = {};
-                  var snackbar = SnackBar(
-                    content: Text("로그아웃 되었습니다."),
-                    duration: Duration(milliseconds: 1500),
-                  );
-                  // pd.close();
-                  Future.delayed(Duration(milliseconds: 300), () => ScaffoldMessenger.of(context).showSnackBar(snackbar));
+                  pd.close();
+                  Future.delayed(
+                      Duration.zero,
+                      () =>
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => FirstPageView()),
+                                  (route) => false));
+
                 }
               },
             ),

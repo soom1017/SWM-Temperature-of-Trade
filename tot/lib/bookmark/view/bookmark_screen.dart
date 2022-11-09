@@ -9,6 +9,9 @@ import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
+import 'package:tot/common/view/first_page_view.dart';
+import 'package:tot/common/view/root_tab.dart';
+import 'package:transition/transition.dart' as tr;
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({Key? key}) : super(key: key);
@@ -28,21 +31,25 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           context: context,
           builder: (_) => PlatformAlertDialog(
             title: Text(
-              '회원가입 후 이용 할 수 있습니다.',
-              style: TextStyle(fontSize: 17.sp),
+              '로그인 후 이용 할 수 있습니다.',
+              style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
             ),
             content: Text(
-              '비회원은 이용 할 수 없는 기능입니다.\n회원가입 하시겠습니까?',
+              '게스트는 이용 할 수 없는 기능입니다.\n로그인 하시겠습니까?',
               style: TextStyle(fontSize: 13.sp),
             ),
             actions: <Widget>[
               PlatformDialogAction(
                 child: PlatformText("네"),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => FirstPageView()),
+                        (route) => false),
               ),
               PlatformDialogAction(
                 child: PlatformText("아니오"),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                    tr.Transition(child: RootTab(), transitionEffect: tr.TransitionEffect.FADE),
+                        (route) => false),
               ),
             ],
           ),

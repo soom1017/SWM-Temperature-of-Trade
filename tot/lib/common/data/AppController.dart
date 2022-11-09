@@ -109,5 +109,6 @@ Future<void> getFilterKeywordByLoad() async {
 
 Future<void> getUsersFavoritesByLoad() async {
   final temp = await tokenCheck(() => API.getUserFavorites());
+  print(temp);
   userFilterKey = temp;
 }

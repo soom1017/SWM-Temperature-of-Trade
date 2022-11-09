@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/AppController.dart';
@@ -20,6 +21,7 @@ class FirstPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProgressDialog pd = ProgressDialog(context: context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
@@ -54,26 +56,26 @@ class FirstPageView extends StatelessWidget {
                 _RoundedButton(
                     imageSrc: 'assets/image/facebook.png',
                     press: () async {
-                      await _signInFacebook();
+                      await _signInFacebook(context);
                       _naviToRootTab(context);
                     }),
                 if (Platform.isIOS)
                   _RoundedButton(
                       imageSrc: 'assets/image/apple.png',
                       press: () async {
-                        await _signInApple();
+                        await _signInApple(context);
                         _naviToRootTab(context);
                       }),
                 _RoundedButton(
                     imageSrc: 'assets/image/google.png',
                     press: () async {
-                      await _signInGoogle();
+                      await _signInGoogle(context);
                       _naviToRootTab(context);
                     }),
                 _RoundedButton(
                     imageSrc: 'assets/image/kakao.png',
                     press: () async {
-                      await _signInKakao();
+                      await _signInKakao(context);
                       _naviToRootTab(context);
                     }),
               ],
@@ -106,71 +108,95 @@ class FirstPageView extends StatelessWidget {
     );
   }
 
-  Future<void> _signInGoogle() async {
+  Future<void> _signInGoogle(BuildContext context) async {
+    ProgressDialog pd = ProgressDialog(context: context);
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
+    pd.show(max: 100, msg: '로그인 하는 중...');
     final GoogleSignInAuthentication? googleSignInAuthentication =
         await googleSignInAccount?.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleSignInAuthentication?.accessToken,
       idToken: googleSignInAuthentication?.idToken,
     );
+    pd.update(value: 20);
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    await _authUser({
-      'isKakao': false,
-      'access_token':
-          FirebaseAuth.instance.currentUser!.getIdToken().toString(),
-      'fcm_token': fcmToken,
-      'uid': user.user!.uid,
-    });
-    await c.initialize();
-  }
-
-  Future<void> _signInFacebook() async {
-    final FacebookLoginResult result = await FacebookLogin().logIn();
-    final AuthCredential credential =
-        FacebookAuthProvider.credential(result.accessToken!.token);
-    UserCredential user =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    pd.update(value: 40);
     final _token = await user.user!.getIdToken();
     final fcmToken = await FirebaseMessaging.instance.getToken();
+    pd.update(value: 60);
     await _authUser({
       'isKakao': false,
       'access_token': _token.toString(),
       'fcm_token': fcmToken,
       'uid': user.user!.uid,
     });
+    pd.update(value: 80);
     await c.initialize();
+    pd.update(value: 100);
+    pd.close();
   }
 
-  Future<void> _signInApple() async {
+  Future<void> _signInFacebook(BuildContext context) async {
+    ProgressDialog pd = ProgressDialog(context: context);
+    final FacebookLoginResult result = await FacebookLogin().logIn();
+    pd.show(max: 100, msg: '로그인 하는 중...');
+    final AuthCredential credential =
+        FacebookAuthProvider.credential(result.accessToken!.token);
+    pd.update(value: 20);
+    UserCredential user =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    pd.update(value: 40);
+    final _token = await user.user!.getIdToken();
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    pd.update(value: 60);
+    await _authUser({
+      'isKakao': false,
+      'access_token': _token.toString(),
+      'fcm_token': fcmToken,
+      'uid': user.user!.uid,
+    });
+    pd.update(value: 80);
+    await c.initialize();
+    pd.update(value: 100);
+    pd.close();
+  }
+
+  Future<void> _signInApple(BuildContext context) async {
+    ProgressDialog pd = ProgressDialog(context: context);
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
         AppleIDAuthorizationScopes.fullName,
       ],
     );
-
+    pd.show(max: 100, msg: '로그인 하는 중...');
     final credential = OAuthProvider("apple.com").credential(
       idToken: appleCredential.identityToken,
       accessToken: appleCredential.authorizationCode,
     );
+    pd.update(value: 20);
     UserCredential user =
         await FirebaseAuth.instance.signInWithCredential(credential);
+    pd.update(value: 40);
+    final _token = await user.user!.getIdToken();
     final fcmToken = await FirebaseMessaging.instance.getToken();
+    pd.update(value: 60);
     await _authUser({
-      'access_token':
-          FirebaseAuth.instance.currentUser!.getIdToken().toString(),
+      'access_token': _token.toString(),
       'fcm_token': fcmToken,
       'isKakao': false,
       'uid': user.user!.uid,
     });
+    pd.update(value: 80);
     await c.initialize();
+    pd.update(value: 100);
+    pd.close();
   }
 
-  Future<void> _signInKakao() async {
+  Future<void> _signInKakao(BuildContext context) async {
+    ProgressDialog pd = ProgressDialog(context: context);
     final isInstalled = await kakao.isKakaoTalkInstalled();
     late String token;
     if (isInstalled) {
@@ -180,8 +206,11 @@ class FirstPageView extends StatelessWidget {
       final temp = await kakao.UserApi.instance.loginWithKakaoAccount();
       token = temp.accessToken;
     }
+    pd.show(max: 100, msg: '로그인 하는 중...');
     final user = await kakao.UserApi.instance.me();
+    pd.update(value: 20);
     final fcmToken = await FirebaseMessaging.instance.getToken();
+    pd.update(value: 40);
 
     final customToken = await _authUser({
       'isKakao': true,
@@ -189,10 +218,12 @@ class FirstPageView extends StatelessWidget {
       'access_token': token.toString(),
       'fcm_token': fcmToken,
     });
-
+    pd.update(value: 60);
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);
+    pd.update(value: 80);
     await c.initialize();
-    // await tokenCheck(() => getBookmarkByLoad());
+    pd.update(value: 100);
+    pd.close();
   }
 
   Future<String?> _authUser(Map<String, dynamic> user) async {
@@ -207,11 +238,10 @@ class FirstPageView extends StatelessWidget {
   }
 
   void _naviToRootTab(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RootTab(),
-        ));
+    Future.delayed(
+        Duration.zero,
+        () => Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => RootTab()), (route) => false));
   }
 }
 
