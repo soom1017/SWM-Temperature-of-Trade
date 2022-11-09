@@ -33,7 +33,7 @@ class StockMatcher:
         self.prob = None
         self.substitutes = load_substitute_data()
     
-    def ignore_parent_company(matched: list):
+    def ignore_parent_company(self, matched: list):
         stocks = ' '.join(matched)
         real_matched = [st for st in matched if stocks.count(st) == 1]
         return real_matched
@@ -79,7 +79,7 @@ class StockMatcher:
             depth += 1
             weight /= 2
             
-    def rearrange_prob(stock_prob: dict):
+    def rearrange_prob(self, stock_prob: dict):
         stock = list(stock_prob.keys())
         prob_val = list(stock_prob.values())
         prob_val = softmax(prob_val)
