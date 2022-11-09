@@ -1,22 +1,20 @@
 import pandas as pd
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from sqlalchemy.orm import Session
+from app.db.database import get_db
+from app.crud.keywords import get_all_keywords
 from app.crud.utils import get_update_time
 from app.util.keywordcrawler import MapCrawler
 from app.config import settings
 
 HOT_KEYWORD_PATH = settings.HOT_KEYWORD_PATH
-KEYWORD_LIST_PATH = settings.KEYWORD_LIST_PATH
-STOCK_LIST_PATH = settings.STOCK_LIST_PATH
 
 keywords = APIRouter()
 
 @keywords.get('/')
-async def get_keyword_list():
-    keyword_df = pd.read_csv(KEYWORD_LIST_PATH)
-    stock_df = pd.read_csv(STOCK_LIST_PATH)
-    keywords = keyword_df["name"].values[1:].tolist()
-    stocks = stock_df["name"].values.tolist()
+async def get_keyword_list(db: Session = Depends(get_db)):
+    keywords, stocks = get_all_keywords(db)
     
     return {"keywords": keywords, "stocks": stocks}
 
