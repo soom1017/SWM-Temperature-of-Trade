@@ -146,6 +146,7 @@ class _NewsTileState extends State<NewsTile> {
           SlidableAction(
             onPressed: (BuildContext context) {
               var snackbar;
+              print("${widget.newsTitle} : $toggle -> ${toggle^1}");
               if (toggle == 0) {
                 c.createBookmark(widget.data);
                 snackbar = SnackBar(
@@ -155,9 +156,11 @@ class _NewsTileState extends State<NewsTile> {
                     label: '취소',
                     onPressed: () {
                       c.deleteBookmark(widget.id);
-                      setState(() {
-                        toggle ^= 1;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          toggle ^= 1;
+                        });
+                      }
                     },
                   ),
                 );
@@ -171,12 +174,19 @@ class _NewsTileState extends State<NewsTile> {
                     label: '취소',
                     onPressed: () {
                       c.createBookmark(widget.data);
-                      setState(() {
-                        toggle ^= 1;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          toggle ^= 1;
+                        });
+                      }
                     },
                   ),
                 );
+              }
+              if (mounted) {
+                setState(() {
+                  toggle ^= 1;
+                });
               }
               ScaffoldMessenger.of(context).showSnackBar(snackbar);
             },

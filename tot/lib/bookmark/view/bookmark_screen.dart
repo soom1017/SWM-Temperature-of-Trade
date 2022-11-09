@@ -57,11 +57,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       return Container();
     }
-    return Obx(() {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
-        child: SlidableAutoCloseBehavior(
-          child: ListView.separated(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+      child: SlidableAutoCloseBehavior(
+        child: Obx(() {
+          final blist = c.bookmarks;
+          return ListView.separated(
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, i) {
               if (i == 0) {
@@ -84,8 +85,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   ],
                 );
               }
-              // return NewsTile.fromData(snapshot.data[i - 1]);
-              return NewsTile.fromData(c.bookmarks[i - 1]);
+              return NewsTile.fromData(blist[i - 1]);
             },
             separatorBuilder: (context, i) {
               if (i == 0) return SizedBox.shrink();
@@ -93,10 +93,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 thickness: 1.5,
               );
             },
-            itemCount: c.bookmarks.length + 1,
-          ),
-        ),
-      );
-    });
+            itemCount: blist.length + 1,
+          );
+        }),
+      ),
+    );
   }
 }

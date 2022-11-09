@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
               end: Alignment.topCenter,
             ),),
             child: HomeMainKeywordList(),
-            height: 200.h,
+            height: 220.h,
           ),
           Container(
             decoration: BoxDecoration(
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(25.w, 20.h, 20.w, 20.h,),
               child: Text('기사 온도로 보는\n경제 시장 분위기', style: TextStyle(color: Color(0xFF1A63D9),fontSize: 32.sp, fontWeight: FontWeight.w600),),
             ),
-            height: 120.h,
+            height: 150.h,
             width: double.infinity,
           ),
           Padding(
