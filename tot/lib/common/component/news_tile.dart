@@ -19,18 +19,22 @@ class NewsTile extends StatefulWidget {
   final int label;
   final List<String> tagList;
   final NewsTileData data;
+  final bool? isBookmarkPage;
 
-  const NewsTile({required this.tagList,
-    required this.postingDate,
-    required this.newsTitle,
-    required this.id,
-    required this.summary,
-    required this.label, required this.data,
-    this.stockName,
-    Key? key})
+  const NewsTile(
+      {required this.tagList,
+      required this.postingDate,
+      required this.newsTitle,
+      required this.id,
+      required this.summary,
+      required this.label,
+      required this.data,
+      this.stockName,
+      this.isBookmarkPage,
+      Key? key})
       : super(key: key);
 
-  factory NewsTile.fromData(NewsTileData data) {
+  factory NewsTile.fromData(NewsTileData data, {bool fix = false}) {
     return NewsTile(
       label: data.label,
       tagList: data.keywords,
@@ -40,6 +44,7 @@ class NewsTile extends StatefulWidget {
       id: data.id,
       summary: data.summary,
       data: data,
+      isBookmarkPage: fix,
     );
   }
 
@@ -57,7 +62,10 @@ int checkBookmark(int id) {
 
 class _NewsTileState extends State<NewsTile> {
   bool _expanded = false;
-  List<IconData> toggleIcon = [ToTCustomIcons.slide_bookmark_off, ToTCustomIcons.slide_bookmark_on];
+  List<IconData> toggleIcon = [
+    ToTCustomIcons.slide_bookmark_off,
+    ToTCustomIcons.slide_bookmark_on
+  ];
   late int toggle;
 
   @override
@@ -107,8 +115,8 @@ class _NewsTileState extends State<NewsTile> {
                     fit: BoxFit.fitWidth,
                     child: Text(
                       widget.newsTitle,
-                      style:
-                      TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 17.sp, fontWeight: FontWeight.w600),
                     ),
                   ),
                   SizedBox(
@@ -117,7 +125,9 @@ class _NewsTileState extends State<NewsTile> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
                     child: Text(
-                      widget.summary, style: TextStyle(fontSize: 14.sp),),
+                      widget.summary,
+                      style: TextStyle(fontSize: 14.sp),
+                    ),
                   ),
                 ],
               ),
@@ -146,55 +156,106 @@ class _NewsTileState extends State<NewsTile> {
           SlidableAction(
             onPressed: (BuildContext context) {
               var snackbar;
-              print("${widget.newsTitle} : $toggle -> ${toggle^1}");
-              if (toggle == 0) {
-                c.createBookmark(widget.data);
-                snackbar = SnackBar(
-                  content: Text("북마크에 추가했습니다."),
-                  duration: Duration(milliseconds: 1500),
-                  action: SnackBarAction(
-                    label: '취소',
-                    onPressed: () {
-                      print(widget.id);
-                      c.deleteBookmark(widget.id);
-                      if (mounted) {
-                        setState(() {
-                          toggle ^= 1;
-                        });
-                      }
-                    },
-                  ),
-                );
-              }
-              if (toggle == 1) {
-                c.deleteBookmark(widget.id);
-                snackbar = SnackBar(
-                  content: Text("북마크에서 삭제했습니다."),
-                  duration: Duration(milliseconds: 1500),
-                  action: SnackBarAction(
-                    label: '취소',
-                    onPressed: () {
-                      print(widget.id);
+              print("${widget.newsTitle} : $toggle -> ${toggle ^ 1}");
+              if ((widget.isBookmarkPage ?? false)) {
+                print(widget.isBookmarkPage);
+                if (toggle == 0) {
+                  snackbar = SnackBar(
+                    content: Text("북마크에 추가했습니다."),
+                    duration: Duration(milliseconds: 1500),
+                    action: SnackBarAction(
+                      label: '취소',
+                      onPressed: () {
+                        print(widget.id);
+                        if (mounted) {
+                          setState(() {
+                            c.deleteBookmark(widget.id);
+                            toggle ^= 1;
+                          });
+                        }
+                      },
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  if (mounted) {
+                    setState(() {
                       c.createBookmark(widget.data);
-                      if (mounted) {
+                      toggle ^= 1;
+                    });
+                  }
+                }
+                if (toggle == 1) {
+                  snackbar = SnackBar(
+                    content: Text("북마크에서 삭제했습니다."),
+                    duration: Duration(milliseconds: 1500),
+                    action: SnackBarAction(
+                      label: '취소',
+                      onPressed: () {
+                        print(widget.id);
+                        if (mounted) {
+                          setState(() {
+                            c.createBookmark(widget.data);
+                            toggle ^= 1;
+                          });
+                        }
+                      },
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  if (mounted) {
+                    setState(() {
+                      c.deleteBookmark(widget.id);
+                      toggle ^= 1;
+                    });
+                  }
+                }
+              } else {
+                print(widget.isBookmarkPage);
+                if (toggle == 0) {
+                  c.createBookmark(widget.data);
+                  snackbar = SnackBar(
+                    content: Text("북마크에 추가했습니다."),
+                    duration: Duration(milliseconds: 1500),
+                    action: SnackBarAction(
+                      label: '취소',
+                      onPressed: () {
+                        print(widget.id);
+                        c.deleteBookmark(widget.id);
                         setState(() {
                           toggle ^= 1;
                         });
-                      }
-                    },
-                  ),
-                );
-              }
-              if (mounted) {
+                      },
+                    ),
+                  );
+                }
+                if (toggle == 1) {
+                  c.deleteBookmark(widget.id);
+                  snackbar = SnackBar(
+                    content: Text("북마크에서 삭제했습니다."),
+                    duration: Duration(milliseconds: 1500),
+                    action: SnackBarAction(
+                      label: '취소',
+                      onPressed: () {
+                        print(widget.id);
+                        c.createBookmark(widget.data);
+                        setState(() {
+                          toggle ^= 1;
+                        });
+                      },
+                    ),
+                  );
+                }
+                ScaffoldMessenger.of(context).showSnackBar(snackbar);
                 setState(() {
                   toggle ^= 1;
                 });
               }
-              ScaffoldMessenger.of(context).showSnackBar(snackbar);
             },
             backgroundColor: Colors.transparent,
             foregroundColor: PRIMARY_COLOR,
-            icon: toggleIcon[toggle],
+            icon: (widget.isBookmarkPage ?? false)
+                ? toggleIcon[1]
+                : toggleIcon[toggle],
             label: '북마크',
             padding: EdgeInsets.symmetric(horizontal: 10.w),
             borderRadius: BorderRadius.circular(30),
@@ -291,10 +352,9 @@ class _NewsTileState extends State<NewsTile> {
   List<Widget> keywordTags() {
     return List.from(
       widget.tagList.map(
-            (keyword) =>
-            KeywordTag(
-              keywordName: ("#$keyword"),
-            ),
+        (keyword) => KeywordTag(
+          keywordName: ("#$keyword"),
+        ),
       ),
     );
   }

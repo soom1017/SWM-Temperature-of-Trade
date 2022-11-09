@@ -61,31 +61,31 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
       child: SlidableAutoCloseBehavior(
         child: Obx(() {
-          final blist = c.bookmarks;
+          c.bookmarks.forEach((element) {print(element.id);});
           return ListView.separated(
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, i) {
-              // if (i == 0) {
-              //   return Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       SizedBox(
-              //         height: 25.h,
-              //       ),
-              //       Text(
-              //         c.bookmarks.isEmpty ? "북마크 한 뉴스가 없습니다." : "북마크 한 뉴스",
-              //         style: TextStyle(
-              //             fontSize: 30.sp,
-              //             color: PRIMARY_COLOR,
-              //             fontWeight: FontWeight.w600),
-              //       ),
-              //       SizedBox(
-              //         height: 20.h,
-              //       ),
-              //     ],
-              //   );
-              // }
-              return NewsTile.fromData(blist[i]);
+              if (i == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 25.h,
+                    ),
+                    Text(
+                      c.bookmarks.isEmpty ? "북마크 한 뉴스가 없습니다." : "북마크 한 뉴스",
+                      style: TextStyle(
+                          fontSize: 30.sp,
+                          color: PRIMARY_COLOR,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                  ],
+                );
+              }
+              return NewsTile.fromData(c.bookmarks[i - 1], fix : true);
             },
             separatorBuilder: (context, i) {
               if (i == 0) return SizedBox.shrink();
@@ -93,7 +93,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 thickness: 1.5,
               );
             },
-            itemCount: blist.length,
+            itemCount: c.bookmarks.length + 1,
           );
         }),
       ),
