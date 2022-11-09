@@ -38,8 +38,9 @@ def kakao_auth_request(uid: str, access_token: str, fcm_token: str, db: Session 
     # add kakao-authorized user
     db_user = db.query(User).filter(User.uid == uid).first()
     if not db_user:
-        create_new_user(uid, fcm_token, db)
+        db_user = create_new_user(uid, fcm_token, db)
         auth.create_user(uid=uid)
+    update_user_fcm_token(db_user, fcm_token, db)
     
     # finish sign-in    
     auth.get_user(uid, app)
@@ -52,6 +53,7 @@ def etc_auth_request(token: str, fcm_token: str, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.uid == uid).first()
     if not db_user:
         create_new_user(uid, fcm_token, db)
+    update_user_fcm_token(db_user, fcm_token, db)
 
 ## user
 # get user
@@ -66,6 +68,12 @@ def get_one_user_by_token(token: str, db: Session = Depends(get_db)):
 def create_new_user(uid: str, fcm_token: str, db: Session = Depends(get_db)):
     new_user = User(uid=uid, token=fcm_token)
     db.add(new_user)
+    db.commit()
+    return new_user
+    
+def update_user_fcm_token(db_user: User, fcm_token: str, db: Session = Depends(get_db)):
+    db_user.token = fcm_token
+    db.add(db_user)
     db.commit()
     
 ## user information

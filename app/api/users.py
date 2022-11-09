@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.util.models import AuthData, FilterData
 from app.crud.news import get_one_news_by_id
-from app.crud.users import get_one_user_by_token, kakao_auth_request, etc_auth_request, get_bookmarks_of, get_favorites_of, update_favorites_of
+from app.crud.users import get_one_user_by_token, update_user_fcm_token, kakao_auth_request, etc_auth_request, get_bookmarks_of, get_favorites_of, update_favorites_of
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -20,6 +20,12 @@ async def auth_request(authData: AuthData, db: Session = Depends(get_db)):
         return custom_token
     
     etc_auth_request(token, fcm_token, db)
+
+# Notification
+@users.patch('/notification')
+async def toggle_notification_setting(fcm_token: str = '', token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    db_user = get_one_user_by_token(token, db)
+    update_user_fcm_token(db_user, fcm_token)
 
 # Bookmark
 @users.get('/bookmarks')
