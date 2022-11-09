@@ -40,6 +40,7 @@ class DefaultLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: BG_COLOR,
       appBar: conditionalAppBar(isExtraPage, isDetailPage, context),
       body: child,
@@ -73,17 +74,20 @@ class DefaultLayout extends StatelessWidget {
       elevation: 0,
       actions: [
         IconButton(
-          onPressed: () {
-            routeToSearchPage(context);
-          },
-          icon: Icon(ToTCustomIcons.search, size: 28.sp,color: PRIMARY_COLOR,)
-        ),
+            onPressed: () {
+              routeToSearchPage(context);
+            },
+            icon: Icon(
+              ToTCustomIcons.search,
+              size: 28.sp,
+              color: PRIMARY_COLOR,
+            )),
         IconButton(
-          onPressed: () {
-            routeToNotifyPage(context);
-          },
-          icon: Icon(ToTCustomIcons.notify, size: 28.sp,color: PRIMARY_COLOR)
-        ),
+            onPressed: () {
+              routeToNotifyPage(context);
+            },
+            icon:
+                Icon(ToTCustomIcons.notify, size: 28.sp, color: PRIMARY_COLOR)),
       ],
     );
   }
@@ -110,11 +114,11 @@ class DefaultLayout extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget conditionalAppBar(bool isExtraPage, bool isDetailPage, BuildContext context) {
+  PreferredSizeWidget conditionalAppBar(
+      bool isExtraPage, bool isDetailPage, BuildContext context) {
     if (isExtraPage == true && isDetailPage == true) {
       return EmptyAppBar();
-    }
-    else if (isExtraPage == true) {
+    } else if (isExtraPage == true) {
       return renderExtraPageAppBar(context);
     }
     return renderAppBar(context);

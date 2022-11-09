@@ -19,6 +19,7 @@ class FirstPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -26,7 +27,7 @@ class FirstPageView extends StatelessWidget {
             height: 250.h,
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10.w,10.h,10.w,10.h),
+            padding: EdgeInsets.fromLTRB(10.w, 10.h, 10.w, 10.h),
             child: Container(
               width: 110.w,
               child: Image.asset('assets/image/asset6.png'),
@@ -120,7 +121,7 @@ class FirstPageView extends StatelessWidget {
       'access_token':
           FirebaseAuth.instance.currentUser!.getIdToken().toString(),
       'fcm_token': fcmToken,
-      'uid':user.user!.uid,
+      'uid': user.user!.uid,
     });
     await tokenCheck(() => getBookmarkByLoad());
   }
@@ -137,7 +138,7 @@ class FirstPageView extends StatelessWidget {
       'isKakao': false,
       'access_token': _token.toString(),
       'fcm_token': fcmToken,
-      'uid':user.user!.uid,
+      'uid': user.user!.uid,
     });
     await tokenCheck(() => getBookmarkByLoad());
   }
@@ -162,7 +163,7 @@ class FirstPageView extends StatelessWidget {
           FirebaseAuth.instance.currentUser!.getIdToken().toString(),
       'fcm_token': fcmToken,
       'isKakao': false,
-      'uid' : user.user!.uid,
+      'uid': user.user!.uid,
     });
     await tokenCheck(() => getBookmarkByLoad());
   }
@@ -223,7 +224,7 @@ class _RoundedButton extends StatelessWidget {
     return GestureDetector(
       onTap: press,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(10.w,10.h,10.w,10.h),
+        padding: EdgeInsets.fromLTRB(10.w, 10.h, 10.w, 10.h),
         child: Container(
           width: 65.w,
           height: 65.h,

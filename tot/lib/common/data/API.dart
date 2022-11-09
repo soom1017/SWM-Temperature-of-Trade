@@ -110,7 +110,8 @@ abstract class API {
   }
 
   static Future<List<NewsTileData>?> getNewsListByFilter(
-  Map<String, List<String>> keyList, {int newsId = -1}) async {
+      Map<String, List<String>> keyList,
+      {int newsId = -1}) async {
     final response =
         await API.dio.post("/news/list-filter/$newsId", data: keyList);
     return List<Map<String, dynamic>>.from(response.data['data'])
@@ -126,14 +127,9 @@ abstract class API {
     };
   }
 
-  static Future<void> updateUserFavorite(Map<String, List<String>> keyList) async {
-    print("updateUserFavorite");
-    try {
-      await API.dio.post("/users/favorites", data: keyList);
-    } catch(e){
-      print("ckck");
-      print(e);
-    }
+  static Future<void> updateUserFavorite(
+      Map<String, List<String>> keyList) async {
+    await API.dio.patch("/users/favorites", data: keyList);
   }
 }
 

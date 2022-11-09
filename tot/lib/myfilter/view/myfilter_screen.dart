@@ -43,6 +43,8 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         isStock: false,
       ),
     );
+    // stocks.removeWhere((element) => userFilterKey["stocks"]!.contains(element.name));
+    // keywords.removeWhere((element) => userFilterKey["keywords"]!.contains(element.name));
 
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       Future.delayed(
@@ -255,6 +257,8 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
           return c.name;
         },
         itemBuilder: (_keyword) {
+          if(userFilterKey[_keyword.isStock ? "stocks" : "keywords"]!.contains(_keyword.name))
+            return Container();
           return Padding(
             padding: EdgeInsets.fromLTRB(6.0.w, 6.h, 6.w, 6.h),
             child: Container(

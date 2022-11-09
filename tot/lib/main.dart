@@ -133,6 +133,7 @@ Future<void> getUsersFavoritesByLoad() async {
 
 class _App extends StatelessWidget {
   const _App({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final BookmarkCache x = Get.put(BookmarkCache());
@@ -168,6 +169,7 @@ class _App extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             home: Scaffold(
+              resizeToAvoidBottomInset: false,
               body: Center(
                 child: CircularProgressIndicator(),
               ),

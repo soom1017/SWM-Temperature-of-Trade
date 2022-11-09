@@ -16,8 +16,7 @@ class RootTab extends StatefulWidget {
   State<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab>
-    with SingleTickerProviderStateMixin {
+class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   int index = 0;
   late TabController controller;
 
@@ -34,7 +33,7 @@ class _RootTabState extends State<RootTab>
     super.dispose();
   }
 
-  void tabListener(){
+  void tabListener() {
     setState(() {
       index = controller.index;
     });
@@ -49,30 +48,62 @@ class _RootTabState extends State<RootTab>
         selectedFontSize: 11.sp,
         unselectedFontSize: 11.sp,
         type: BottomNavigationBarType.fixed,
-        onTap: (int index){
+        onTap: (int index) {
           controller.animateTo(index);
         },
         currentIndex: index,
         items: [
           BottomNavigationBarItem(
-            icon: index == 0 ? Icon(ToTCustomIcons.home_on, size: 30.sp,) : Icon(ToTCustomIcons.home_off, size: 30.sp,),
+            icon: index == 0
+                ? Icon(
+                    ToTCustomIcons.home_on,
+                    size: 30.sp,
+                  )
+                : Icon(
+                    ToTCustomIcons.home_off,
+                    size: 30.sp,
+                  ),
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: index == 1 ? Icon(ToTCustomIcons.filter_on, size: 24.sp,) : Icon(ToTCustomIcons.filter_off, size: 24.sp,),
+            icon: index == 1
+                ? Icon(
+                    ToTCustomIcons.filter_on,
+                    size: 24.sp,
+                  )
+                : Icon(
+                    ToTCustomIcons.filter_off,
+                    size: 24.sp,
+                  ),
             label: '마이필터',
           ),
           BottomNavigationBarItem(
-            icon: index == 2 ? Icon(ToTCustomIcons.bookmark_on, size: 30.sp,) : Icon(ToTCustomIcons.bookmark_off, size: 30.sp,),
+            icon: index == 2
+                ? Icon(
+                    ToTCustomIcons.bookmark_on,
+                    size: 30.sp,
+                  )
+                : Icon(
+                    ToTCustomIcons.bookmark_off,
+                    size: 30.sp,
+                  ),
             label: '북마크',
           ),
           BottomNavigationBarItem(
-            icon: index == 3 ? Icon(ToTCustomIcons.setting_on, size: 30.sp,) : Icon(ToTCustomIcons.setting_off, size: 30.sp,),
+            icon: index == 3
+                ? Icon(
+                    ToTCustomIcons.setting_on,
+                    size: 30.sp,
+                  )
+                : Icon(
+                    ToTCustomIcons.setting_off,
+                    size: 30.sp,
+                  ),
             label: '설정',
           )
         ],
       ),
-      child:TabBarView(
+      child: TabBarView(
         physics: NeverScrollableScrollPhysics(),
         controller: controller,
         children: [
