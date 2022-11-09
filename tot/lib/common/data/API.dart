@@ -85,6 +85,14 @@ abstract class API {
     return response.data;
   }
 
+  static Future<Map<String, List<String>>> getFilterKeyword() async {
+    final response = await dio.get("/keywords/");
+    return {
+      "keywords": List<String>.from(response.data["keywords"]),
+      "stocks": List<String>.from(response.data["stocks"])
+    };
+  }
+
   static Future<List<ChartData>> getSentimentStats() async {
     final response = await dio.get("/news/stats-sentiment/");
     Map<String, dynamic> x = response.data['data'];
@@ -99,6 +107,15 @@ abstract class API {
       ans.add(ChartData(DateTime.parse(e), neutral, positive, negative, t));
     }
     return ans.reversed.toList();
+  }
+
+  static Future<List<NewsTileData>?> getNewsListByFilter(
+  Map<String, List<String>> keyList, {int newsId = -1}) async {
+    final response =
+        await API.dio.post("/news/list-filter/$newsId", data: keyList);
+    return List<Map<String, dynamic>>.from(response.data['data'])
+        .map((e) => NewsTileData.fromResponse(e))
+        .toList();
   }
 }
 

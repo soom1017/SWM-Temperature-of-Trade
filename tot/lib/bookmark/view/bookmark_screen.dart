@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/BookmarkCache.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({Key? key}) : super(key: key);
@@ -51,53 +53,50 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final BookmarkCache c = BookmarkCache.to;
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       return Container();
     }
-    return FutureBuilder(
-      future: tokenCheck(() => API.getUserBookmark()),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData == false)
-          return Center(child: CircularProgressIndicator());
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
-          child: SlidableAutoCloseBehavior(
-            child: ListView.separated(
-              physics: ClampingScrollPhysics(),
-              itemBuilder: (context, i) {
-                if (i == 0) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 25.h,
-                      ),
-                      Text(
-                        "북마크 한 뉴스",
-                        style: TextStyle(
-                            fontSize: 30.sp,
-                            color: PRIMARY_COLOR,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                    ],
-                  );
-                }
-                return NewsTile.fromData(snapshot.data[i - 1]);
-              },
-              separatorBuilder: (context, i) {
-                if (i == 0) return SizedBox.shrink();
-                return const Divider(
-                  thickness: 1.5,
+    return Obx(() {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+        child: SlidableAutoCloseBehavior(
+          child: ListView.separated(
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (context, i) {
+              if (i == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 25.h,
+                    ),
+                    Text(
+                      c.bookmarks.isEmpty ? "북마크 한 뉴스가 없습니다." : "북마크 한 뉴스",
+                      style: TextStyle(
+                          fontSize: 30.sp,
+                          color: PRIMARY_COLOR,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                  ],
                 );
-              },
-              itemCount: snapshot.data.length + 1,
-            ),
+              }
+              // return NewsTile.fromData(snapshot.data[i - 1]);
+              return NewsTile.fromData(c.bookmarks[i - 1]);
+            },
+            separatorBuilder: (context, i) {
+              if (i == 0) return SizedBox.shrink();
+              return const Divider(
+                thickness: 1.5,
+              );
+            },
+            itemCount: c.bookmarks.length + 1,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
   }
 }

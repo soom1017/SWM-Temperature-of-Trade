@@ -58,6 +58,7 @@ dependencies:
   flutter_local_notifications:
   flutter_screenutil: ^5.6.0
   url_launcher:
+  get:
 
 dev_dependencies:
   flutter_test:

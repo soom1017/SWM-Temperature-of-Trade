@@ -2,12 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
+import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
+import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/view/search_view.dart';
 
 class MyfilterScreen extends StatefulWidget {
@@ -18,39 +21,29 @@ class MyfilterScreen extends StatefulWidget {
 }
 
 class _MyfilterScreenState extends State<MyfilterScreen> {
-  Map<String, _Keyword> _searchList = {};
-  List<_Keyword> _keylist = [];
-
-  // 가운뎃점 쓰는 경우가 있음
-  final _newsTileList = <NewsTile>[
-    NewsTile(
-      summary: "asdf",
-      newsTitle: "1",
-      stockName: "이화전기",
-      tagList: ["#인수", "#코스닥", "#위스키"],
-      postingDate: "2022.07.29",
-      id: 10,
-      label: 0,
-    ),
-  ];
+  final Map<String, List<String>> _keylist = {"keywords": ["금리"], "stocks": []};
+  List<_Keyword> keywords = [];
 
   RefreshController _controller = RefreshController();
 
   @override
   void initState() {
-    super.initState();
-    for (int i = 0; i < 29; i++)
-      _newsTileList.add(
-        NewsTile(
-          summary: "asdf",
-          newsTitle: "${i + 2}",
-          stockName: "이화전기",
-          tagList: ["#인수", "#코스닥", "#위스키"],
-          postingDate: "2022.07.29",
-          id: 10,
-          label: 0,
+    keywords = []
+      ..addAll(List<_Keyword>.generate(
+        filterKeyword["stocks"].length,
+            (index) => _Keyword(
+          name: filterKeyword["stocks"][index],
+          isStock: true,
         ),
-      );
+      ))
+      ..addAll(List<_Keyword>.generate(
+        filterKeyword["keywords"].length,
+            (index) => _Keyword(
+          name: filterKeyword["keywords"][index],
+          isStock: false,
+        ),
+      ));
+
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       Future.delayed(
         Duration.zero,
@@ -79,6 +72,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         ),
       );
     }
+    super.initState();
   }
 
   @override
@@ -86,123 +80,147 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       return Container();
     }
-    print("test");
     return Stack(
       children: [
         Container(
           child: Column(
             children: [
-              _search(' 관심종목'),
+              _search(' 관심종목', true),
               Divider(
                 thickness: 1,
               ),
-              _search(' 관심키워드'),
+              _search(' 관심키워드', false),
             ],
           ),
         ),
-        DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          builder: (BuildContext context, ScrollController scrollController) {
-            // return _Bottom(Column(
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     SizedBox(
-            //       height: 40,
-            //     ),
-            //     Icon(
-            //       Icons.filter_alt_off_outlined,
-            //       size: 100,
-            //     ),
-            //     Text(
-            //       "조건에 맞는 뉴스가",
-            //       style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-            //     ),
-            //     SizedBox(
-            //       height: 10,
-            //     ),
-            //     Text(
-            //       "존재하지 않습니다.",
-            //       style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-            //     ),
-            //   ],
-            // ));
-            return _Bottom(_list(scrollController));
-          },
-        ),
+        _Bottom(),
       ],
     );
   }
 
-  // Widget _noData
-
-  Widget _Bottom(Widget inner) {
-    return Container(
-      width: double.infinity,
-      // height: 450,
-      decoration: BoxDecoration(
-        color: NEWSTAB_BG_COLOR,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.7),
-            spreadRadius: 0,
-            blurRadius: 5,
-            offset: Offset(0, -1),
+  Widget _noData(){
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 40,
+          ),
+          Icon(
+            Icons.filter_alt_off_outlined,
+            size: 100,
+          ),
+          Text(
+            "조건에 맞는 뉴스가",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            "존재하지 않습니다.",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
           ),
         ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            HORIZONTAL_PADDING.w, 20.0.h, HORIZONTAL_PADDING.w, 0.0.h),
-        child: inner,
       ),
     );
   }
 
-  Widget _list(ScrollController scrollController) {
-    return StatefulBuilder(
-      builder: (BuildContext context2, setter) {
-        return SmartRefresher(
-          controller: _controller,
-          onLoading: () async {
-            await Future.delayed(Duration(milliseconds: 1000));
-            for (int i = 0; i < 15; i++) {
-              _newsTileList.add(NewsTile(
-                summary: "asdf",
-                newsTitle: "이화전기, 위스키 브랜드 '윈저' 인수전 참여",
-                stockName: "이화전기",
-                tagList: ["#인수", "#코스닥", "#위스키"],
-                postingDate: "2022.07.29",
-                id: 10,
-                label: 0,
-              ));
-            }
-            _controller.loadComplete();
-            setter(() {});
-          },
-          enablePullUp: true,
-          enablePullDown: false,
-          child: ListView.separated(
-            itemBuilder: (context, i) {
-              return _newsTileList[i];
-            },
-            separatorBuilder: (context, i) {
-              return const Divider(
-                thickness: 1.5,
-              );
-            },
-            itemCount: _newsTileList.length,
-            controller: scrollController,
-            physics: ClampingScrollPhysics(),
+  Widget _Bottom() {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5,
+      minChildSize: 0.5,
+      maxChildSize: 0.9,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+          width: double.infinity,
+          // height: 450,
+          decoration: BoxDecoration(
+            color: NEWSTAB_BG_COLOR,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.7),
+                spreadRadius: 0,
+                blurRadius: 5,
+                offset: Offset(0, -1),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+                HORIZONTAL_PADDING.w, 20.0.h, HORIZONTAL_PADDING.w, 0.0.h),
+            child: _list(scrollController),
           ),
         );
       },
     );
   }
 
-  Widget _search(String title) {
+  Widget _list(ScrollController scrollController) {
+    return FutureBuilder(
+      future: tokenCheck(() => API.getNewsListByFilter(_keylist)),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (_keylist["keywords"]!.isEmpty && _keylist["stocks"]!.isEmpty)
+          return Container();
+        else if(snapshot.data.isEmpty)
+          return _noData();
+        return Container(
+            child: StatefulBuilder(
+              builder: (BuildContext context2, setter){
+                return _refresher(snapshot.data, setter, scrollController);
+              },
+            )
+        );
+      },
+    );
+  }
+
+  Widget _refresher(List<NewsTileData> data, setter, scrollController){
+    return SlidableAutoCloseBehavior(
+      child: SmartRefresher(
+        controller: _controller,
+        // onRefresh: () async {
+        //   final _next = await tokenCheck(() => API.getNewsListByFilter(_keylist));
+        //   _controller.refreshCompleted();
+        //   data = _next;
+        //   setter(() {});
+        // },
+        onLoading: () async {
+          var _next = null;
+          if(!data.isEmpty) {
+            _next = await tokenCheck(() =>
+                API.getNewsListByFilter(_keylist, newsId: data.last.id));
+          }
+          _controller.loadComplete();
+          if (_next != null) {
+            data.addAll(_next!);
+          }
+          setter(() {});
+        },
+        // enablePullUp: true,
+        enablePullDown: true,
+        child: ListView.separated(
+          physics: ClampingScrollPhysics(),
+          itemBuilder: (context, i) {
+            return NewsTile.fromData(data[i]);
+          },
+          separatorBuilder: (context, i) {
+            return const Divider(
+              thickness: 1.5,
+            );
+          },
+          itemCount: data.length,
+        ),
+        scrollController: scrollController,
+      ),
+    );
+  }
+
+  Widget _search(String title, bool isStock) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: MultipleSearchSelection<_Keyword>(
@@ -224,9 +242,9 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         ),
         onPickedChange: (c) {
           setState(() {
-            _keylist = c;
+            keywords = c;
           });
-          print(_keylist.length);
+          print(keywords.length);
         },
         items: keywords,
         // List<_Keyword>
@@ -327,14 +345,6 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
     );
   }
 }
-
-List<_Keyword> keywords = List<_Keyword>.generate(
-  keywordList.length,
-  (index) => _Keyword(
-    name: keywordList[index],
-    isStock: false,
-  ),
-);
 
 class _Keyword {
   final String name;

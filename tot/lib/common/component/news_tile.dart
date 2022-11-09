@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/view/news_detail_view.dart';
@@ -16,16 +17,16 @@ class NewsTile extends StatefulWidget {
   final int id;
   final int label;
   final List<String> tagList;
+  final NewsTileData data;
 
-  const NewsTile(
-      {required this.tagList,
-      required this.postingDate,
-      required this.newsTitle,
-      required this.id,
-      required this.summary,
-      required this.label,
-      this.stockName,
-      Key? key})
+  const NewsTile({required this.tagList,
+    required this.postingDate,
+    required this.newsTitle,
+    required this.id,
+    required this.summary,
+    required this.label, required this.data,
+    this.stockName,
+    Key? key})
       : super(key: key);
 
   factory NewsTile.fromData(NewsTileData data) {
@@ -37,6 +38,7 @@ class NewsTile extends StatefulWidget {
       stockName: data.attention_stock,
       id: data.id,
       summary: data.summary,
+      data: data,
     );
   }
 
@@ -45,7 +47,7 @@ class NewsTile extends StatefulWidget {
 }
 
 int checkBookmark(int id) {
-  if (userBookmark.contains(id)) {
+  if (BookmarkCache.to.bookmarks.any((element) => element.id == id)) {
     return 1;
   } else {
     return 0;
@@ -91,6 +93,7 @@ class _NewsTileState extends State<NewsTile> {
               border: Border.all(width: 1.w, color: Colors.grey),
               borderRadius: BorderRadius.vertical(
                 bottom: Radius.circular(15),
+                top: Radius.circular(15),
               ),
               color: Colors.white,
             ),
@@ -104,7 +107,7 @@ class _NewsTileState extends State<NewsTile> {
                     child: Text(
                       widget.newsTitle,
                       style:
-                          TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+                      TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
                     ),
                   ),
                   SizedBox(
@@ -112,7 +115,8 @@ class _NewsTileState extends State<NewsTile> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
-                    child: Text(widget.summary, style: TextStyle(fontSize: 14.sp),),
+                    child: Text(
+                      widget.summary, style: TextStyle(fontSize: 14.sp),),
                   ),
                 ],
               ),
@@ -131,6 +135,7 @@ class _NewsTileState extends State<NewsTile> {
   }
 
   Widget _slidableWidget(Widget child) {
+    final BookmarkCache c = BookmarkCache.to;
     return Slidable(
       groupTag: "tile",
       endActionPane: ActionPane(
@@ -141,16 +146,14 @@ class _NewsTileState extends State<NewsTile> {
             onPressed: (BuildContext context) {
               var snackbar;
               if (toggle == 0) {
-                userBookmark.add(widget.id);
-                tokenCheck(() => API.createBookmarkById(widget.id));
+                c.createBookmark(widget.data);
                 snackbar = SnackBar(
                   content: Text("북마크에 추가했습니다."),
                   duration: Duration(milliseconds: 1500),
                   action: SnackBarAction(
                     label: '취소',
                     onPressed: () {
-                      userBookmark.remove(widget.id);
-                      tokenCheck(() => API.deleteBookmarkById(widget.id));
+                      c.deleteBookmark(widget.id);
                       setState(() {
                         toggle ^= 1;
                       });
@@ -159,16 +162,14 @@ class _NewsTileState extends State<NewsTile> {
                 );
               }
               if (toggle == 1) {
-                userBookmark.remove(widget.id);
-                tokenCheck(() => API.deleteBookmarkById(widget.id));
+                c.deleteBookmark(widget.id);
                 snackbar = SnackBar(
                   content: Text("북마크에서 삭제했습니다."),
                   duration: Duration(milliseconds: 1500),
                   action: SnackBarAction(
                     label: '취소',
                     onPressed: () {
-                      userBookmark.add(widget.id);
-                      tokenCheck(() => API.createBookmarkById(widget.id));
+                      c.createBookmark(widget.data);
                       setState(() {
                         toggle ^= 1;
                       });
@@ -177,9 +178,6 @@ class _NewsTileState extends State<NewsTile> {
                 );
               }
               ScaffoldMessenger.of(context).showSnackBar(snackbar);
-              setState(() {
-                toggle ^= 1;
-              });
             },
             backgroundColor: Colors.transparent,
             foregroundColor: PRIMARY_COLOR,
@@ -280,9 +278,10 @@ class _NewsTileState extends State<NewsTile> {
   List<Widget> keywordTags() {
     return List.from(
       widget.tagList.map(
-        (keyword) => KeywordTag(
-          keywordName: ("#$keyword"),
-        ),
+            (keyword) =>
+            KeywordTag(
+              keywordName: ("#$keyword"),
+            ),
       ),
     );
   }

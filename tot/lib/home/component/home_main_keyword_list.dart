@@ -37,7 +37,7 @@ class HomeMainKeywordList extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         height: 2.0)),
                 for(var i=0;i<4;i++)
-                  HomeMainKeywordButton(keyword: keywordList[i]),
+                  HomeMainKeywordButton(keyword: keywordListRank[i]),
                 Text(
                   "입니다.",
                   style: TextStyle(

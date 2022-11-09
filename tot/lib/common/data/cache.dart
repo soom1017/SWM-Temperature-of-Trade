@@ -1,2 +1,3 @@
 var userBookmark = [];
-var keywordList = [];
+var keywordListRank = [];
+var filterKeyword = {};

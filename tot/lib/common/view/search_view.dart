@@ -1,16 +1,16 @@
-import 'dart:math';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:graphview/GraphView.dart';
-import 'package:multiple_search_selection/helpers/create_options.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
+import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/layout/default_layout.dart';
 
 class SearchView extends StatefulWidget {
@@ -27,7 +27,32 @@ TextStyle kStyleDefault = TextStyle(
 );
 
 class _SearchViewState extends State<SearchView> {
-  List<_Keyword> _keylist = [];
+  final Map<String, List<String>> _keylist = {
+    "keywords": List<String>.from([]),
+    "stocks": List<String>.from([])
+  };
+  List<_Keyword> keywords = [];
+  RefreshController _controller = RefreshController();
+
+  @override
+  void initState() {
+    keywords = []
+      ..addAll(List<_Keyword>.generate(
+        filterKeyword["stocks"].length,
+        (index) => _Keyword(
+          name: filterKeyword["stocks"][index],
+          isStock: true,
+        ),
+      ))
+      ..addAll(List<_Keyword>.generate(
+        filterKeyword["keywords"].length,
+        (index) => _Keyword(
+          name: filterKeyword["keywords"][index],
+          isStock: false,
+        ),
+      ));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,16 +110,18 @@ class _SearchViewState extends State<SearchView> {
           ),
           onPickedChange: (c) {
             setState(() {
-              _keylist = c;
+              _keylist.update(
+                  "stocks", (value) => List<String>.from(c.where((e) => e.isStock).map((e) => e.name)));
+              _keylist.update(
+                  "keywords", (value) => List<String>.from(c.where((e) => !e.isStock).map((e) => e.name)));
             });
-            print(_keylist.length);
+            print(c.length);
           },
           items: keywords,
-          // List<_Keyword>
           fieldToCheck: (c) {
             return c.name;
           },
-          itemBuilder: (_Keyword) {
+          itemBuilder: (_keyword) {
             return Padding(
               padding: EdgeInsets.fromLTRB(6.w, 6.h, 6.w, 6.h),
               child: Container(
@@ -108,7 +135,7 @@ class _SearchViewState extends State<SearchView> {
                     horizontal: 12.w,
                   ),
                   child: Text(
-                    _Keyword.name,
+                    _keyword.isStock ? _keyword.name : "#${_keyword.name}",
                     style: TextStyle(
                       fontSize: 15.sp,
                       color: SMALL_FONT_COLOR,
@@ -118,7 +145,7 @@ class _SearchViewState extends State<SearchView> {
               ),
             );
           },
-          pickedItemBuilder: (_Keyword) {
+          pickedItemBuilder: (_keyword) {
             return Container(
               decoration: BoxDecoration(
                 color: Color(0xFFD8E1E8),
@@ -132,12 +159,13 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
-                      _Keyword.name,
+                      _keyword.name,
                       style: TextStyle(fontSize: 21.sp, color: PRIMARY_COLOR),
                     ),
                     Text(
                       '  ×',
-                      style: TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
+                      style:
+                          TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
                     ),
                   ],
                 ),
@@ -189,44 +217,99 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
+  Widget _noData(){
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 40,
+          ),
+          Icon(
+            Icons.filter_alt_off_outlined,
+            size: 100,
+          ),
+          Text(
+            "조건에 맞는 뉴스가",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            "존재하지 않습니다.",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _list() {
     return Flexible(
       child: FutureBuilder(
-        future: tokenCheck(() => API.getUserBookmark()),
+        future: tokenCheck(() => API.getNewsListByFilter(_keylist)),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData == false) {
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
+          if (_keylist["keywords"]!.isEmpty && _keylist["stocks"]!.isEmpty)
+            return Container();
+          else if(snapshot.data.isEmpty)
+            return _noData();
           return Container(
             padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
-            child: SlidableAutoCloseBehavior(
-              child: ListView.separated(
-                physics: ClampingScrollPhysics(),
-                itemBuilder: (context, i) {
-                  return NewsTile.fromData(snapshot.data[i]);
-                },
-                separatorBuilder: (context, i) {
-                  return const Divider(
-                    thickness: 1.5,
-                  );
-                },
-                itemCount: snapshot.data.length,
-              ),
-            ),
+            child: StatefulBuilder(
+              builder: (BuildContext context2, setter){
+                return _refresher(snapshot.data, setter);
+              },
+            )
           );
         },
       ),
     );
   }
-}
 
-List<_Keyword> keywords = List<_Keyword>.generate(
-  keywordList.length,
-  (index) => _Keyword(
-    name: keywordList[index],
-    isStock: false,
-  ),
-);
+  Widget _refresher(List<NewsTileData> data, setter){
+    return SlidableAutoCloseBehavior(
+      child: SmartRefresher(
+        controller: _controller,
+        onRefresh: () async {
+          final _next = await tokenCheck(() => API.getNewsListByFilter(_keylist));
+          _controller.refreshCompleted();
+          data = _next;
+          setter(() {});
+        },
+        onLoading: () async {
+          var _next = null;
+          if(!data.isEmpty) {
+            _next = await tokenCheck(() =>
+                API.getNewsListByFilter(_keylist, newsId: data.last.id));
+          }
+          _controller.loadComplete();
+          if (_next != null) {
+            data.addAll(_next!);
+          }
+          setter(() {});
+        },
+        enablePullUp: true,
+        enablePullDown: true,
+        child: ListView.separated(
+          physics: ClampingScrollPhysics(),
+          itemBuilder: (context, i) {
+            return NewsTile.fromData(data[i]);
+          },
+          separatorBuilder: (context, i) {
+            return const Divider(
+              thickness: 1.5,
+            );
+          },
+          itemCount: data.length,
+        ),
+      ),
+    );
+  }
+}
 
 class _Keyword {
   final String name;

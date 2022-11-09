@@ -89,8 +89,8 @@ class HomeKeywordRankView extends StatelessWidget {
               SizedBox(
                 height: 20.h,
               ),
-              for (var i = 0; i < keywordList.length; i++)
-                KeywordRankTile(keyword: keywordList[i], rank: i+1),
+              for (var i = 0; i < keywordListRank.length; i++)
+                KeywordRankTile(keyword: keywordListRank[i], rank: i+1),
             ],
           ),
         ),

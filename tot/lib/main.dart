@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/common/view/first_page_view.dart';
@@ -19,7 +21,9 @@ void main() async {
   kakao.KakaoSdk.init(nativeAppKey: '65883b79301a6a8e7b88ab503dfc2959');
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
-    _App(),
+    GetMaterialApp(
+      home: _App(),
+    ),
   );
 }
 
@@ -38,15 +42,18 @@ Future<FirebaseApp> _load() async {
     provisional: true,
     sound: true,
   );
+
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage rm) {
-    print(rm.toString());
-  });
+  FirebaseMessaging.onMessage.listen(
+    (RemoteMessage rm) {
+      print(rm.toString());
+    },
+  );
 
   const AndroidNotificationChannel androidNotificationChannel =
       AndroidNotificationChannel(
@@ -63,8 +70,8 @@ Future<FirebaseApp> _load() async {
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(androidNotificationChannel);
 
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    print(fcmToken);
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  print(fcmToken);
 
   // if (authStatus.authorizationStatus == AuthorizationStatus.authorized) {
   //   FirebaseMessaging.instance.isSupported()
@@ -82,8 +89,10 @@ Future<FirebaseApp> _load() async {
   if (FirebaseAuth.instance.currentUser != null &&
       !FirebaseAuth.instance.currentUser!.isAnonymous) {
     await API.changeDioToken();
+    await BookmarkCache.to.loadBookmark();
     await getBookmarkByLoad();
     await getKeywordRankByLoad();
+    await getFilterKeywordByLoad();
     print("is Anonymous? : ${FirebaseAuth.instance.currentUser!.isAnonymous}");
   }
   if (FirebaseAuth.instance.currentUser == null ||
@@ -91,6 +100,7 @@ Future<FirebaseApp> _load() async {
     await FirebaseAuth.instance.signInAnonymously();
     await API.changeDioToken();
     await getKeywordRankByLoad();
+    await getFilterKeywordByLoad();
     print("is Anonymous? : ${FirebaseAuth.instance.currentUser!.isAnonymous}");
   }
   return temp;
@@ -107,25 +117,30 @@ Future<void> getBookmarkByLoad() async {
 
 Future<void> getKeywordRankByLoad() async {
   final temp = List<String>.from(await tokenCheck(() => API.getKeywordRank()));
-  keywordList.addAll(temp!);
+  keywordListRank.addAll(temp!);
+}
+
+Future<void> getFilterKeywordByLoad() async {
+  final temp = await tokenCheck(() => API.getFilterKeyword());
+  filterKeyword = temp;
 }
 
 class _App extends StatelessWidget {
   const _App({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    final BookmarkCache x = Get.put(BookmarkCache());
     return ScreenUtilInit(
       designSize: Size(430.0, 932.0),
       builder: (context, child) => FutureBuilder(
         future: _load(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return MaterialApp(
+            return const MaterialApp(
               debugShowCheckedModeBanner: false,
               home: DefaultLayout(
                 child: Center(
-                  child: Text("Firebase load fail"),
+                  child: Text("data load fail"),
                 ),
               ),
             );

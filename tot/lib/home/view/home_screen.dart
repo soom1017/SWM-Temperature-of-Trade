@@ -34,16 +34,27 @@ class HomeScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-              colors: [Color(0xFFFFFF), Color(0x2E9BACBC)],
+              colors: [Color(0xFFFFFF), Color(0x2CCFE0F5)],
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
-            )),
+            ),),
             child: HomeMainKeywordList(),
-            height: 300.h,
+            height: 200.h,
           ),
-          //HomeUserKeywords(name: "JH"),
-          // Text('기사로 보는'),
-          // Text('경제시장 흐름'),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFFFFF), Color(0x2A9BACBC)],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(25.w, 20.h, 20.w, 20.h,),
+              child: Text('기사 온도로 보는\n경제 시장 분위기', style: TextStyle(color: Color(0xFF1A63D9),fontSize: 32.sp, fontWeight: FontWeight.w600),),
+            ),
+            height: 120.h,
+            width: double.infinity,
+          ),
           Padding(
             padding: EdgeInsets.fromLTRB(10.0.w,10.h,10.w,10.h),
             child: FutureBuilder(
@@ -119,38 +130,42 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
 
   @override
   Widget build(BuildContext context) {
-    return SfCartesianChart(
-      primaryXAxis: CategoryAxis(
-        labelPlacement: LabelPlacement.onTicks,
-        placeLabelsNearAxisLine: false,
-        crossesAt: 0,
-      ),
-      primaryYAxis: NumericAxis(
-        minimum: -1,
-        maximum: 1,
-        crossesAt: 0,
-        interval: 0.2,
-        placeLabelsNearAxisLine: false,
-        plotBands: [
-          PlotBand(
-            start: 0,
-            end: 0,
-            borderColor: Colors.red,
-            borderWidth: 2,
+    return Container(
+      height: 270.h,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 15.w, 0),
+        child: SfCartesianChart(
+          primaryXAxis: CategoryAxis(
+            labelPlacement: LabelPlacement.onTicks,
+            placeLabelsNearAxisLine: true,
+            crossesAt: 0,
           ),
-        ],
-      ),
-      trackballBehavior: _trackballBehavior,
-      series: <LineSeries<ChartData, String>>[
-        LineSeries<ChartData, String>(
-          dataSource: widget.data,
-          name: '긍부정 비율',
-          color: Colors.blue,
-          xValueMapper: (ChartData sales, _) =>
-              '${sales.date.month}/${sales.date.day}',
-          yValueMapper: (ChartData sales, _) => sales.t,
+          primaryYAxis: NumericAxis(
+            minimum: -1,
+            maximum: 1,
+            crossesAt: 0,
+            interval: 0.5,
+            placeLabelsNearAxisLine: false,
+            plotBands: [
+              PlotBand(
+                start: 0,
+                end: 0,
+              ),
+            ],
+          ),
+          trackballBehavior: _trackballBehavior,
+          series: <LineSeries<ChartData, String>>[
+            LineSeries<ChartData, String>(
+              dataSource: widget.data,
+              name: '긍부정 비율',
+              color: Color(0xFF5E82E5),
+              xValueMapper: (ChartData sales, _) =>
+                  '${sales.date.month}/${sales.date.day}',
+              yValueMapper: (ChartData sales, _) => sales.t,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
