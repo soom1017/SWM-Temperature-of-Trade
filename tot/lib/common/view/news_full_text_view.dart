@@ -70,11 +70,12 @@ class _NewsFullTextViewState extends State<NewsFullTextView> {
           temp.add(TextSpan(
               text: line.toString(),
               style: TextStyle(
-                backgroundColor: Color(0xFFF8E606),
+                backgroundColor: Color.fromARGB(255, 252, 248, 184),
                 fontSize: 17.sp,
+                height: 1.5
               )));
         } else {
-          temp.add(TextSpan(text: line.toString(), style: TextStyle(fontSize: 17.sp)));
+          temp.add(TextSpan(text: line.toString(), style: TextStyle(fontSize: 17.sp, height: 1.5)));
         }
         x++;
         cnt++;

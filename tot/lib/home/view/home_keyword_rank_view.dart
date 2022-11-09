@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/view/keyword_screen.dart';
-import '../../common/const/colors.dart';
+import 'package:tot/common/layout/page_title_layout.dart';
 import '../../common/layout/default_layout.dart';
 
 // 몇시 기준으로 선정한 키워드인지,
@@ -69,23 +69,17 @@ class HomeKeywordRankView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      isExtraPage: true,
+      // isExtraPage: true,
       pageName: "키워드 순위",
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-              HORIZONTAL_PADDING.w, 20.h, HORIZONTAL_PADDING.w, 0.h),
+              HORIZONTAL_PADDING.w, 0.h, HORIZONTAL_PADDING.w, 0.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "키워드 순위",
-                style: TextStyle(
-                    fontSize: 25.sp,
-                    color: PRIMARY_COLOR,
-                    fontWeight: FontWeight.w600),
-              ),
+              PageTitleLayout(pageName: "키워드 순위"),
               SizedBox(
                 height: 20.h,
               ),
