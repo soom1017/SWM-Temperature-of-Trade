@@ -6,6 +6,7 @@ import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/view/news_detail_view.dart';
+import 'package:tot/common/const/tot_custom_icons_icons.dart';
 
 import '../const/colors.dart';
 
@@ -56,7 +57,7 @@ int checkBookmark(int id) {
 
 class _NewsTileState extends State<NewsTile> {
   bool _expanded = false;
-  List<IconData> toggleIcon = [Icons.bookmark_border, Icons.bookmark];
+  List<IconData> toggleIcon = [ToTCustomIcons.slide_bookmark_off, ToTCustomIcons.slide_bookmark_on];
   late int toggle;
 
   @override

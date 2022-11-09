@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/component/news_detail_pie_chart.dert.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/component/news_detail_head.dart';
 import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/news_data.dart';
 import 'package:tot/common/view/news_full_text_view.dart';
 import 'package:tot/home/component/home_user_keywords.dart';
@@ -60,6 +62,8 @@ class NewsDetailView extends StatefulWidget {
 }
 
 class _NewsDetailViewState extends State<NewsDetailView> {
+  int toggle = 0;
+
   routeToNewsFullTextView(BuildContext context, NewsData news) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -72,6 +76,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final BookmarkCache c = BookmarkCache.to;
     return DefaultLayout(
       isExtraPage: true,
       pageName: "뉴스 상세",
@@ -90,7 +95,13 @@ class _NewsDetailViewState extends State<NewsDetailView> {
             final news = snapshot.data!;
             return Column(
               children: [
-                NewsDetailHead.fromNewsData(news),
+                Obx(() {
+                  if(c.bookmarks.where((p0) => p0.id == news.id) == false){
+                    return NewsDetailHead.fromNewsData(news);
+                  }else{
+                    return NewsDetailHead.fromNewsData(news);
+                  }
+                }),
                 _Information(news),
                 Divider(
                   thickness: 5.0,

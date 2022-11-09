@@ -7,6 +7,19 @@ import 'package:tot/common/view/notify_view.dart';
 import 'package:tot/common/view/search_view.dart';
 import 'package:tot/home/view/home_screen.dart';
 import 'package:transition/transition.dart';
+import 'package:tot/common/const/tot_custom_icons_icons.dart';
+
+class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color(0xFFDFEDFA),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size(0.0, 0.0);
+}
 
 class DefaultLayout extends StatelessWidget {
   final Widget child;
@@ -27,6 +40,7 @@ class DefaultLayout extends StatelessWidget {
     return Scaffold(
       backgroundColor: BG_COLOR,
       appBar:
+          // isExtraPage ? EmptyAppBar() : renderAppBar(context),
           isExtraPage ? renderExtraPageAppBar(context) : renderAppBar(context),
       body: child,
       bottomNavigationBar: bottomNavigationBar,
@@ -62,15 +76,13 @@ class DefaultLayout extends StatelessWidget {
           onPressed: () {
             routeToSearchPage(context);
           },
-          icon: Image.asset("assets/image/search.png"),
-          iconSize: 30.sp,
+          icon: Icon(ToTCustomIcons.search, size: 28.sp,color: PRIMARY_COLOR,)
         ),
         IconButton(
           onPressed: () {
             routeToNotifyPage(context);
           },
-          icon: Image.asset("assets/image/alert.png"),
-          iconSize: 30.sp,
+          icon: Icon(ToTCustomIcons.notify, size: 28.sp,color: PRIMARY_COLOR)
         ),
       ],
     );

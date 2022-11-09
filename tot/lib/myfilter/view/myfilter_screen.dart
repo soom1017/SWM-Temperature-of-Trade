@@ -183,12 +183,6 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
         controller: _controller,
-        // onRefresh: () async {
-        //   final _next = await tokenCheck(() => API.getNewsListByFilter(_keylist));
-        //   _controller.refreshCompleted();
-        //   data = _next;
-        //   setter(() {});
-        // },
         onLoading: () async {
           var _next = null;
           if(!data.isEmpty) {
@@ -201,8 +195,8 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
           }
           setter(() {});
         },
-        // enablePullUp: true,
-        enablePullDown: true,
+        enablePullUp: true,
+        enablePullDown: false,
         child: ListView.separated(
           physics: ClampingScrollPhysics(),
           itemBuilder: (context, i) {
@@ -216,6 +210,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
           itemCount: data.length,
         ),
         scrollController: scrollController,
+        physics: ClampingScrollPhysics(),
       ),
     );
   }

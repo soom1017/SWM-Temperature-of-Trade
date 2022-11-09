@@ -7,6 +7,7 @@ import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/home/view/home_screen.dart';
 import 'package:tot/myfilter/view/myfilter_screen.dart';
 import 'package:tot/setting/view/setting_screen.dart';
+import 'package:tot/common/const/tot_custom_icons_icons.dart';
 
 class RootTab extends StatefulWidget {
   const RootTab({Key? key}) : super(key: key);
@@ -54,19 +55,19 @@ class _RootTabState extends State<RootTab>
         currentIndex: index,
         items: [
           BottomNavigationBarItem(
-            icon: index == 0 ? Icon(Icons.home, size: 30.sp) : Icon(Icons.home_outlined, size: 30.sp,),
+            icon: index == 0 ? Icon(ToTCustomIcons.home_on, size: 30.sp,) : Icon(ToTCustomIcons.home_off, size: 30.sp,),
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: index == 1 ? Icon(Icons.filter_alt, size:30.sp,) : Icon(Icons.filter_alt_outlined, size: 30.sp,),
+            icon: index == 1 ? Icon(ToTCustomIcons.filter_on, size: 24.sp,) : Icon(ToTCustomIcons.filter_off, size: 24.sp,),
             label: '마이필터',
           ),
           BottomNavigationBarItem(
-            icon: index == 2 ? Icon(Icons.bookmark, size:30.sp,) : Icon(Icons.bookmark_border, size: 30.sp,),
+            icon: index == 2 ? Icon(ToTCustomIcons.bookmark_on, size: 30.sp,) : Icon(ToTCustomIcons.bookmark_off, size: 30.sp,),
             label: '북마크',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 30.sp,),
+            icon: index == 3 ? Icon(ToTCustomIcons.setting_on, size: 30.sp,) : Icon(ToTCustomIcons.setting_off, size: 30.sp,),
             label: '설정',
           )
         ],
