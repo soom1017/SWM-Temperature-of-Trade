@@ -62,7 +62,9 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   Widget _keywordEmpty() {
     return Column(
       children: [
-        SizedBox(height: 160.h,),
+        SizedBox(
+          height: 160.h,
+        ),
         Container(
           width: 260.w,
           child: Row(
@@ -148,8 +150,8 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
         onLoading: () async {
           var _next = null;
           if (data.isNotEmpty) {
-            _next = await tokenCheck(() => API.getNewsListByKeyword(widget.keyword,
-                news_id: data.last.id));
+            _next = await tokenCheck(() => API
+                .getNewsListByKeyword(widget.keyword, news_id: data.last.id));
           }
           _controller.loadComplete();
           if (_next != null) {
@@ -207,6 +209,10 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   }
 
   void _onNodeClick(TreeNodeData node, String data) {
-    print("clicked on node $data");
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => KeywordMapScreen(keyword: data),
+      ),
+    );
   }
 }

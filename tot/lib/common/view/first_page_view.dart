@@ -5,16 +5,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/AppController.dart';
 import 'package:tot/common/view/root_tab.dart';
-import 'package:tot/main.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 
 class FirstPageView extends StatelessWidget {
-  const FirstPageView({Key? key}) : super(key: key);
+  FirstPageView({Key? key}) : super(key: key);
+  final AppController c = Get.put(AppController());
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class FirstPageView extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(10.w, 10.h, 10.w, 10.h),
             child: Container(
               width: 110.w,
-              child: Image.asset('assets/image/asset6.png'),
+              child: Image.asset('assets/image/asset5.png'),
             ),
           ),
           SizedBox(height: 100.h),
@@ -123,7 +125,7 @@ class FirstPageView extends StatelessWidget {
       'fcm_token': fcmToken,
       'uid': user.user!.uid,
     });
-    await tokenCheck(() => getBookmarkByLoad());
+    await c.initialize();
   }
 
   Future<void> _signInFacebook() async {
@@ -140,7 +142,7 @@ class FirstPageView extends StatelessWidget {
       'fcm_token': fcmToken,
       'uid': user.user!.uid,
     });
-    await tokenCheck(() => getBookmarkByLoad());
+    await c.initialize();
   }
 
   Future<void> _signInApple() async {
@@ -165,7 +167,7 @@ class FirstPageView extends StatelessWidget {
       'isKakao': false,
       'uid': user.user!.uid,
     });
-    await tokenCheck(() => getBookmarkByLoad());
+    await c.initialize();
   }
 
   Future<void> _signInKakao() async {
@@ -189,7 +191,8 @@ class FirstPageView extends StatelessWidget {
     });
 
     await FirebaseAuth.instance.signInWithCustomToken(customToken!);
-    await tokenCheck(() => getBookmarkByLoad());
+    await c.initialize();
+    // await tokenCheck(() => getBookmarkByLoad());
   }
 
   Future<String?> _authUser(Map<String, dynamic> user) async {

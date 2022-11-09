@@ -59,6 +59,7 @@ dependencies:
   flutter_screenutil: ^5.6.0
   url_launcher:
   get:
+  sn_progress_dialog: ^1.0.8
 
 dev_dependencies:
   flutter_test:

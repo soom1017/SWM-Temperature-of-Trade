@@ -94,6 +94,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
               );
             }
             final news = snapshot.data!;
+            print(news.attention_stock + "Sdfg");
             return Column(
               children: [
                 Obx(() {

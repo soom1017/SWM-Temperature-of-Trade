@@ -18,7 +18,7 @@ Dio dioSetting() {
 abstract class API {
   static var dio = dioSetting();
 
-  static changeDioToken() async {
+  static Future<void> changeDioToken() async {
     if (FirebaseAuth.instance.currentUser != null) {
       String temp = await FirebaseAuth.instance.currentUser!.getIdToken(true);
       dio.options.headers['Authorization'] = 'Bearer ${temp}';
