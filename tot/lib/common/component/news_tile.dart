@@ -155,6 +155,7 @@ class _NewsTileState extends State<NewsTile> {
                   action: SnackBarAction(
                     label: '취소',
                     onPressed: () {
+                      print(widget.id);
                       c.deleteBookmark(widget.id);
                       if (mounted) {
                         setState(() {
@@ -173,6 +174,7 @@ class _NewsTileState extends State<NewsTile> {
                   action: SnackBarAction(
                     label: '취소',
                     onPressed: () {
+                      print(widget.id);
                       c.createBookmark(widget.data);
                       if (mounted) {
                         setState(() {

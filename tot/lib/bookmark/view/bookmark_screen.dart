@@ -65,27 +65,27 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           return ListView.separated(
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, i) {
-              if (i == 0) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 25.h,
-                    ),
-                    Text(
-                      c.bookmarks.isEmpty ? "북마크 한 뉴스가 없습니다." : "북마크 한 뉴스",
-                      style: TextStyle(
-                          fontSize: 30.sp,
-                          color: PRIMARY_COLOR,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                  ],
-                );
-              }
-              return NewsTile.fromData(blist[i - 1]);
+              // if (i == 0) {
+              //   return Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       SizedBox(
+              //         height: 25.h,
+              //       ),
+              //       Text(
+              //         c.bookmarks.isEmpty ? "북마크 한 뉴스가 없습니다." : "북마크 한 뉴스",
+              //         style: TextStyle(
+              //             fontSize: 30.sp,
+              //             color: PRIMARY_COLOR,
+              //             fontWeight: FontWeight.w600),
+              //       ),
+              //       SizedBox(
+              //         height: 20.h,
+              //       ),
+              //     ],
+              //   );
+              // }
+              return NewsTile.fromData(blist[i]);
             },
             separatorBuilder: (context, i) {
               if (i == 0) return SizedBox.shrink();
@@ -93,7 +93,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 thickness: 1.5,
               );
             },
-            itemCount: blist.length + 1,
+            itemCount: blist.length,
           );
         }),
       ),

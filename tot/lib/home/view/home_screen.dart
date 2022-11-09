@@ -13,7 +13,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+      physics: ClampingScrollPhysics(),
+      scrollDirection: Axis.vertical,
       child: Column(
         children: [
           Container(
@@ -33,11 +35,12 @@ class HomeScreen extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-              colors: [Color(0xFFFFFF), Color(0x2CCFE0F5)],
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-            ),),
+              gradient: LinearGradient(
+                colors: [Color(0xFFFFFF), Color(0x2CCFE0F5)],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),
+            ),
             child: HomeMainKeywordList(),
             height: 220.h,
           ),
@@ -47,20 +50,31 @@ class HomeScreen extends StatelessWidget {
                 colors: [Color(0xFFFFFF), Color(0x2A9BACBC)],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-              ),),
+              ),
+            ),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(25.w, 20.h, 20.w, 20.h,),
-              child: Text('기사 온도로 보는\n경제 시장 분위기', style: TextStyle(color: Color(0xFF1A63D9),fontSize: 32.sp, fontWeight: FontWeight.w600),),
+              padding: EdgeInsets.fromLTRB(
+                25.w,
+                20.h,
+                20.w,
+                20.h,
+              ),
+              child: Text(
+                '기사 온도로 보는\n경제 시장 분위기',
+                style: TextStyle(
+                    color: Color(0xFF1A63D9),
+                    fontSize: 32.sp,
+                    fontWeight: FontWeight.w600),
+              ),
             ),
             height: 150.h,
             width: double.infinity,
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10.0.w,10.h,10.w,10.h),
+            padding: EdgeInsets.fromLTRB(10.0.w, 10.h, 10.w, 10.h),
             child: FutureBuilder(
               future: tokenCheck(() => API.getSentimentStats()),
-              builder: (BuildContext context,
-                  AsyncSnapshot snapshot) {
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
                     child: CircularProgressIndicator(),
@@ -110,16 +124,12 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
                   '긍정 : ${widget.data[trackballDetails.pointIndex!].positive.toInt()}건',
                   style: TextStyle(
                       fontSize: 13.sp,
-                      color: Color.fromRGBO(255, 255, 255, 1)
-                  )
-              ),
+                      color: Color.fromRGBO(255, 255, 255, 1))),
               Text(
                   '부정 : ${widget.data[trackballDetails.pointIndex!].negative.toInt()}건',
                   style: TextStyle(
                       fontSize: 13.sp,
-                      color: Color.fromRGBO(255, 255, 255, 1)
-                  )
-              ),
+                      color: Color.fromRGBO(255, 255, 255, 1))),
             ],
           ),
         );
