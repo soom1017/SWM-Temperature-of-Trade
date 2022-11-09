@@ -28,6 +28,7 @@ class _NewsFullTextViewState extends State<NewsFullTextView> {
     final BookmarkCache c = BookmarkCache.to;
     return DefaultLayout(
       isExtraPage: true,
+      isDetailPage: true,
       pageName: "뉴스 전문",
       child: SingleChildScrollView(
         physics: ClampingScrollPhysics(),

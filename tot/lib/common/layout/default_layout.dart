@@ -25,6 +25,7 @@ class DefaultLayout extends StatelessWidget {
   final Widget child;
   final Widget? bottomNavigationBar;
   final bool isExtraPage;
+  final bool isDetailPage;
   final String? pageName;
 
   const DefaultLayout({
@@ -32,6 +33,7 @@ class DefaultLayout extends StatelessWidget {
     this.bottomNavigationBar,
     Key? key,
     this.isExtraPage = false,
+    this.isDetailPage = false,
     this.pageName,
   }) : super(key: key);
 
@@ -39,9 +41,7 @@ class DefaultLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: BG_COLOR,
-      appBar:
-          // isExtraPage ? EmptyAppBar() : renderAppBar(context),
-          isExtraPage ? renderExtraPageAppBar(context) : renderAppBar(context),
+      appBar: conditionalAppBar(isExtraPage, isDetailPage, context),
       body: child,
       bottomNavigationBar: bottomNavigationBar,
     );
@@ -108,6 +108,16 @@ class DefaultLayout extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  PreferredSizeWidget conditionalAppBar(bool isExtraPage, bool isDetailPage, BuildContext context) {
+    if (isExtraPage == true && isDetailPage == true) {
+      return EmptyAppBar();
+    }
+    else if (isExtraPage == true) {
+      return renderExtraPageAppBar(context);
+    }
+    return renderAppBar(context);
   }
 
   routeToSearchPage(BuildContext context) {

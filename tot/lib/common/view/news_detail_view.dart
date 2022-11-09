@@ -79,6 +79,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
     final BookmarkCache c = BookmarkCache.to;
     return DefaultLayout(
       isExtraPage: true,
+      isDetailPage: true,
       pageName: "뉴스 상세",
       child: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
