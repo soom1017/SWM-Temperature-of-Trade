@@ -16,6 +16,7 @@ class Settings:
     
     HOT_NEWSLIST_PATH: str = os.getenv("HOT_NEWSLIST_PATH")
     HOT_KEYWORD_PATH: str = os.getenv("HOT_KEYWORD_PATH")
+    STOCK_LIST_PATH: str = os.getenv("STOCK_LIST_PATH")
     KEYWORD_LIST_PATH: str = os.getenv("KEYWORD_LIST_PATH")
     SENTIMENT_STATS_PATH: str = os.getenv("SENTIMENT_STATS_PATH")
     

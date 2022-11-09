@@ -20,6 +20,7 @@ class News(BaseModel):
     created_at: datetime = None
     summary: Optional[str] = None
     attention_stock: Optional[str] = None
+    label: Optional[int] = None
     keyword: Optional[List[Keyword]] = None
     
     class Config:
@@ -32,6 +33,7 @@ class NewsParsed:
         self.created_at = news.created_at
         self.summary = news.summary
         self.attention_stock = news.attention_stock
+        self.label = news.label
         self.keyword = []
         for k in news.keyword:
             self.keyword.append(k.name)
@@ -42,7 +44,6 @@ class NewsDetail(News):
     body: str
     highlight_idx: Optional[str] = None
     stock_prob: Optional[str] = None
-    label: Optional[int] = None
     score: Optional[float] = None
     
 class NewsDetailParsed(NewsParsed):
@@ -53,6 +54,5 @@ class NewsDetailParsed(NewsParsed):
         self.body = eval(news.body)
         self.highlight_idx = eval(news.highlight_idx)
         self.stock_prob = eval(news.stock_prob) if news.stock_prob != "" else None
-        self.label = news.label
         self.score = news.score
         

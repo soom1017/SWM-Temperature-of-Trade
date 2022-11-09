@@ -5,6 +5,7 @@ from app.db.database import get_db
 from app.util.models import FilterData
 from app.db.models import News
 from app.db.schemas import NewsDetailParsed
+from app.crud.utils import get_update_time
 from app.crud.news import get_one_news_by_id, get_recent_news, get_hot_news, get_news_by_filter, get_news_by_keyword, get_weekly_sentiment_stats
 
 news = APIRouter()
@@ -26,6 +27,7 @@ async def get_recent_news_list(news_id: int, db: Session = Depends(get_db)):
 @news.get('/list-hot/{news_id}')
 async def get_hot_news_list(news_id: int, db: Session = Depends(get_db)):
     data = get_hot_news(news_id, db)
+    data['update_time'] = get_update_time('news')
     return data
 
 @news.get('/keyword/{keyword_name}/{news_id}')

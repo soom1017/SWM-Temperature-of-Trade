@@ -32,10 +32,11 @@ def get_parsed_list_of(db_news_list: list):
 # get list
 def get_recent_news(news_id: int, db: Session = Depends(get_db)):
     if news_id == -1:
-        db_news_list = db.query(News).order_by(News.created_at.desc()).limit(20).all()
+        db_news_list = db.query(News).order_by(News.id.desc()).limit(20).all()
     else:
         db_news_list = db.query(News).\
                             filter(News.id < news_id).\
+                            order_by(News.id.desc()).\
                             limit(20).all()
             
     return get_parsed_list_of(db_news_list)
@@ -48,6 +49,7 @@ def get_hot_news(news_id: int, db: Session = Depends(get_db)):
         hot_news_ids = [id for id in hot_news_ids if id.strip() != ""]
         
     # get 20 news starts from `news_id`
+    news_list = []
     if news_id == -1:
         news_list = [get_one_news_by_id(id, db) for id in hot_news_ids[:20]]
     else:
