@@ -93,6 +93,7 @@ Future<FirebaseApp> _load() async {
     await getBookmarkByLoad();
     await getKeywordRankByLoad();
     await getFilterKeywordByLoad();
+    await getUsersFavoritesByLoad();
     print("is Anonymous? : ${FirebaseAuth.instance.currentUser!.isAnonymous}");
   }
   if (FirebaseAuth.instance.currentUser == null ||
@@ -123,6 +124,11 @@ Future<void> getKeywordRankByLoad() async {
 Future<void> getFilterKeywordByLoad() async {
   final temp = await tokenCheck(() => API.getFilterKeyword());
   filterKeyword = temp;
+}
+
+Future<void> getUsersFavoritesByLoad() async {
+  final temp = await tokenCheck(() => API.getUserFavorites());
+  userFilterKey = temp;
 }
 
 class _App extends StatelessWidget {

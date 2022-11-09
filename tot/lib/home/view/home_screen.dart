@@ -110,7 +110,7 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
       enable: true,
       builder: (BuildContext context, TrackballDetails trackballDetails) {
         return Container(
-          height: 40.h,
+          height: 50.h,
           width: 80.w,
           decoration: BoxDecoration(
             color: Color.fromRGBO(0, 8, 22, 0.75),
@@ -167,7 +167,6 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
           series: <LineSeries<ChartData, String>>[
             LineSeries<ChartData, String>(
               dataSource: widget.data,
-              name: '긍부정 비율',
               color: Color(0xFF5E82E5),
               xValueMapper: (ChartData sales, _) =>
                   '${sales.date.month}/${sales.date.day}',

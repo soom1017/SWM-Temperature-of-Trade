@@ -21,33 +21,33 @@ class MyfilterScreen extends StatefulWidget {
 }
 
 class _MyfilterScreenState extends State<MyfilterScreen> {
-  final Map<String, List<String>> _keylist = {"keywords": ["금리"], "stocks": []};
+  final Map<String, List<String>> _keylist = {"keywords": [], "stocks": []};
   List<_Keyword> keywords = [];
+  List<_Keyword> stocks = [];
 
   RefreshController _controller = RefreshController();
 
   @override
   void initState() {
-    keywords = []
-      ..addAll(List<_Keyword>.generate(
-        filterKeyword["stocks"].length,
-            (index) => _Keyword(
-          name: filterKeyword["stocks"][index],
-          isStock: true,
-        ),
-      ))
-      ..addAll(List<_Keyword>.generate(
-        filterKeyword["keywords"].length,
-            (index) => _Keyword(
-          name: filterKeyword["keywords"][index],
-          isStock: false,
-        ),
-      ));
+    stocks = List<_Keyword>.generate(
+      filterKeyword["stocks"].length,
+      (index) => _Keyword(
+        name: filterKeyword["stocks"][index],
+        isStock: true,
+      ),
+    );
+    keywords = List<_Keyword>.generate(
+      filterKeyword["keywords"].length,
+      (index) => _Keyword(
+        name: filterKeyword["keywords"][index],
+        isStock: false,
+      ),
+    );
 
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       Future.delayed(
         Duration.zero,
-            () => showPlatformDialog(
+        () => showPlatformDialog(
           context: context,
           builder: (_) => PlatformAlertDialog(
             title: Text(
@@ -98,7 +98,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
     );
   }
 
-  Widget _noData(){
+  Widget _noData(bool isInit) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -111,14 +111,14 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
             size: 100,
           ),
           Text(
-            "조건에 맞는 뉴스가",
+            isInit ? "종목과 키워드를" : "조건에 맞는 뉴스가",
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
           ),
           SizedBox(
             height: 10,
           ),
           Text(
-            "존재하지 않습니다.",
+            isInit ? "먼저 설정해주세요" : "존재하지 않습니다.",
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
           ),
         ],
@@ -159,35 +159,33 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
 
   Widget _list(ScrollController scrollController) {
     return FutureBuilder(
-      future: tokenCheck(() => API.getNewsListByFilter(_keylist)),
+      future: tokenCheck(
+          () => API.getNewsListByFilter(userFilterKey)),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (_keylist["keywords"]!.isEmpty && _keylist["stocks"]!.isEmpty)
-          return Container();
-        else if(snapshot.data.isEmpty)
-          return _noData();
-        return Container(
-            child: StatefulBuilder(
-              builder: (BuildContext context2, setter){
-                return _refresher(snapshot.data, setter, scrollController);
-              },
-            )
-        );
+        if (userFilterKey["keywords"]!.isEmpty && userFilterKey["stocks"]!.isEmpty)
+          return _noData(true);
+        else if (snapshot.data.isEmpty) return _noData(false);
+        return Container(child: StatefulBuilder(
+          builder: (BuildContext context2, setter) {
+            return _refresher(snapshot.data, setter, scrollController);
+          },
+        ));
       },
     );
   }
 
-  Widget _refresher(List<NewsTileData> data, setter, scrollController){
+  Widget _refresher(List<NewsTileData> data, setter, scrollController) {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
         controller: _controller,
         onLoading: () async {
           var _next = null;
-          if(!data.isEmpty) {
+          if (!data.isEmpty) {
             _next = await tokenCheck(() =>
-                API.getNewsListByFilter(_keylist, newsId: data.last.id));
+                API.getNewsListByFilter(userFilterKey, newsId: data.last.id));
           }
           _controller.loadComplete();
           if (_next != null) {
@@ -235,20 +233,30 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
             ),
           ),
         ),
+        initialPickedItems: List<_Keyword>.from(
+            userFilterKey[isStock ? "stocks" : "keywords"]!
+                .map((e) => _Keyword(name: e, isStock: isStock))),
         onPickedChange: (c) {
+          userFilterKey.update(
+              isStock ? "stocks" : "keywords",
+              (value) => List<String>.from(
+                  c.where((e) => e.isStock == isStock).map((e) => e.name)));
+          API.updateUserFavorite(userFilterKey);
           setState(() {
-            keywords = c;
+            _keylist.update(
+                isStock ? "stocks" : "keywords",
+                (value) => List<String>.from(
+                    c.where((e) => e.isStock == isStock).map((e) => e.name)));
           });
-          print(keywords.length);
+          print(c.length);
         },
-        items: keywords,
-        // List<_Keyword>
+        items: isStock ? stocks : keywords,
         fieldToCheck: (c) {
           return c.name;
         },
-        itemBuilder: (_Keyword) {
+        itemBuilder: (_keyword) {
           return Padding(
-            padding: EdgeInsets.fromLTRB(6.0.w,6.h,6.w,6.h),
+            padding: EdgeInsets.fromLTRB(6.0.w, 6.h, 6.w, 6.h),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
@@ -260,7 +268,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
                   horizontal: 12.w,
                 ),
                 child: Text(
-                  _Keyword.name,
+                  _keyword.isStock ? _keyword.name : "#${_keyword.name}",
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: SMALL_FONT_COLOR,
@@ -270,7 +278,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
             ),
           );
         },
-        pickedItemBuilder: (_Keyword) {
+        pickedItemBuilder: (_keyword) {
           return Container(
             decoration: BoxDecoration(
               color: Color(0xFFD8E1E8),
@@ -284,7 +292,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
-                    _Keyword.name,
+                    _keyword.name,
                     style: TextStyle(fontSize: 21.sp, color: PRIMARY_COLOR),
                   ),
                   Text(
@@ -306,7 +314,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         showItemsButton: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0.w),
           child: Text(
-            '키워드 찾기',
+            isStock ? '종목 찾기' : '키워드 찾기',
             style: TextStyle(fontSize: 17.sp, color: Colors.blueAccent),
           ),
         ),
@@ -326,7 +334,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         ),
         showShowedItemsScrollbar: false,
         noResultsWidget: Padding(
-          padding: EdgeInsets.fromLTRB(8.0.w,8.h,8.w,8.h),
+          padding: EdgeInsets.fromLTRB(8.0.w, 8.h, 8.w, 8.h),
           child: Text(
             '검색된 키워드가 없습니다.',
             style: TextStyle(

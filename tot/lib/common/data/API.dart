@@ -117,6 +117,24 @@ abstract class API {
         .map((e) => NewsTileData.fromResponse(e))
         .toList();
   }
+
+  static Future<Map<String, List<String>>> getUserFavorites() async {
+    final response = await dio.get("/users/favorites");
+    return {
+      "keywords": List<String>.from(response.data["keywords"]),
+      "stocks": List<String>.from(response.data["stocks"])
+    };
+  }
+
+  static Future<void> updateUserFavorite(Map<String, List<String>> keyList) async {
+    print("updateUserFavorite");
+    try {
+      await API.dio.post("/users/favorites", data: keyList);
+    } catch(e){
+      print("ckck");
+      print(e);
+    }
+  }
 }
 
 Future<dynamic> tokenCheck(func) async {
