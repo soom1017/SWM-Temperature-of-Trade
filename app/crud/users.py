@@ -36,7 +36,7 @@ def kakao_auth_request(uid: str, access_token: str, fcm_token: str, db: Session 
         raise HTTPException(401, detail="Token is not valid")
     
     # add kakao-authorized user
-    db_user = db.query(User).filter(User.uid == uid).first()
+    db_user = db.query(User).filter(User.user_id == uid).first()
     if not db_user:
         db_user = create_new_user(uid, fcm_token, db)
         auth.create_user(uid=uid)
@@ -50,7 +50,7 @@ def kakao_auth_request(uid: str, access_token: str, fcm_token: str, db: Session 
 def etc_auth_request(token: str, fcm_token: str, db: Session = Depends(get_db)):
     # validate id-token, finish sign-in
     uid = get_uid_from_token(token)
-    db_user = db.query(User).filter(User.uid == uid).first()
+    db_user = db.query(User).filter(User.user_id == uid).first()
     if not db_user:
         create_new_user(uid, fcm_token, db)
     update_user_fcm_token(db_user, fcm_token, db)
@@ -59,7 +59,7 @@ def etc_auth_request(token: str, fcm_token: str, db: Session = Depends(get_db)):
 # get user
 def get_one_user_by_token(token: str, db: Session = Depends(get_db)):
     uid = get_uid_from_token(token)
-    db_user = db.query(User).filter(User.uid == uid).first()
+    db_user = db.query(User).filter(User.user_id == uid).first()
     if not db_user:
         raise HTTPException(404, detail="User not found")
     return db_user

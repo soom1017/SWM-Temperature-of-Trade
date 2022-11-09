@@ -35,12 +35,12 @@ async def get_news_list_by_keyword(keyword_name: str, news_id: int, db: Session 
     data = get_news_by_keyword(news_id, keyword_name, db)
     return data
 
-@news.post('/list-filter')
+@news.post('/list-filter/{news_id}')
 async def get_news_list_by_filter(filters: FilterData, news_id: int, db: Session = Depends(get_db)):
     data = get_news_by_filter(news_id, filters, db)
     return data
     
-@news.get('/stat-sentiment')
+@news.get('/stats-sentiment/')
 async def get_sentiment_stats(db: Session = Depends(get_db)):
     data = get_weekly_sentiment_stats(db)
     return {"data": data}

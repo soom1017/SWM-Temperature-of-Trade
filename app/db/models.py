@@ -35,8 +35,8 @@ class User(Base):
     __tablename__ = "user"
     
     id = Column(INTEGER, primary_key=True, autoincrement=True)
-    uid = Column(VARCHAR(128), nullable=False)
-    token = Column(VARCHAR(128))
+    user_id = Column(VARCHAR(128), nullable=False)
+    token = Column(VARCHAR(255))
     main_page = Column(Integer)
     
     news = relationship('News', secondary=user_bookmark, back_populates="user")
