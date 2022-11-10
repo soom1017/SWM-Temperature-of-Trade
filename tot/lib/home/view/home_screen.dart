@@ -64,10 +64,9 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(
                     color: Color(0xFF1A63D9),
                     fontSize: 32.sp,
-                    fontWeight: FontWeight.w600),
+                    fontWeight: FontWeight.w600, height: 1.2),
               ),
             ),
-            height: 125.h,
             width: double.infinity,
           ),
           Padding(

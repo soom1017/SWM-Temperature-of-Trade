@@ -47,7 +47,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
                     if (_keywordGraphMap != {} && _keywordGraphMap != null)
                       _keywordGraph(_keywordGraphMap['graph'].keys.toList()),
                     if (_keywordGraphMap == {} || _keywordGraphMap == null)
-                      _keywordEmpty(),
+                      _keywordEmpty(true),
                   ],
                 ),
               ),
@@ -59,7 +59,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
     );
   }
 
-  Widget _keywordEmpty() {
+  Widget _keywordEmpty(bool isGraph) {
     return Column(
       children: [
         SizedBox(
@@ -88,7 +88,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
           height: 10.h,
         ),
         Text(
-          '키워드 맵이 없습니다.',
+          isGraph?'키워드 맵이 없습니다.':'뉴스 기사가 없습니다.',
           style: TextStyle(fontSize: 30.sp),
         ),
       ],
@@ -131,7 +131,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
           child: Padding(
             padding: EdgeInsets.fromLTRB(
                 HORIZONTAL_PADDING.w, 20.0.h, HORIZONTAL_PADDING.w, 0.0.h),
-            child: StatefulBuilder(
+            child: data.isEmpty?_keywordEmpty(false):StatefulBuilder(
               builder: (BuildContext context2, setter) {
                 return _refresher(data, scrollController, setter);
               },
