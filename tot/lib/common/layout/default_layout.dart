@@ -51,14 +51,19 @@ class DefaultLayout extends StatelessWidget {
   AppBar renderAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
-      // toolbarHeight: 62,
-      title: Text(
-        'ToT',
-        style: TextStyle(
-          fontSize: 32.0.sp,
-          fontWeight: FontWeight.w500,
-          color: PRIMARY_COLOR,
-        ),
+      toolbarHeight: MediaQuery.of(context).size.height * 0.06,
+      title: GestureDetector(
+        onTap:() {
+          routeToHomePage(context);
+        },
+        child: Text(
+          'ToT',
+          style: TextStyle(
+            fontSize: 32.0.sp,
+            fontWeight: FontWeight.w500,
+            color: PRIMARY_COLOR,
+          ),
+        )
       ),
       // centerTitle: true,
       leadingWidth: 30.w,

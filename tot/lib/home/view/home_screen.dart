@@ -60,14 +60,14 @@ class HomeScreen extends StatelessWidget {
                 20.h,
               ),
               child: Text(
-                '기사 온도로 보는\n경제 시장 분위기',
+                '뉴스 온도로 보는\n경제 시장 분위기',
                 style: TextStyle(
                     color: Color(0xFF1A63D9),
                     fontSize: 32.sp,
                     fontWeight: FontWeight.w600),
               ),
             ),
-            height: 150.h,
+            height: 125.h,
             width: double.infinity,
           ),
           Padding(

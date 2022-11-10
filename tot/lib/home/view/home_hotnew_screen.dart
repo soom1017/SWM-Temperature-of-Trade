@@ -25,7 +25,7 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
   Widget build(BuildContext context) {
     return DefaultLayout(
       pageName: widget.isHot ? "HOT" : "NEW",
-      isExtraPage: true,
+      // isExtraPage: true,
       child: FutureBuilder(
         future: widget.isHot
             ? tokenCheck(() => API.getNewsListHot())
@@ -89,12 +89,12 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 25.h,
+                    height: 20.h,
                   ),
                   Text(
                     widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 업데이트된 뉴스",
                     style: TextStyle(
-                        fontSize: 30.sp,
+                        fontSize: 28.sp,
                         color: PRIMARY_COLOR,
                         fontWeight: FontWeight.w600),
                   ),
