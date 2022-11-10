@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/cache.dart';
+import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/common/view/keyword_screen.dart';
 import 'package:tot/common/layout/page_title_layout.dart';
-import '../../common/layout/default_layout.dart';
 
 // 몇시 기준으로 선정한 키워드인지,
 // 키워드 순위 변동도 표시

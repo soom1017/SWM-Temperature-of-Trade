@@ -94,13 +94,12 @@ class _NewsDetailViewState extends State<NewsDetailView> {
               );
             }
             final news = snapshot.data!;
-            print(news.attention_stock + "Sdfg");
             return Column(
               children: [
                 Obx(() {
-                  if(c.bookmarks.where((p0) => p0.id == news.id) == false){
+                  if (c.bookmarks.where((p0) => p0.id == news.id) == false) {
                     return NewsDetailHead.fromNewsData(news);
-                  }else{
+                  } else {
                     return NewsDetailHead.fromNewsData(news);
                   }
                 }),
@@ -132,11 +131,12 @@ class _NewsDetailViewState extends State<NewsDetailView> {
                     SizedBox(
                       height: 15.h,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: HORIZONTAL_PADDING.w),
-                      child: _Graph(news),
-                    ),
+                    if (news.attention_stock != "종합")
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: HORIZONTAL_PADDING.w),
+                        child: _Graph(news),
+                      ),
                   ],
                 ),
               ],
