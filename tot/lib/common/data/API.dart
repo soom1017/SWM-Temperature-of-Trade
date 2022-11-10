@@ -131,6 +131,10 @@ abstract class API {
       Map<String, List<String>> keyList) async {
     await API.dio.patch("/users/favorites", data: keyList);
   }
+
+  static Future<void> updateNotificationSetting(String? fcmToken) async {
+    await API.dio.patch("/users/notification", data: {"fcm_token": fcmToken});
+  }
 }
 
 Future<dynamic> tokenCheck(func) async {

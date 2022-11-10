@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:tot/NavigationService.dart';
 import 'package:tot/common/data/API.dart';
@@ -12,6 +13,7 @@ import 'package:tot/common/view/notify_view.dart';
 
 class AppController extends GetxController {
   static AppController get to => Get.find<AppController>();
+  static const storage = FlutterSecureStorage();
   final Rxn<RemoteMessage> message = Rxn<RemoteMessage>();
 
   Future<bool> initialize() async {

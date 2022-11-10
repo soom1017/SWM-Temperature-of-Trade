@@ -60,6 +60,7 @@ dependencies:
   url_launcher:
   get:
   sn_progress_dialog: ^1.0.8
+  flutter_secure_storage: ^6.0.0
 
 dev_dependencies:
   flutter_test:

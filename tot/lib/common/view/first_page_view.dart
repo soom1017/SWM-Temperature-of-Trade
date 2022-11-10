@@ -228,6 +228,7 @@ class FirstPageView extends StatelessWidget {
 
   Future<String?> _authUser(Map<String, dynamic> user) async {
     try {
+      await AppController.storage.write(key: "fcmToken", value: user["fcm_token"]);
       final String url = '/users/auth';
       final customTokenResponse = await API.dio.post(url, data: user);
       return customTokenResponse.data;
