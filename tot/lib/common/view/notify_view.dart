@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/API.dart';
+import 'package:tot/common/data/AppController.dart';
 import 'package:tot/common/data/cache.dart';
 import '../layout/default_layout.dart';
 
@@ -18,6 +20,7 @@ class NotifyView extends StatefulWidget {
 
 class _NotifyViewState extends State<NotifyView> {
   RefreshController _controller = RefreshController();
+  final AppController c = Get.put(AppController());
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +32,27 @@ class _NotifyViewState extends State<NotifyView> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData == false)
             return Center(child: CircularProgressIndicator());
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
-            // padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING, 0, 5 ,0),
-            child: StatefulBuilder(
-              builder: (BuildContext context2, setter) {
-                return _refresher(snapshot.data, setter);
-              },
-            ),
+          return Center(
+            child: Obx(() {
+              return Column(
+                children: [
+                  Text(c.message.value?.notification?.title ?? 'title',
+                      style: TextStyle(fontSize: 20.sp)),
+                  Text(c.message.value?.notification?.body ?? 'message',
+                      style: TextStyle(fontSize: 15.sp)),
+                ],
+              );
+            }),
           );
+          // return Container(
+          //   padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
+          //   // padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING, 0, 5 ,0),
+          //   child: StatefulBuilder(
+          //     builder: (BuildContext context2, setter) {
+          //       return _refresher(snapshot.data, setter);
+          //     },
+          //   ),
+          // );
         },
       ),
     );
@@ -49,7 +64,8 @@ class _NotifyViewState extends State<NotifyView> {
         controller: _controller,
         onRefresh: () async {
           var _next = null;
-          _next = await tokenCheck(() => API.getNewsListByFilter(userFilterKey));
+          _next =
+              await tokenCheck(() => API.getNewsListByFilter(userFilterKey));
           _controller.refreshCompleted();
           data = _next;
           setter(() {});
@@ -57,7 +73,8 @@ class _NotifyViewState extends State<NotifyView> {
         onLoading: () async {
           var _next = null;
           if (!data.isEmpty) {
-            await tokenCheck(() => API.getNewsListByFilter(userFilterKey, newsId: data.last.id));
+            await tokenCheck(() =>
+                API.getNewsListByFilter(userFilterKey, newsId: data.last.id));
           }
           _controller.loadComplete();
           if (_next != null) {
