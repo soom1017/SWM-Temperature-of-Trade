@@ -141,6 +141,7 @@ Future<dynamic> tokenCheck(func) async {
       await API.changeDioToken();
       return await func();
     } else {
+      print(e);
       return null;
     }
   }

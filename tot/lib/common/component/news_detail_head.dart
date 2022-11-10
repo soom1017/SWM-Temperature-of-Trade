@@ -94,7 +94,6 @@ class _NewsDetailHeadState extends State<NewsDetailHead> {
   @override
   Widget build(BuildContext func) {
     final BookmarkCache c = BookmarkCache.to;
-    print("test");
     return Container(
       color: NEWSDETAIL_TL_COLOR,
       padding: EdgeInsets.fromLTRB(

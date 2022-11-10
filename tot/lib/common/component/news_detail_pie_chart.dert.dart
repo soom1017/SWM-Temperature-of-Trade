@@ -29,7 +29,7 @@ class NewsDetailPieChart extends StatelessWidget {
       centerText: centerText,
       legendLabels: legendLabels,
       chartLegendSpacing: 25.w,
-      centerTextStyle: TextStyle(fontSize: 25.sp, color: Colors.black, fontWeight: FontWeight.w500),
+      centerTextStyle: TextStyle(fontSize: 20.sp, color: Colors.black, fontWeight: FontWeight.w500),
       legendOptions: LegendOptions(
         showLegendsInRow: false,
         legendPosition: LegendPosition.left,

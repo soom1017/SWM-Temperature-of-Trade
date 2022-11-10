@@ -11,6 +11,7 @@ class NewsData {
   final List<int> highlight_idx;
   final int label;
   final double score;
+  final Map<String, double>? stock_prob;
 
   NewsData({
     required this.id,
@@ -25,6 +26,7 @@ class NewsData {
     required this.highlight_idx,
     required this.label,
     required this.score,
+    required this.stock_prob,
   });
 
   factory NewsData.fromResponse(Map<String, dynamic> response) {
@@ -38,6 +40,14 @@ class NewsData {
     final press = data['press'];
     final body = List<List<dynamic>>.from(data['body']).map((e) => e.map((x) => x.toString()).toList()).toList();
     final summary = data['summary'];
+    Map<String, double>? stock_prob = {};
+    if(data['stock_prob'] == null) {
+      stock_prob = null;
+    } else{
+      data['stock_prob'].keys.toList().forEach((e) {
+        stock_prob![e.toString()] = data['stock_prob'][e.toString()];
+      });
+    }
     var highlight_idx;
     if(data['highlight_idx'] == null)
       highlight_idx = List<int>.from([]);
@@ -58,6 +68,7 @@ class NewsData {
         summary: summary,
         highlight_idx: highlight_idx,
         label: label,
+        stock_prob: stock_prob,
         score: score);
   }
 }

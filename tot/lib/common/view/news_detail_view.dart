@@ -13,18 +13,6 @@ import 'package:tot/home/component/home_user_keywords.dart';
 import '../layout/default_layout.dart';
 import 'package:tot/common/const/padding.dart';
 
-Map<String, double> dataMap = {
-  "현대카드": 56,
-  "삼성카드": 19,
-  "토스": 16,
-};
-
-Map<String, String> legendLabels = {
-  "현대카드": "현대카드 56%",
-  "삼성카드": "삼성카드 19%",
-  "토스": "토스 16%",
-};
-
 final List<Color> colorList = [
   KEYWORD_BG_COLOR,
   Color(0xFF4099DD).withOpacity(0.3),
@@ -88,6 +76,10 @@ class _NewsDetailViewState extends State<NewsDetailView> {
         child: FutureBuilder(
           future: tokenCheck(() => API.getNewsById(widget.id!)),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if(snapshot.hasError){
+              print(snapshot.error);
+              return Center(child: Text("페이지를 로드하지 못 했습니다."),);
+            }
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -131,12 +123,13 @@ class _NewsDetailViewState extends State<NewsDetailView> {
                     SizedBox(
                       height: 15.h,
                     ),
-                    if (news.attention_stock != "종합")
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: HORIZONTAL_PADDING.w),
-                        child: _Graph(news),
-                      ),
+                    if (news.stock_prob != null)
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(
+                      //       horizontal: HORIZONTAL_PADDING.w),
+                      //   child: _Graph(news),
+                      // ),
+                      Center(child: _Graph(news)),
                   ],
                 ),
               ],
@@ -212,29 +205,33 @@ class _NewsDetailViewState extends State<NewsDetailView> {
   }
 
   Widget _Graph(NewsData news) {
+    Map<String, String> legendLabels = {};
+    news.stock_prob!.keys.forEach((element) {
+      legendLabels[element] = "$element ${news.stock_prob![element]}%";
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "관련된 종목들은 아래와 같아요",
-          style: TextStyle(fontSize: 28.sp, fontWeight: FontWeight.w700),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
+          child: Text(
+            "관련된 종목들은 아래와 같아요",
+            style: TextStyle(fontSize: 28.sp, fontWeight: FontWeight.w700),
+          ),
         ),
         SizedBox(
           height: 35.h,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
-          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Spacer(),
             NewsDetailPieChart(
               legendLabels: legendLabels,
               colorList: colorList,
-              dataMap: dataMap,
-              centerText: "현대카드\n56%",
-            ),
-            SizedBox(
-              width: 20.w,
+              dataMap: news.stock_prob!,
+              centerText: "${news.attention_stock}\n${news.stock_prob![news.attention_stock]}%",
             ),
           ],
         ),
