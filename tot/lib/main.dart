@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:tot/NavigationService.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/AppController.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
@@ -53,6 +54,7 @@ class _App extends StatelessWidget {
           }
           if (snapshot.hasData) {
             return MaterialApp(
+              navigatorKey: NavigationService().navigationKey,
               debugShowCheckedModeBanner: false,
               home: FirebaseAuth.instance.currentUser!.isAnonymous
                   ? FirstPageView()

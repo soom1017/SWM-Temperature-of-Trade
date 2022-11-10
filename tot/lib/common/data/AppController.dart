@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:tot/NavigationService.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
+import 'package:tot/common/view/notify_view.dart';
 
 class AppController extends GetxController {
   static AppController get to => Get.find<AppController>();
@@ -49,12 +52,13 @@ class AppController extends GetxController {
 
     // 안드로이드 foreground 알림 활성화
     await flutterLocalNotificationsPlugin.initialize(
-      InitializationSettings(
-          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-          iOS: DarwinInitializationSettings()),
-      // onDidReceiveNotificationResponse: (payload) async {}
-    );
-
+        InitializationSettings(
+            android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+            iOS: DarwinInitializationSettings()),
+        onDidReceiveNotificationResponse: (payload) async {
+          print(payload.payload);
+          NavigationService().navigateToScreen(const NotifyView());
+        });
     // foreground 알림 생성
     FirebaseMessaging.onMessage.listen((RemoteMessage rm) {
       message.value = rm;
@@ -74,8 +78,15 @@ class AppController extends GetxController {
                   'This channel is used for important notifications.',
             ),
           ),
+          payload: rm.data['argument'],
         );
       }
+    });
+
+    // background 상태 터치시
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage rm) {
+      print(rm.data['argument']);
+      NavigationService().navigateToScreen(const NotifyView());
     });
 
     final fcmToken = await FirebaseMessaging.instance.getToken();
@@ -106,6 +117,15 @@ class AppController extends GetxController {
         print(
             "is Anonymous? : ${FirebaseAuth.instance.currentUser!.isAnonymous}");
       }
+    }
+
+    // 종료 상태에서 알림 터치시
+    RemoteMessage? initialMessage =
+    await FirebaseMessaging.instance.getInitialMessage();
+    print("initMessage");
+    if (initialMessage != null) {
+      print(initialMessage.data['argument']);
+      NavigationService().navigateToScreen(const NotifyView());
     }
     return true;
   }
