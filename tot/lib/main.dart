@@ -1,20 +1,18 @@
-import 'dart:io';
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:tot/NavigationService.dart';
-import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/AppController.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
-import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
 import 'package:tot/common/view/first_page_view.dart';
+import 'package:tot/common/view/notify_view.dart';
 import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/firebase_options.dart';
 
@@ -40,7 +38,30 @@ class _App extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(430.0, 932.0),
       builder: (context, child) => FutureBuilder(
-        future: c.initialize(),
+        future: c.initialize().then((_) async {
+          // 종료 상태에서 알림 터치시
+          RemoteMessage? initialMessage =
+              await FirebaseMessaging.instance.getInitialMessage();
+          if (initialMessage != null) {
+            final _data = json.decode(initialMessage.data.toString());
+            print("init : " + _data.toString());
+
+            final List<dynamic> _notifyList = json.decode(
+                await AppController.storage.read(key: "notify") ?? "[]");
+            _notifyList.insert(0, {
+              "id": _data["id"],
+              "title": _data["title"],
+              "time": _data["time"],
+            });
+
+            await AppController.storage
+                .write(key: "notify", value: json.encode(_notifyList));
+            Future.delayed(Duration(milliseconds: 100), () {
+              NavigationService().navigateToScreen(const NotifyView());
+            });
+          }
+          return true;
+        }),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const MaterialApp(

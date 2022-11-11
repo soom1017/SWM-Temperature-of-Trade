@@ -34,7 +34,7 @@ class _NotifyViewState extends State<NotifyView> {
       "id": 5123212,
       "title": "라마바사아자차카타파하가나다라마바사아자차카타파하",
       "time": "2022-01-24T14:21:00",
-    },
+    }
   ];
 
   @override
@@ -100,7 +100,7 @@ class _NotifyViewState extends State<NotifyView> {
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemBuilder: (context, i) {
-          if (notifyList == null || notifyList!.isEmpty || notifyList![0]["id"] == null) {
+          if (notifyList == null) {
             return Container();
           }
           return NotificationTile.fromNotify(notifyList![i], () async {

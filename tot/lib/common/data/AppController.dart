@@ -100,14 +100,15 @@ class AppController extends GetxController {
 
     // background 상태 터치시
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage rm) async {
-      print("back : " + rm.data.toString());
+      final _data = json.decode(rm.data.toString());
+      print("back : " + _data.toString());
 
       final List<dynamic> _notifyList =
-      json.decode(await storage.read(key: "notify") ?? "[]");
+          json.decode(await storage.read(key: "notify") ?? "[]");
       _notifyList.insert(0, {
-        "id": rm.data["id"],
-        "title": rm.data["title"],
-        "time": rm.data["time"],
+        "id": _data["id"],
+        "title": _data["title"],
+        "time": _data["time"],
       });
 
       await storage.write(key: "notify", value: json.encode(_notifyList));
@@ -142,24 +143,6 @@ class AppController extends GetxController {
         print(
             "is Anonymous? : ${FirebaseAuth.instance.currentUser!.isAnonymous}");
       }
-    }
-
-    // 종료 상태에서 알림 터치시
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      print("init : " + initialMessage.data.toString());
-
-      final List<dynamic> _notifyList =
-      json.decode(await storage.read(key: "notify") ?? "[]");
-      _notifyList.insert(0, {
-        "id": initialMessage.data["id"],
-        "title": initialMessage.data["title"],
-        "time": initialMessage.data["time"],
-      });
-
-      await storage.write(key: "notify", value: json.encode(_notifyList));
-      NavigationService().navigateToScreen(const NotifyView());
     }
     return true;
   }
