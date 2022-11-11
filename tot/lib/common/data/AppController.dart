@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -58,9 +60,20 @@ class AppController extends GetxController {
             android: AndroidInitializationSettings('@mipmap/ic_launcher'),
             iOS: DarwinInitializationSettings()),
         onDidReceiveNotificationResponse: (payload) async {
-          print(payload.payload);
-          NavigationService().navigateToScreen(const NotifyView());
-        });
+      final _data = json.decode(payload.payload!);
+      print("fore : " + _data.toString());
+
+      final List<dynamic> _notifyList =
+          json.decode(await storage.read(key: "notify") ?? "[]");
+      _notifyList.insert(0, {
+        "id": _data["id"],
+        "title": _data["title"],
+        "time": _data["time"],
+      });
+
+      await storage.write(key: "notify", value: json.encode(_notifyList));
+      NavigationService().navigateToScreen(const NotifyView());
+    });
     // foreground 알림 생성
     FirebaseMessaging.onMessage.listen((RemoteMessage rm) {
       message.value = rm;
@@ -80,14 +93,24 @@ class AppController extends GetxController {
                   'This channel is used for important notifications.',
             ),
           ),
-          payload: rm.data['argument'],
+          payload: rm.data.toString(),
         );
       }
     });
 
     // background 상태 터치시
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage rm) {
-      print(rm.data['argument']);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage rm) async {
+      print("back : " + rm.data.toString());
+
+      final List<dynamic> _notifyList =
+      json.decode(await storage.read(key: "notify") ?? "[]");
+      _notifyList.insert(0, {
+        "id": rm.data["id"],
+        "title": rm.data["title"],
+        "time": rm.data["time"],
+      });
+
+      await storage.write(key: "notify", value: json.encode(_notifyList));
       NavigationService().navigateToScreen(const NotifyView());
     });
 
@@ -123,10 +146,19 @@ class AppController extends GetxController {
 
     // 종료 상태에서 알림 터치시
     RemoteMessage? initialMessage =
-    await FirebaseMessaging.instance.getInitialMessage();
-    print("initMessage");
+        await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
-      print(initialMessage.data['argument']);
+      print("init : " + initialMessage.data.toString());
+
+      final List<dynamic> _notifyList =
+      json.decode(await storage.read(key: "notify") ?? "[]");
+      _notifyList.insert(0, {
+        "id": initialMessage.data["id"],
+        "title": initialMessage.data["title"],
+        "time": initialMessage.data["time"],
+      });
+
+      await storage.write(key: "notify", value: json.encode(_notifyList));
       NavigationService().navigateToScreen(const NotifyView());
     }
     return true;

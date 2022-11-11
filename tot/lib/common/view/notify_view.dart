@@ -1,14 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
-import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/AppController.dart';
-import 'package:tot/common/data/cache.dart';
 import '../layout/default_layout.dart';
 
 class NotifyView extends StatefulWidget {
@@ -19,104 +17,182 @@ class NotifyView extends StatefulWidget {
 }
 
 class _NotifyViewState extends State<NotifyView> {
-  RefreshController _controller = RefreshController();
   final AppController c = Get.put(AppController());
+  List<Map<String, dynamic>>? notifyList;
+  List<Map<String, dynamic>> test = [
+    {
+      "id": 123451,
+      "title": "가나다라마바사아자차카타파하가나다라마바사아자차카타파하",
+      "time": "2022-04-24T14:21:00",
+    },
+    {
+      "id": 41341,
+      "title": "차카타파하가나다라마바사아자차카타파하",
+      "time": "2022-02-24T14:21:00",
+    },
+    {
+      "id": 5123212,
+      "title": "라마바사아자차카타파하가나다라마바사아자차카타파하",
+      "time": "2022-01-24T14:21:00",
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+  }
+
+  _asyncMethod() async {
+    final temp = await AppController.storage.read(key: "notify");
+    final List<dynamic> list = json.decode(temp ?? "[]");
+    notifyList = list.map((e) => Map<String, dynamic>.from(e)).toList();
+    // notifyList = test;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       pageName: "알림",
       isExtraPage: true,
-      child: FutureBuilder(
-        future: tokenCheck(() => API.getNewsListByFilter(userFilterKey)),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData == false)
-            return Center(child: CircularProgressIndicator());
-          return Center(
-            child: Obx(() {
-              return Column(
-                children: [
-                  Text(c.message.value?.notification?.title ?? 'title',
-                      style: TextStyle(fontSize: 20.sp)),
-                  Text(c.message.value?.notification?.body ?? 'message',
-                      style: TextStyle(fontSize: 15.sp)),
-                ],
-              );
-            }),
-          );
-          // return Container(
-          //   padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
-          //   // padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING, 0, 5 ,0),
-          //   child: StatefulBuilder(
-          //     builder: (BuildContext context2, setter) {
-          //       return _refresher(snapshot.data, setter);
-          //     },
-          //   ),
-          // );
-        },
+      child: Container(
+        color: NEWSTAB_BG_COLOR,
+        padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _head(),
+            _list(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _refresher(data, setter) {
+  Widget _head() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 12.h, 0, 20.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "뉴스 알림",
+            style: TextStyle(
+                fontSize: 35.sp,
+                color: KEYWORD_BG_COLOR,
+                fontWeight: FontWeight.w600),
+          ),
+          Text(
+            "회원님의 관심사와 관련된 새로운 뉴스를 표시해드립니다.",
+            style: TextStyle(fontSize: 13.sp, color: SMALL_FONT_COLOR),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _list() {
     return SlidableAutoCloseBehavior(
-      child: SmartRefresher(
-        controller: _controller,
-        onRefresh: () async {
-          var _next = null;
-          _next =
-              await tokenCheck(() => API.getNewsListByFilter(userFilterKey));
-          _controller.refreshCompleted();
-          data = _next;
-          setter(() {});
-        },
-        onLoading: () async {
-          var _next = null;
-          if (!data.isEmpty) {
-            await tokenCheck(() =>
-                API.getNewsListByFilter(userFilterKey, newsId: data.last.id));
+      child: ListView.separated(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemBuilder: (context, i) {
+          if (notifyList == null || notifyList!.isEmpty || notifyList![0]["id"] == null) {
+            return Container();
           }
-          _controller.loadComplete();
-          if (_next != null) {
-            data.addAll(_next!);
-          }
-          setter(() {});
+          return NotificationTile.fromNotify(notifyList![i], () async {
+            notifyList!.removeAt(i);
+            await AppController.storage
+                .write(key: "notify", value: json.encode(notifyList));
+            setState(() {});
+          });
         },
-        enablePullUp: true,
-        enablePullDown: true,
-        child: ListView.separated(
-          itemBuilder: (context, i) {
-            if (i == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    "아직 못 본 관심 뉴스",
-                    style: TextStyle(
-                        fontSize: 28.sp,
-                        color: PRIMARY_COLOR,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                  ),
-                ],
-              );
-            }
-            return NewsTile.fromData(data[i - 1]);
-          },
-          separatorBuilder: (context, i) {
-            if (i == 0) return SizedBox.shrink();
-            return const Divider(
-              thickness: 1.5,
-            );
-          },
-          itemCount: data.length + 1,
-          physics: ClampingScrollPhysics(),
-        ),
+        separatorBuilder: (context, i) {
+          return const Divider(
+            thickness: 1.5,
+          );
+        },
+        itemCount: notifyList?.length ?? 0,
+        physics: ClampingScrollPhysics(),
+      ),
+    );
+  }
+}
+
+class NotificationTile extends StatefulWidget {
+  final String title;
+  final DateTime time;
+  final int id;
+  final Function func;
+
+  const NotificationTile({
+    Key? key,
+    required this.title,
+    required this.time,
+    required this.id,
+    required this.func,
+  }) : super(key: key);
+
+  factory NotificationTile.fromNotify(
+      Map<String, dynamic> data, Function func) {
+    print("notify : " + data.toString());
+    final String title = data["title"];
+    final DateTime time = DateTime.parse(data["time"]);
+    final int id = data["id"];
+    return NotificationTile(
+      title: title,
+      time: time,
+      id: id,
+      func: func,
+    );
+  }
+
+  @override
+  State<NotificationTile> createState() => _NotificationTileState();
+}
+
+class _NotificationTileState extends State<NotificationTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      direction: DismissDirection.endToStart,
+      key: Key(widget.id.toString()),
+      onDismissed: (_) {
+        widget.func();
+      },
+      child: _tile(),
+    );
+  }
+
+  Widget _tile() {
+    final t = widget.time;
+    return Container(
+      color: Colors.transparent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "${t.year}.${t.month.toString().padLeft(2, '0')}.${t.day.toString().padLeft(2, '0')} ${t.hour.toString().padLeft(2, '0')}:${t.minute}",
+            style: TextStyle(
+                fontSize: 15.sp,
+                color: KEYWORD_BG_COLOR,
+                fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: 7.h,
+          ),
+          Text(
+            overflow: TextOverflow.ellipsis,
+            widget.title,
+            style: TextStyle(
+              fontSize: 19.sp,
+            ),
+          ),
+        ],
       ),
     );
   }
