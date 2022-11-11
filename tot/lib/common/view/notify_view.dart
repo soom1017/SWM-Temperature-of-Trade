@@ -7,6 +7,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/AppController.dart';
+import 'package:tot/common/view/news_detail_view.dart';
 import '../layout/default_layout.dart';
 
 class NotifyView extends StatefulWidget {
@@ -167,32 +168,45 @@ class _NotificationTileState extends State<NotificationTile> {
     );
   }
 
+  routeToNewsDetailPage(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => NewsDetailView.fromNewsId(widget.id),
+      ),
+    );
+  }
+
   Widget _tile() {
     final t = widget.time;
-    return Container(
-      color: Colors.transparent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${t.year}.${t.month.toString().padLeft(2, '0')}.${t.day.toString().padLeft(2, '0')} ${t.hour.toString().padLeft(2, '0')}:${t.minute}",
-            style: TextStyle(
-                fontSize: 15.sp,
-                color: KEYWORD_BG_COLOR,
-                fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            height: 7.h,
-          ),
-          Text(
-            overflow: TextOverflow.ellipsis,
-            widget.title,
-            style: TextStyle(
-              fontSize: 19.sp,
+    return GestureDetector(
+      onTap: () {
+        routeToNewsDetailPage(context);
+      },
+      child: Container(
+        color: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${t.year}.${t.month.toString().padLeft(2, '0')}.${t.day.toString().padLeft(2, '0')} ${t.hour.toString().padLeft(2, '0')}:${t.minute}",
+              style: TextStyle(
+                  fontSize: 15.sp,
+                  color: KEYWORD_BG_COLOR,
+                  fontWeight: FontWeight.w600),
             ),
-          ),
-        ],
+            SizedBox(
+              height: 7.h,
+            ),
+            Text(
+              overflow: TextOverflow.ellipsis,
+              widget.title,
+              style: TextStyle(
+                fontSize: 19.sp,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

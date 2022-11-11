@@ -20,28 +20,16 @@ final List<Color> colorList = [
 ];
 
 class NewsDetailView extends StatefulWidget {
-  final String? stockName;
-  final String postingDate;
-  final String newsTitle;
-  final List<String> tagList;
-  final int? id;
+  final int id;
 
   const NewsDetailView(
-      {required this.tagList,
-      required this.postingDate,
-      required this.newsTitle,
-      this.stockName,
-      this.id,
-      Key? key})
+      {required this.id,
+        Key? key})
       : super(key: key);
 
-  factory NewsDetailView.fromNewsTile(NewsTile tile) {
+  factory NewsDetailView.fromNewsId(int id) {
     return NewsDetailView(
-      tagList: tile.tagList,
-      postingDate: tile.postingDate,
-      newsTitle: tile.newsTitle,
-      stockName: tile.stockName,
-      id: tile.id,
+      id: id,
     );
   }
 
@@ -151,7 +139,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
           Row(
             children: [
               Spacer(),
-              for (String keyword in widget.tagList)
+              for (String keyword in news.keywords)
                 HomeUserKeyword(
                   keyword: keyword,
                   textStyle: TextStyle(

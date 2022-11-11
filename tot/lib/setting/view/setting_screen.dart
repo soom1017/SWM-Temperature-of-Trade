@@ -60,11 +60,14 @@ class _SettingScreenState extends State<SettingScreen> {
                   if (value) {
                     final fcmToken =
                         await FirebaseMessaging.instance.getToken();
-                    await AppController.storage.write(key: "fcmToken", value: fcmToken);
+                    await AppController.storage
+                        .write(key: "fcmToken", value: fcmToken);
                     await API.updateNotificationSetting(fcmToken);
                   } else {
                     await AppController.storage
                         .write(key: "fcmToken", value: "");
+                    await AppController.storage
+                        .write(key: "notify", value: "[]]");
                     await API.updateNotificationSetting("");
                   }
                 } catch (e) {

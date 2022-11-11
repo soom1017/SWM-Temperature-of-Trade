@@ -79,7 +79,7 @@ class _NewsTileState extends State<NewsTile> {
     print(widget.newsTitle);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => NewsDetailView.fromNewsTile(widget),
+        builder: (_) => NewsDetailView.fromNewsId(widget.id),
       ),
     );
   }
