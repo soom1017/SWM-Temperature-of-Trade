@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
@@ -106,7 +107,7 @@ class _NewsDetailHeadState extends State<NewsDetailHead> {
             children: [
               GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(0, 4.h, 15.w, 0),

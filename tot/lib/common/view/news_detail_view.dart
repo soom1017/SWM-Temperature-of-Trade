@@ -22,10 +22,7 @@ final List<Color> colorList = [
 class NewsDetailView extends StatefulWidget {
   final int id;
 
-  const NewsDetailView(
-      {required this.id,
-        Key? key})
-      : super(key: key);
+  const NewsDetailView({required this.id, Key? key}) : super(key: key);
 
   factory NewsDetailView.fromNewsId(int id) {
     return NewsDetailView(
@@ -40,14 +37,10 @@ class NewsDetailView extends StatefulWidget {
 class _NewsDetailViewState extends State<NewsDetailView> {
   int toggle = 0;
 
-  routeToNewsFullTextView(BuildContext context, NewsData news) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewsFullTextView(
+  routeToNewsFullTextView(NewsData news) {
+    Get.to(() => NewsFullTextView(
           news: news,
-        ),
-      ),
-    );
+        ));
   }
 
   @override
@@ -64,27 +57,39 @@ class _NewsDetailViewState extends State<NewsDetailView> {
         child: FutureBuilder(
           future: tokenCheck(() => API.getNewsById(widget.id!)),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if(snapshot.hasError){
+            if (snapshot.hasError) {
               print(snapshot.error);
-              return Center(child: Text("페이지를 로드하지 못 했습니다."),);
-            }else if(snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: Text("페이지를 로드하지 못 했습니다."),
+              );
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
               );
-            }else {
-              if(snapshot.data == null){
+            } else {
+              if (snapshot.data == null) {
                 return Container(
                   height: 800.h,
-                  child: Center(child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("페이지를 로드하지 못했습니다.", style: TextStyle(fontSize: 20.sp,),),
-                      GestureDetector(child: Text("뒤로가기"),onTap: () {
-                        Navigator.of(context).pop();
-                      },),
-                    ],
-                  ),),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "페이지를 로드하지 못했습니다.",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                          ),
+                        ),
+                        GestureDetector(
+                          child: Text("뒤로가기"),
+                          onTap: () {
+                            Get.back();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }
               final news = snapshot.data!;
@@ -126,11 +131,11 @@ class _NewsDetailViewState extends State<NewsDetailView> {
                         height: 15.h,
                       ),
                       if (news.stock_prob != null)
-                      // Padding(
-                      //   padding: EdgeInsets.symmetric(
-                      //       horizontal: HORIZONTAL_PADDING.w),
-                      //   child: _Graph(news),
-                      // ),
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(
+                        //       horizontal: HORIZONTAL_PADDING.w),
+                        //   child: _Graph(news),
+                        // ),
                         Center(child: _Graph(news)),
                     ],
                   ),
@@ -179,7 +184,7 @@ class _NewsDetailViewState extends State<NewsDetailView> {
             height: 27.h,
             child: ElevatedButton(
               onPressed: () {
-                routeToNewsFullTextView(context, news);
+                routeToNewsFullTextView(news);
               },
               style: ButtonStyle(
                 padding: MaterialStateProperty.all<EdgeInsets>(
@@ -234,7 +239,8 @@ class _NewsDetailViewState extends State<NewsDetailView> {
               legendLabels: legendLabels,
               colorList: colorList,
               dataMap: news.stock_prob!,
-              centerText: "${news.attention_stock}\n${news.stock_prob![news.attention_stock]}%",
+              centerText:
+                  "${news.attention_stock}\n${news.stock_prob![news.attention_stock]}%",
             ),
           ],
         ),

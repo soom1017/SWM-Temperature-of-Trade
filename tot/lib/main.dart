@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
-import 'package:tot/NavigationService.dart';
 import 'package:tot/common/data/AppController.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/layout/default_layout.dart';
@@ -56,9 +55,7 @@ class _App extends StatelessWidget {
 
             await AppController.storage
                 .write(key: "notify", value: json.encode(_notifyList));
-            Future.delayed(Duration(milliseconds: 100), () {
-              NavigationService().navigateToScreen(const NotifyView());
-            });
+            Get.to(() => NotifyView());
           }
           return true;
         }),
@@ -74,8 +71,7 @@ class _App extends StatelessWidget {
             );
           }
           if (snapshot.hasData) {
-            return MaterialApp(
-              navigatorKey: NavigationService().navigationKey,
+            return GetMaterialApp(
               debugShowCheckedModeBanner: false,
               home: FirebaseAuth.instance.currentUser!.isAnonymous
                   ? FirstPageView()
@@ -87,7 +83,6 @@ class _App extends StatelessWidget {
               },
             );
           }
-          // 로딩 페이지
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             home: Scaffold(

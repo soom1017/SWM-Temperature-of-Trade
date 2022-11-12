@@ -1,6 +1,7 @@
 import 'package:circlegraph/circlegraph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
@@ -209,10 +210,6 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   }
 
   void _onNodeClick(TreeNodeData node, String data) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => KeywordMapScreen(keyword: data),
-      ),
-    );
+    Get.to(() => KeywordMapScreen(keyword: data));
   }
 }

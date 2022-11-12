@@ -57,26 +57,26 @@ class FirstPageView extends StatelessWidget {
                     imageSrc: 'assets/image/facebook.png',
                     press: () async {
                       await _signInFacebook(context);
-                      _naviToRootTab(context);
+                      _naviToRootTab();
                     }),
                 if (Platform.isIOS)
                   _RoundedButton(
                       imageSrc: 'assets/image/apple.png',
                       press: () async {
                         await _signInApple(context);
-                        _naviToRootTab(context);
+                        _naviToRootTab();
                       }),
                 _RoundedButton(
                     imageSrc: 'assets/image/google.png',
                     press: () async {
                       await _signInGoogle(context);
-                      _naviToRootTab(context);
+                      _naviToRootTab();
                     }),
                 _RoundedButton(
                     imageSrc: 'assets/image/kakao.png',
                     press: () async {
                       await _signInKakao(context);
-                      _naviToRootTab(context);
+                      _naviToRootTab();
                     }),
               ],
             ),
@@ -93,7 +93,7 @@ class FirstPageView extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              _naviToRootTab(context);
+              _naviToRootTab();
             },
             child: Text(
               "게스트로 로그인",
@@ -228,7 +228,8 @@ class FirstPageView extends StatelessWidget {
 
   Future<String?> _authUser(Map<String, dynamic> user) async {
     try {
-      await AppController.storage.write(key: "fcmToken", value: user["fcm_token"]);
+      await AppController.storage
+          .write(key: "fcmToken", value: user["fcm_token"]);
       final String url = '/users/auth';
       final customTokenResponse = await API.dio.post(url, data: user);
       return customTokenResponse.data;
@@ -238,11 +239,8 @@ class FirstPageView extends StatelessWidget {
     }
   }
 
-  void _naviToRootTab(BuildContext context) {
-    Future.delayed(
-        Duration.zero,
-        () => Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => RootTab()), (route) => false));
+  void _naviToRootTab() {
+    Future.delayed(Duration.zero, () => Get.offAll(RootTab()));
   }
 }
 

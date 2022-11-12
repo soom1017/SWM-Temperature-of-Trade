@@ -41,15 +41,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             actions: <Widget>[
               PlatformDialogAction(
                 child: PlatformText("네"),
-                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => FirstPageView()),
-                        (route) => false),
+                onPressed: () => Get.offAll(FirstPageView()),
               ),
               PlatformDialogAction(
                 child: PlatformText("아니오"),
-                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    tr.Transition(child: RootTab(), transitionEffect: tr.TransitionEffect.FADE),
-                        (route) => false),
+                onPressed: () => Get.offAll(RootTab()),
               ),
             ],
           ),
@@ -68,7 +64,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
       child: SlidableAutoCloseBehavior(
         child: Obx(() {
-          c.bookmarks.forEach((element) {print(element.id);});
           return ListView.separated(
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, i) {

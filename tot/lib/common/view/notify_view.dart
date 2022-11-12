@@ -170,19 +170,15 @@ class _NotificationTileState extends State<NotificationTile> {
     );
   }
 
-  routeToNewsDetailPage(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewsDetailView.fromNewsId(widget.id),
-      ),
-    );
+  routeToNewsDetailPage() {
+    Get.to(() => NewsDetailView.fromNewsId(widget.id));
   }
 
   Widget _tile() {
     final t = widget.time;
     return GestureDetector(
       onTap: () {
-        routeToNewsDetailPage(context);
+        routeToNewsDetailPage();
       },
       child: Container(
         color: Colors.transparent,

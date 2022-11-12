@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/layout/default_layout.dart';
@@ -19,19 +20,15 @@ class KeywordRankTile extends StatelessWidget {
     required this.rank,
   }) : super(key: key);
 
-  routeToKeywordMap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => KeywordMapScreen(keyword: keyword),
-      ),
-    );
+  routeToKeywordMap() {
+    Get.to(() => KeywordMapScreen(keyword: keyword));
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        routeToKeywordMap(context);
+        routeToKeywordMap();
       },
       child: Stack(
         children: [

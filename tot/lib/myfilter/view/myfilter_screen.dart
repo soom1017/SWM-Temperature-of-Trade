@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
@@ -66,15 +67,11 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
             actions: <Widget>[
               PlatformDialogAction(
                 child: PlatformText("네"),
-                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => FirstPageView()),
-                        (route) => false),
+                onPressed: () => Get.offAll(() => FirstPageView()),
               ),
               PlatformDialogAction(
                 child: PlatformText("아니오"),
-                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    Transition(child: RootTab(), transitionEffect: TransitionEffect.FADE),
-                        (route) => false),
+                onPressed: () => Get.offAll(() => RootTab()),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
@@ -74,14 +75,8 @@ class _NewsTileState extends State<NewsTile> {
     toggle = checkBookmark(widget.id);
   }
 
-  routeToNewsDetailPage(BuildContext context) {
-    print(widget.id);
-    print(widget.newsTitle);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewsDetailView.fromNewsId(widget.id),
-      ),
-    );
+  routeToNewsDetailPage() {
+    Get.to(() => NewsDetailView.fromNewsId(widget.id));
   }
 
   @override
@@ -156,9 +151,7 @@ class _NewsTileState extends State<NewsTile> {
           SlidableAction(
             onPressed: (BuildContext context) {
               var snackbar;
-              print("${widget.newsTitle} : $toggle -> ${toggle ^ 1}");
               if ((widget.isBookmarkPage ?? false)) {
-                print(widget.isBookmarkPage);
                 if (toggle == 0) {
                   snackbar = SnackBar(
                     content: Text("북마크에 추가했습니다."),
@@ -166,7 +159,6 @@ class _NewsTileState extends State<NewsTile> {
                     action: SnackBarAction(
                       label: '취소',
                       onPressed: () {
-                        print(widget.id);
                         if (mounted) {
                           setState(() {
                             c.deleteBookmark(widget.id);
@@ -191,7 +183,6 @@ class _NewsTileState extends State<NewsTile> {
                     action: SnackBarAction(
                       label: '취소',
                       onPressed: () {
-                        print(widget.id);
                         if (mounted) {
                           setState(() {
                             c.createBookmark(widget.data);
@@ -210,7 +201,6 @@ class _NewsTileState extends State<NewsTile> {
                   }
                 }
               } else {
-                print(widget.isBookmarkPage);
                 if (toggle == 0) {
                   c.createBookmark(widget.data);
                   snackbar = SnackBar(
@@ -219,7 +209,6 @@ class _NewsTileState extends State<NewsTile> {
                     action: SnackBarAction(
                       label: '취소',
                       onPressed: () {
-                        print(widget.id);
                         c.deleteBookmark(widget.id);
                         setState(() {
                           toggle ^= 1;
@@ -236,7 +225,6 @@ class _NewsTileState extends State<NewsTile> {
                     action: SnackBarAction(
                       label: '취소',
                       onPressed: () {
-                        print(widget.id);
                         c.createBookmark(widget.data);
                         setState(() {
                           toggle ^= 1;
@@ -269,7 +257,7 @@ class _NewsTileState extends State<NewsTile> {
   Widget _newsTile() {
     return GestureDetector(
       onTap: () {
-        routeToNewsDetailPage(context);
+        routeToNewsDetailPage();
       },
       child: Container(
         color: Colors.transparent,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/custom_icons_icons.dart';
 import 'package:tot/common/view/root_tab.dart';
@@ -130,25 +131,14 @@ class DefaultLayout extends StatelessWidget {
   }
 
   routeToSearchPage(BuildContext context) {
-    Navigator.of(context).push(
-      Transition(child: SearchView(), transitionEffect: TransitionEffect.FADE),
-    );
+    Get.to(() => SearchView());
   }
 
   routeToNotifyPage(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NotifyView(),
-      ),
-    );
+    Get.to(() => NotifyView());
   }
 
   routeToHomePage(BuildContext context) {
-    Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => RootTab(),
-      ),
-    );
+    Get.offAll(() => RootTab());
   }
 }
