@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 import os
 from app.config import settings
 
@@ -8,5 +9,6 @@ def get_update_time(context: str):
     file_path = paths[context]
     
     update_time = time.ctime(os.path.getmtime(file_path))
+    update_time = datetime.datetime.strptime(time.ctime(), "%c")
     return update_time
     

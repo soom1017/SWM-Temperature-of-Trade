@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.util.models import AuthData, FilterData
 from app.crud.news import get_one_news_by_id
-from app.crud.users import get_one_user_by_token, update_user_fcm_token, kakao_auth_request, etc_auth_request, get_bookmarks_of, get_favorites_of, update_favorites_of
+from app.crud.users import get_one_user_by_token, delete_user, update_user_fcm_token, kakao_auth_request, etc_auth_request, get_bookmarks_of, get_favorites_of, update_favorites_of
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -20,6 +20,11 @@ async def auth_request(authData: AuthData, db: Session = Depends(get_db)):
         return custom_token
     
     etc_auth_request(token, fcm_token, db)
+    
+# Withdrawal
+@users.delete('/')
+async def user_withdrawal(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    db_user = delete_user(token, db)
 
 # Notification
 @users.patch('/notification')
@@ -43,7 +48,7 @@ async def create_user_bookmark(news_id: int, token: str = Depends(oauth2_scheme)
     db.commit()
     
 @users.get('/delete/bookmark/{news_id}')
-async def create_user_bookmark(news_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+async def delete_user_bookmark(news_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     db_user = get_one_user_by_token(token, db)
     db_news = get_one_news_by_id(news_id, db)
     

@@ -75,6 +75,12 @@ def update_user_fcm_token(db_user: User, fcm_token: str, db: Session = Depends(g
     db_user.token = fcm_token
     db.add(db_user)
     db.commit()
+
+# delete user
+def delete_user(token: str, db: Session = Depends(get_db)):
+    db_user = get_uid_from_token(token)
+    db.delete(db_user)
+    db.commit()
     
 ## user information
 # bookmark

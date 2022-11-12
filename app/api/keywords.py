@@ -21,7 +21,7 @@ async def get_keyword_list(db: Session = Depends(get_db)):
 @keywords.get('/rank')
 async def get_keyword_rank():
     data_rank = pd.read_csv(HOT_KEYWORD_PATH)
-    data = data_rank["name"].values.tolist()
+    data = data_rank["name"].values.tolist()[:20]
     update_time = get_update_time('keyword')
     
     return {"data": data, "update_time": update_time}
