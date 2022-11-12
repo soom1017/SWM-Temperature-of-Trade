@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/custom_icons_icons.dart';
-import 'package:tot/common/root_tab.dart';
+import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/common/view/notify_view.dart';
 import 'package:tot/common/view/search_view.dart';
 import 'package:tot/home/view/home_screen.dart';
 import 'package:transition/transition.dart';
+import 'package:tot/common/const/tot_custom_icons_icons.dart';
+
+class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color(0xFFDFEDFA),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size(0.0, 0.0);
+}
 
 class DefaultLayout extends StatelessWidget {
   final Widget child;
   final Widget? bottomNavigationBar;
   final bool isExtraPage;
+  final bool isDetailPage;
   final String? pageName;
 
   const DefaultLayout({
@@ -18,15 +33,16 @@ class DefaultLayout extends StatelessWidget {
     this.bottomNavigationBar,
     Key? key,
     this.isExtraPage = false,
+    this.isDetailPage = false,
     this.pageName,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: BG_COLOR,
-      appBar:
-          isExtraPage ? renderExtraPageAppBar(context) : renderAppBar(context),
+      appBar: conditionalAppBar(isExtraPage, isDetailPage, context),
       body: child,
       bottomNavigationBar: bottomNavigationBar,
     );
@@ -35,41 +51,48 @@ class DefaultLayout extends StatelessWidget {
   AppBar renderAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
-      // toolbarHeight: 62,
-      title: const Text('ToT',
+      toolbarHeight: MediaQuery.of(context).size.height * 0.06,
+      title: GestureDetector(
+        onTap:() {
+          routeToHomePage(context);
+        },
+        child: Text(
+          'ToT',
           style: TextStyle(
-              fontSize: 28.0,
-              fontWeight: FontWeight.w500,
-              color: PRIMARY_COLOR,)),
+            fontSize: 32.0.sp,
+            fontWeight: FontWeight.w500,
+            color: PRIMARY_COLOR,
+          ),
+        )
+      ),
       // centerTitle: true,
-      leadingWidth: 30,
-      leading: const Padding(
-        padding: EdgeInsets.fromLTRB(15, 0, 10, 0),
-        child: Icon(CustomIcons.icon1, color: PRIMARY_COLOR),
+      leadingWidth: 30.w,
+      leading: Padding(
+        padding: EdgeInsets.fromLTRB(15.w, 0, 10.w, 0),
+        child: Icon(
+          CustomIcons.icon1,
+          color: KEYWORD_BG_COLOR,
+          size: 30.sp,
+        ),
       ),
       // foregroundColor: Colors.black,
       elevation: 0,
       actions: [
         IconButton(
-          onPressed: () {
-            routeToSearchPage(context);
-          },
-          icon: Icon(
-            Icons.search_outlined,
-            color: PRIMARY_COLOR,
-            size: 30,
-          ),
-        ),
+            onPressed: () {
+              routeToSearchPage(context);
+            },
+            icon: Icon(
+              ToTCustomIcons.search,
+              size: 28.sp,
+              color: PRIMARY_COLOR,
+            )),
         IconButton(
-          onPressed: () {
-            routeToNotifyPage(context);
-          },
-          icon: Icon(
-            Icons.notifications_outlined,
-            color: PRIMARY_COLOR,
-            size: 30,
-          ),
-        ),
+            onPressed: () {
+              routeToNotifyPage(context);
+            },
+            icon:
+                Icon(ToTCustomIcons.notify, size: 28.sp, color: PRIMARY_COLOR)),
       ],
     );
   }
@@ -77,7 +100,7 @@ class DefaultLayout extends StatelessWidget {
   AppBar renderExtraPageAppBar(BuildContext context) {
     return AppBar(
       title: Text(pageName!,
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600)),
+          style: TextStyle(fontSize: 28.0.sp, fontWeight: FontWeight.w600)),
       foregroundColor: Colors.black,
       backgroundColor: Colors.white,
       elevation: 5,
@@ -89,18 +112,25 @@ class DefaultLayout extends StatelessWidget {
           icon: Icon(
             Icons.home_outlined,
             color: PRIMARY_COLOR,
-            size: 30,
+            size: 30.sp,
           ),
         ),
       ],
     );
   }
 
+  PreferredSizeWidget conditionalAppBar(
+      bool isExtraPage, bool isDetailPage, BuildContext context) {
+    if (isExtraPage == true && isDetailPage == true) {
+      return EmptyAppBar();
+    } else if (isExtraPage == true) {
+      return renderExtraPageAppBar(context);
+    }
+    return renderAppBar(context);
+  }
+
   routeToSearchPage(BuildContext context) {
     Navigator.of(context).push(
-      // MaterialPageRoute(
-      //   builder: (_) => SearchView(),
-      // ),
       Transition(child: SearchView(), transitionEffect: TransitionEffect.FADE),
     );
   }
