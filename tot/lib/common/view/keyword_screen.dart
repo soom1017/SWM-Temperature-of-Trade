@@ -210,6 +210,6 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   }
 
   void _onNodeClick(TreeNodeData node, String data) {
-    Get.to(() => KeywordMapScreen(keyword: data));
+    Get.to(() => KeywordMapScreen(keyword: data), preventDuplicates: false);
   }
 }
