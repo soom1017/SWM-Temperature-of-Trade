@@ -98,6 +98,7 @@ class AppController extends GetxController {
 
     // background 상태 터치시
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage rm) async {
+      print(rm.data);
       final _data = json.decode(rm.data.toString());
       print("back : " + _data.toString());
 
@@ -156,8 +157,8 @@ Future<void> getBookmarkByLoad() async {
 }
 
 Future<void> getKeywordRankByLoad() async {
-  final temp = List<String>.from(await tokenCheck(() => API.getKeywordRank()));
-  keywordListRank.addAll(temp!);
+  final temp = Map<String, dynamic>.from(await tokenCheck(() => API.getKeywordRank()));
+  keywordListRank = temp;
 }
 
 Future<void> getFilterKeywordByLoad() async {

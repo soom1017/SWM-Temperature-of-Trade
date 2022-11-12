@@ -39,7 +39,12 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
             // padding: const EdgeInsets.fromLTRB(HORIZONTAL_PADDING, 0, 5 ,0),
             child: StatefulBuilder(
               builder: (BuildContext context2, setter) {
-                return _refresher(snapshot.data, setter);
+                if (widget.isHot) {
+                  return _refresher(snapshot.data["data"], setter,
+                      snapshot.data["update_time"]);
+                } else {
+                  return _refresher(snapshot.data, setter, null);
+                }
               },
             ),
           );
@@ -48,7 +53,7 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
     );
   }
 
-  Widget _refresher(data, setter) {
+  Widget _refresher(data, setter, update_time) {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
         controller: _controller,
@@ -56,6 +61,8 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
           var _next = null;
           if (widget.isHot) {
             _next = await tokenCheck(() => API.getNewsListHot());
+            update_time = _next["update_time"];
+            _next = _next["data"];
           } else {
             _next = await tokenCheck(() => API.getNewsListNew());
           }
@@ -69,6 +76,8 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
             if (widget.isHot) {
               _next = await tokenCheck(
                   () => API.getNewsListHot(news_id: data.last.id));
+              update_time = _next["update_time"];
+              _next = _next["data"];
             } else {
               _next = await tokenCheck(
                   () => API.getNewsListNew(news_id: data.last.id));
