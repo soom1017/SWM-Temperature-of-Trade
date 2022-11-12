@@ -9,6 +9,7 @@ import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
+import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/view/first_page_view.dart';
 import 'package:tot/common/view/root_tab.dart';
 import 'package:transition/transition.dart' as tr;
@@ -64,6 +65,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
       child: SlidableAutoCloseBehavior(
         child: Obx(() {
+          List<NewsTileData> _list = c.bookmarks;
           return ListView.separated(
             physics: ClampingScrollPhysics(),
             itemBuilder: (context, i) {
@@ -75,7 +77,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       height: 25.h,
                     ),
                     Text(
-                      c.bookmarks.isEmpty ? "북마크 한 뉴스가 없습니다." : "북마크 한 뉴스",
+                      _list.isEmpty ? "북마크 한 뉴스가 없습니다." : "북마크 한 뉴스",
                       style: TextStyle(
                           fontSize: 30.sp,
                           color: PRIMARY_COLOR,
@@ -87,7 +89,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   ],
                 );
               }
-              return NewsTile.fromData(c.bookmarks[i - 1], fix : true);
+              return NewsTile.fromData(_list[i - 1], fix : true);
             },
             separatorBuilder: (context, i) {
               if (i == 0) return SizedBox.shrink();
@@ -95,7 +97,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 thickness: 1.5,
               );
             },
-            itemCount: c.bookmarks.length + 1,
+            itemCount: _list.length + 1,
           );
         }),
       ),

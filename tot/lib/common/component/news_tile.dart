@@ -150,90 +150,46 @@ class _NewsTileState extends State<NewsTile> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) {
-              var snackbar;
-              if ((widget.isBookmarkPage ?? false)) {
-                if (toggle == 0) {
-                  snackbar = SnackBar(
-                    content: Text("북마크에 추가했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        if (mounted) {
-                          setState(() {
-                            c.deleteBookmark(widget.id);
-                            toggle ^= 1;
-                          });
-                        }
-                      },
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  if (mounted) {
-                    setState(() {
-                      c.createBookmark(widget.data);
-                      toggle ^= 1;
-                    });
-                  }
-                }
-                if (toggle == 1) {
-                  snackbar = SnackBar(
-                    content: Text("북마크에서 삭제했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        if (mounted) {
-                          setState(() {
-                            c.createBookmark(widget.data);
-                            toggle ^= 1;
-                          });
-                        }
-                      },
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  if (mounted) {
-                    setState(() {
-                      c.deleteBookmark(widget.id);
-                      toggle ^= 1;
-                    });
-                  }
-                }
-              } else {
-                if (toggle == 0) {
-                  c.createBookmark(widget.data);
-                  snackbar = SnackBar(
-                    content: Text("북마크에 추가했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        c.deleteBookmark(widget.id);
+              var snackbar = null;
+              if (!c.contain(widget.id)) {
+                c.createBookmark(widget.data);
+                final id = widget.id;
+                snackbar = SnackBar(
+                  content: Text("북마크에 추가했습니다."),
+                  duration: Duration(milliseconds: 1500),
+                  action: SnackBarAction(
+                    label: '취소',
+                    onPressed: () {
+                      c.deleteBookmark(id);
+                      if (mounted) {
                         setState(() {
                           toggle ^= 1;
                         });
-                      },
-                    ),
-                  );
-                }
-                if (toggle == 1) {
-                  c.deleteBookmark(widget.id);
-                  snackbar = SnackBar(
-                    content: Text("북마크에서 삭제했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        c.createBookmark(widget.data);
+                      }
+                    },
+                  ),
+                );
+              } else if (c.contain(widget.id)) {
+                c.deleteBookmark(widget.id);
+                final data = widget.data;
+                snackbar = SnackBar(
+                  content: Text("북마크에서 삭제했습니다."),
+                  duration: Duration(milliseconds: 1500),
+                  action: SnackBarAction(
+                    label: '취소',
+                    onPressed: () {
+                      c.createBookmark(data);
+                      if (mounted) {
                         setState(() {
                           toggle ^= 1;
                         });
-                      },
-                    ),
-                  );
-                }
-                ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                      }
+                    },
+                  ),
+                );
+              }
+              ScaffoldMessenger.of(context).showSnackBar(snackbar);
+              if (mounted) {
                 setState(() {
                   toggle ^= 1;
                 });
