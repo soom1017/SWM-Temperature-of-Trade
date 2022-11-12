@@ -67,61 +67,76 @@ class _NewsDetailViewState extends State<NewsDetailView> {
             if(snapshot.hasError){
               print(snapshot.error);
               return Center(child: Text("페이지를 로드하지 못 했습니다."),);
-            }
-            if (!snapshot.hasData) {
+            }else if(snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
               );
-            }
-            final news = snapshot.data!;
-            return Column(
-              children: [
-                Obx(() {
-                  if (c.bookmarks.where((p0) => p0.id == news.id) == false) {
-                    return NewsDetailHead.fromNewsData(news);
-                  } else {
-                    return NewsDetailHead.fromNewsData(news);
-                  }
-                }),
-                _Information(news),
-                Divider(
-                  thickness: 5.0,
-                  color: Color(0xFF9BACBC).withOpacity(0.4),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    if (news.attention_stock != null)
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: (HORIZONTAL_PADDING - 5).w),
-                        child: _Sentiment(news),
+            }else {
+              if(snapshot.data == null){
+                return Container(
+                  height: 800.h,
+                  child: Center(child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("페이지를 로드하지 못했습니다.", style: TextStyle(fontSize: 20.sp,),),
+                      GestureDetector(child: Text("뒤로가기"),onTap: () {
+                        Navigator.of(context).pop();
+                      },),
+                    ],
+                  ),),
+                );
+              }
+              final news = snapshot.data!;
+              return Column(
+                children: [
+                  Obx(() {
+                    if (c.bookmarks.where((p0) => p0.id == news.id) == false) {
+                      return NewsDetailHead.fromNewsData(news);
+                    } else {
+                      return NewsDetailHead.fromNewsData(news);
+                    }
+                  }),
+                  _Information(news),
+                  Divider(
+                    thickness: 5.0,
+                    color: Color(0xFF9BACBC).withOpacity(0.4),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 20.h,
                       ),
-                    SizedBox(
-                      height: 15.h,
-                    ),
-                    if (news.attention_stock != null)
-                      Divider(
-                        thickness: 2.0,
-                        color: Color(0xFF9BACBC).withOpacity(0.4),
+                      if (news.attention_stock != null)
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: (HORIZONTAL_PADDING - 5).w),
+                          child: _Sentiment(news),
+                        ),
+                      SizedBox(
+                        height: 15.h,
                       ),
-                    SizedBox(
-                      height: 15.h,
-                    ),
-                    if (news.stock_prob != null)
+                      if (news.attention_stock != null)
+                        Divider(
+                          thickness: 2.0,
+                          color: Color(0xFF9BACBC).withOpacity(0.4),
+                        ),
+                      SizedBox(
+                        height: 15.h,
+                      ),
+                      if (news.stock_prob != null)
                       // Padding(
                       //   padding: EdgeInsets.symmetric(
                       //       horizontal: HORIZONTAL_PADDING.w),
                       //   child: _Graph(news),
                       // ),
-                      Center(child: _Graph(news)),
-                  ],
-                ),
-              ],
-            );
+                        Center(child: _Graph(news)),
+                    ],
+                  ),
+                ],
+              );
+            }
           },
         ),
       ),

@@ -96,28 +96,30 @@ class _NotifyViewState extends State<NotifyView> {
   }
 
   Widget _list() {
-    return SlidableAutoCloseBehavior(
-      child: ListView.separated(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemBuilder: (context, i) {
-          if (notifyList == null) {
-            return Container();
-          }
-          return NotificationTile.fromNotify(notifyList![i], () async {
-            notifyList!.removeAt(i);
-            await AppController.storage
-                .write(key: "notify", value: json.encode(notifyList));
-            setState(() {});
-          });
-        },
-        separatorBuilder: (context, i) {
-          return const Divider(
-            thickness: 1.5,
-          );
-        },
-        itemCount: notifyList?.length ?? 0,
-        physics: ClampingScrollPhysics(),
+    return Flexible(
+      child: SlidableAutoCloseBehavior(
+        child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemBuilder: (context, i) {
+            if (notifyList == null) {
+              return Container();
+            }
+            return NotificationTile.fromNotify(notifyList![i], () async {
+              notifyList!.removeAt(i);
+              await AppController.storage
+                  .write(key: "notify", value: json.encode(notifyList));
+              setState(() {});
+            });
+          },
+          separatorBuilder: (context, i) {
+            return const Divider(
+              thickness: 1.5,
+            );
+          },
+          itemCount: notifyList?.length ?? 0,
+          physics: ClampingScrollPhysics(),
+        ),
       ),
     );
   }
@@ -189,7 +191,7 @@ class _NotificationTileState extends State<NotificationTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${t.year}.${t.month.toString().padLeft(2, '0')}.${t.day.toString().padLeft(2, '0')} ${t.hour.toString().padLeft(2, '0')}:${t.minute}",
+              "${t.year}.${t.month.toString().padLeft(2, '0')}.${t.day.toString().padLeft(2, '0')} ${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}",
               style: TextStyle(
                   fontSize: 15.sp,
                   color: KEYWORD_BG_COLOR,
