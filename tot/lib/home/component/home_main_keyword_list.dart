@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/padding.dart';
-import 'package:tot/common/keyword_map_screen.dart';
+import 'package:tot/common/data/cache.dart';
+import 'package:tot/common/view/keyword_screen.dart';
 import 'package:tot/home/view/home_keyword_rank_view.dart';
 
 import '../../common/const/colors.dart';
@@ -19,7 +21,7 @@ class HomeMainKeywordList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING),
+      padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
       child: Align(
         alignment: Alignment.topLeft,
         child: Column(
@@ -31,17 +33,15 @@ class HomeMainKeywordList extends StatelessWidget {
               children: [
                 Text("지금 뜨는 키워드는                       ",
                     style: TextStyle(
-                        fontSize: 32,
+                        fontSize: 32.sp,
                         fontWeight: FontWeight.w500,
                         height: 2.0)),
-                HomeMainKeywordButton(keyword: "#코로나19"),
-                HomeMainKeywordButton(keyword: "#금리"),
-                HomeMainKeywordButton(keyword: "#대출"),
-                HomeMainKeywordButton(keyword: "#전기차"),
+                for(var i=0;i<4;i++)
+                  HomeMainKeywordButton(keyword: keywordListRank[i]),
                 Text(
                   "입니다.",
                   style: TextStyle(
-                      fontSize: 32, fontWeight: FontWeight.w500, height: 1.36),
+                      fontSize: 32.sp, fontWeight: FontWeight.w500, height: 1.36),
                 ),
               ],
             ),
@@ -52,8 +52,8 @@ class HomeMainKeywordList extends StatelessWidget {
                   routeToKeywordRank(context);
                 },
                 child: Text(
-                  "키워드 더보기 〉",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  "키워드 순위 보기 〉",
+                  style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -84,13 +84,9 @@ class HomeMainKeywordButton extends StatelessWidget {
       onPressed: () {
         routeToKeywordMap(context);
       },
-      child: Text(
-        keyword,
-        style: TextStyle(fontSize: 24),
-      ),
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsets>(
-            EdgeInsets.symmetric(horizontal: 10.0)),
+            EdgeInsets.symmetric(horizontal: 10.0.w)),
         foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
         backgroundColor: MaterialStateProperty.all<Color>(KEYWORD_BG_COLOR),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -98,6 +94,10 @@ class HomeMainKeywordButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10.5),
           ),
         ),
+      ),
+      child: Text(
+        "#$keyword",
+        style: TextStyle(fontSize: 24.sp),
       ),
     );
   }

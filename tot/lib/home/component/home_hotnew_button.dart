@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/home/view/home_hotnew_screen.dart';
 
@@ -27,16 +28,10 @@ class HomeHotNewButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {routeToHotNew(context);},
-      // onPressed: null,
-      child: Text(
-        text,
-        style: TextStyle(
-            fontSize: 30, color: PRIMARY_COLOR, fontWeight: FontWeight.w400),
-      ),
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsets>(
-            EdgeInsets.fromLTRB(20, 3, 20, 3)),
-        side: MaterialStateProperty.all<BorderSide>(BorderSide(
+            EdgeInsets.fromLTRB(20.w, 3.h, 20.w, 3.h)),
+        side: MaterialStateProperty.all<BorderSide>(const BorderSide(
           width: 2.0,
           color: PRIMARY_COLOR,
         )),
@@ -47,6 +42,12 @@ class HomeHotNewButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10.5),
           ),
         ),
+      ),
+      // onPressed: null,
+      child: Text(
+        text,
+        style: TextStyle(
+            fontSize: 30.sp, color: PRIMARY_COLOR, fontWeight: FontWeight.w400),
       ),
     );
   }
