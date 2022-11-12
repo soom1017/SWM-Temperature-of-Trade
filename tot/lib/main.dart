@@ -55,7 +55,11 @@ class _App extends StatelessWidget {
 
             await AppController.storage
                 .write(key: "notify", value: json.encode(_notifyList));
-            Get.to(() => NotifyView());
+            if(Get.currentRoute == "/NotifyView"){
+              Get.off(() => NotifyView(), preventDuplicates: false);
+            }else {
+              Get.to(() => NotifyView());
+            }
           }
           return true;
         }),

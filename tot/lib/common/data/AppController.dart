@@ -69,7 +69,11 @@ class AppController extends GetxController {
       });
 
       await storage.write(key: "notify", value: json.encode(_notifyList));
-      Get.to(() => NotifyView());
+      if(Get.currentRoute == "/NotifyView"){
+        Get.off(() => NotifyView(), preventDuplicates: false);
+      }else {
+        Get.to(() => NotifyView());
+      }
     });
     // foreground 알림 생성
     FirebaseMessaging.onMessage.listen((RemoteMessage rm) {
@@ -110,7 +114,11 @@ class AppController extends GetxController {
       });
 
       await storage.write(key: "notify", value: json.encode(_notifyList));
-      Get.to(() => NotifyView());
+      if(Get.currentRoute == "/NotifyView"){
+        Get.off(() => NotifyView(), preventDuplicates: false);
+      }else {
+        Get.to(() => NotifyView());
+      }
     });
 
     final fcmToken = await FirebaseMessaging.instance.getToken();

@@ -25,6 +25,7 @@ class NewsDetailView extends StatefulWidget {
   const NewsDetailView({required this.id, Key? key}) : super(key: key);
 
   factory NewsDetailView.fromNewsId(int id) {
+    print(id);
     return NewsDetailView(
       id: id,
     );
