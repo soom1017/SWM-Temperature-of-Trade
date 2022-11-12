@@ -119,7 +119,10 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             if (!FirebaseAuth.instance.currentUser!.isAnonymous)
               SettingsTile.navigation(
-                title: Text('회원탈퇴'),
+                title: Text(
+                  '회원탈퇴',
+                  style: TextStyle(color: Colors.red),
+                ),
                 onPressed: (_) async {
                   Future.delayed(
                     Duration.zero,

@@ -139,6 +139,8 @@ class DefaultLayout extends StatelessWidget {
   }
 
   routeToHomePage(BuildContext context) {
-    Get.offAll(() => RootTab());
+    if(Get.currentRoute != "/RootTab") {
+      Get.offAll(() => RootTab());
+    }
   }
 }
