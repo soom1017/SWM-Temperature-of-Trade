@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tot/common/const/colors.dart';
@@ -119,6 +121,48 @@ class _SettingScreenState extends State<SettingScreen> {
                 }
               },
             ),
+            if (!FirebaseAuth.instance.currentUser!.isAnonymous)
+              SettingsTile.navigation(
+                title: Text('회원탈퇴'),
+                onPressed: (_) async {
+                  Future.delayed(
+                    Duration.zero,
+                        () => showPlatformDialog(
+                      context: context,
+                      builder: (_) => PlatformAlertDialog(
+                        title: Text(
+                          '정말로 회원탈퇴 하시겠습니까?',
+                          style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+                        ),
+                        content: Text(
+                          '탈퇴하시면 모든 데이터는 복구가 불가능합니다.',
+                          style: TextStyle(fontSize: 13.sp),
+                        ),
+                        actions: <Widget>[
+                          PlatformDialogAction(
+                            child: PlatformText("네"),
+                            onPressed: () async {
+                              await API.deleteUser();
+                              await FirebaseAuth.instance.signOut();
+                              await FirebaseAuth.instance.signInAnonymously();
+                              await API.changeDioToken();
+                              Future.delayed(
+                                  Duration.zero,
+                                      () => Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(builder: (_) => FirstPageView()),
+                                          (route) => false));
+                            },
+                          ),
+                          PlatformDialogAction(
+                            child: PlatformText("아니오"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ],

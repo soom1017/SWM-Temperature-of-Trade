@@ -40,11 +40,15 @@ abstract class API {
         .toList();
   }
 
-  static Future<List<NewsTileData>> getNewsListHot({int news_id = -1}) async {
+  static Future<Map<String, dynamic>> getNewsListHot({int news_id = -1}) async {
     final response = await dio.get("/news/list-hot/${news_id}");
-    return List<Map<String, dynamic>>.from(response.data['data'])
-        .map((e) => NewsTileData.fromResponse(e))
-        .toList();
+    final data = {
+      "data" : List<Map<String, dynamic>>.from(response.data['data'])
+          .map((e) => NewsTileData.fromResponse(e))
+          .toList(),
+      "update_time" : response.data['update_time'],
+    };
+    return data;
   }
 
   static Future<List<NewsTileData>> getNewsListByKeyword(String keywordName,
@@ -72,11 +76,15 @@ abstract class API {
         .toList();
   }
 
-  static Future<List<String>> getKeywordRank() async {
+  static Future<Map<String, dynamic>> getKeywordRank() async {
     final response = await dio.get("/keywords/rank");
-    return List<String>.from(response.data['data'])
-        .map((e) => e.toString())
-        .toList();
+    final data = {
+      "data": List<String>.from(response.data['data'])
+          .map((e) => e.toString())
+          .toList(),
+      "update_time": response.data['update_time']
+    };
+    return data;
   }
 
   static Future<Map<String, dynamic>> getGraphMapByKeyword(
@@ -134,6 +142,10 @@ abstract class API {
 
   static Future<void> updateNotificationSetting(String? fcmToken) async {
     await API.dio.patch("/users/notification", data: {"fcm_token": fcmToken});
+  }
+
+  static Future<void> deleteUser() async {
+    await API.dio.delete("/users/");
   }
 }
 
