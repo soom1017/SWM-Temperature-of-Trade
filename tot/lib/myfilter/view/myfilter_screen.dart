@@ -47,8 +47,6 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         isStock: false,
       ),
     );
-    // stocks.removeWhere((element) => userFilterKey["stocks"]!.contains(element.name));
-    // keywords.removeWhere((element) => userFilterKey["keywords"]!.contains(element.name));
 
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       Future.delayed(
@@ -332,7 +330,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         searchFieldInputDecoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
           hintText: '검색어를 입력하세요',
-          hintStyle: kStyleDefault.copyWith(
+          hintStyle: TextStyle(
             fontSize: 13.sp,
             color: Colors.grey[400],
           ),

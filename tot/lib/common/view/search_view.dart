@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:multiple_search_selection/multiple_search_selection.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
@@ -9,7 +9,6 @@ import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/data/news_tile_data.dart';
-import 'package:tot/common/layout/default_layout.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);
@@ -18,19 +17,16 @@ class SearchView extends StatefulWidget {
   State<SearchView> createState() => _SearchViewState();
 }
 
-TextStyle kStyleDefault = TextStyle(
-  color: Colors.black,
-  fontSize: 16.sp,
-  fontWeight: FontWeight.bold,
-);
-
 class _SearchViewState extends State<SearchView> {
   final Map<String, List<String>> _keylist = {
     "keywords": List<String>.from([]),
     "stocks": List<String>.from([])
   };
+
   List<_Keyword> keywords = [];
-  RefreshController _controller = RefreshController();
+  List<_Keyword> selectedItems = [];
+  final RefreshController _refreshController = RefreshController();
+  final _textController = TextEditingController();
 
   @override
   void initState() {
@@ -52,162 +48,101 @@ class _SearchViewState extends State<SearchView> {
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return DefaultLayout(
-      isExtraPage: true,
-      pageName: "검색",
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _search(),
-          const Divider(
-            thickness: 1,
-            color: Colors.grey,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
-            child: Text(
-              "필터 뉴스",
-              style: TextStyle(
-                  fontSize: 26.sp,
-                  color: PRIMARY_COLOR,
-                  fontWeight: FontWeight.w600),
+  List<_Keyword> matcher(pattern) {
+    if (pattern == '') {
+      return [];
+    }
+    return keywords
+        .where((element) => element.name
+            .toLowerCase()
+            .contains(pattern.toString().toLowerCase()))
+        .toList();
+  }
+
+  AppBar _appBar() {
+    return AppBar(
+      backgroundColor: BG_COLOR,
+      foregroundColor: Colors.black,
+      title: Container(
+        width: double.infinity,
+        height: 40.h,
+        decoration: BoxDecoration(
+            color: Color(0xFFF3F8FC), borderRadius: BorderRadius.circular(20)),
+        child: Center(
+          child: TypeAheadFormField(
+            hideOnLoading: true,
+            noItemsFoundBuilder: (_){
+              return Padding(
+                padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
+                child: Text(
+                  '검색된 키워드가 없습니다.',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 13.sp,
+                  ),
+                ),
+              );
+            },
+            textFieldConfiguration: TextFieldConfiguration(
+              controller: _textController,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: GestureDetector(
+                  child: const Icon(Icons.clear),
+                  onTap: _textController.clear,
+                ),
+              ),
             ),
+            suggestionsBoxDecoration: SuggestionsBoxDecoration(
+              constraints: BoxConstraints(
+                maxHeight: 300.h,
+              ),
+            ),
+            suggestionsCallback: (pattern) {
+              return matcher(pattern);
+            },
+            hideKeyboardOnDrag: true,
+            hideSuggestionsOnKeyboardHide: false,
+            itemBuilder: (context, _Keyword suggestion) {
+              return suggestionItem(suggestion);
+            },
+            onSuggestionSelected: (_Keyword suggestion) {
+              selectedItems.add(suggestion);
+              keywords.remove(suggestion);
+              _textController.clear();
+              setState(() {
+                if (suggestion.isStock) {
+                  _keylist["stocks"]!.add(suggestion.name);
+                } else {
+                  _keylist["keywords"]!.add(suggestion.name);
+                }
+              });
+            },
           ),
-          SizedBox(
-            height: 20.h,
-          ),
-          _list(),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _search() {
-    return Container(
-      color: HOME_BG_COLOR,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.w),
-        child: MultipleSearchSelection<_Keyword>(
-          clearSearchFieldOnSelect: true,
-          pickedItemsContainerMaxHeight: 100.h,
-          title: Container(
-            color: Colors.transparent,
-            width: double.infinity,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(5.w, 12.h, 12.w, 5.h),
-              child: Text(
-                '필터',
-                style: TextStyle(
-                    fontSize: 26.sp,
-                    color: PRIMARY_COLOR,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
+  Widget suggestionItem(_keyword) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(6.w, 6.h, 6.w, 6.h),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          color: HOME_BG_COLOR,
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 12.0.h,
+            horizontal: 12.w,
           ),
-          onPickedChange: (c) {
-            setState(() {
-              _keylist.update(
-                  "stocks", (value) => List<String>.from(c.where((e) => e.isStock).map((e) => e.name)));
-              _keylist.update(
-                  "keywords", (value) => List<String>.from(c.where((e) => !e.isStock).map((e) => e.name)));
-            });
-            print(c.length);
-          },
-          items: keywords,
-          fieldToCheck: (c) {
-            return c.name;
-          },
-          itemBuilder: (_keyword) {
-            return Padding(
-              padding: EdgeInsets.fromLTRB(6.w, 6.h, 6.w, 6.h),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: HOME_BG_COLOR,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 12.0.h,
-                    horizontal: 12.w,
-                  ),
-                  child: Text(
-                    _keyword.isStock ? _keyword.name : "#${_keyword.name}",
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      color: SMALL_FONT_COLOR,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-          pickedItemBuilder: (_keyword) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFD8E1E8),
-                border: Border.all(color: Color(0xFFD8E1E8)),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      _keyword.name,
-                      style: TextStyle(fontSize: 21.sp, color: PRIMARY_COLOR),
-                    ),
-                    Text(
-                      '  ×',
-                      style:
-                          TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-          clearAllButton: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
-            child: Text(
-              '필터 초기화',
-              style: TextStyle(fontSize: 17.sp, color: Colors.redAccent),
-            ),
-          ),
-          showItemsButton: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
-            child: Text(
-              '찾기',
-              style: TextStyle(fontSize: 17.sp, color: Colors.blueAccent),
-            ),
-          ),
-          fuzzySearch: FuzzySearch.jaro,
-          itemsVisibility: ShowedItemsVisibility.toggle,
-          showSelectAllButton: false,
-          searchFieldInputDecoration: InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
-            hintText: '검색어를 입력하세요',
-            hintStyle: kStyleDefault.copyWith(
-              fontSize: 13.sp,
-              color: Colors.grey[400],
-            ),
-          ),
-          pickedItemsBoxDecoration: const BoxDecoration(
-            color: Colors.transparent,
-          ),
-          showShowedItemsScrollbar: false,
-          noResultsWidget: Padding(
-            padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
-            child: Text(
-              '검색된 키워드가 없습니다.',
-              style: kStyleDefault.copyWith(
-                color: Colors.grey,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w100,
-              ),
+          child: Text(
+            _keyword.isStock ? _keyword.name : "#${_keyword.name}",
+            style: TextStyle(
+              fontSize: 15.sp,
+              color: SMALL_FONT_COLOR,
             ),
           ),
         ),
@@ -215,28 +150,185 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  Widget _noData(){
+  Widget selectedItem(_Keyword _keyword) {
+    return GestureDetector(
+      onTap: () {
+        selectedItems.remove(_keyword);
+        keywords.add(_keyword);
+        setState(() {
+          if (_keyword.isStock) {
+            _keylist["stocks"]!.remove(_keyword.name);
+          } else {
+            _keylist["keywords"]!.remove(_keyword.name);
+          }
+        });
+      },
+      child: Container(
+        height: 32.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: Color(0xFFD8E1E8),
+        ),
+        padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(
+                  _keyword.name,
+                  style: TextStyle(fontSize: 17.sp, color: PRIMARY_COLOR),
+                ),
+                Text(
+                  '  ×',
+                  style: TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _appBar(),
+      body: _body(),
+    );
+  }
+
+  Widget _filter() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0.w),
+      decoration: BoxDecoration(
+        color: Color(0xFFF3F8FC),
+      ),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 10.h,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "필터",
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  color: PRIMARY_COLOR,
+                ),
+              ),
+              Spacer(),
+              GestureDetector(
+                onTap: (){
+                  // 초기화
+                  keywords.addAll(selectedItems);
+                  _keylist["stocks"]!.removeWhere((element) => selectedItems.any((e) => e.isStock && e.name == element));
+                  _keylist["keywords"]!.removeWhere((element) => selectedItems.any((e) => !e.isStock && e.name == element));
+                  selectedItems.clear();
+                  // 불러오기
+                  selectedItems.addAll(List<_Keyword>.from(userFilterKey["stocks"]!.map((e) => _Keyword(name: e, isStock: true))));
+                  selectedItems.addAll(List<_Keyword>.from(userFilterKey["keywords"]!.map((e) => _Keyword(name: e, isStock: false))));
+                  keywords.removeWhere((element) => selectedItems.contains(element));
+                  _keylist["stocks"]!.addAll(userFilterKey["stocks"]!);
+                  _keylist["keywords"]!.addAll(userFilterKey["keywords"]!);
+                  setState(() {
+                  });
+                },
+                child: Text(
+                  "마이필터 불러오기",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: PRIMARY_COLOR,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 25.w,
+              ),
+              GestureDetector(
+                onTap: () {
+                  keywords.addAll(selectedItems);
+                  _keylist["stocks"]!.removeWhere((element) => selectedItems.any((e) => e.isStock && e.name == element));
+                  _keylist["keywords"]!.removeWhere((element) => selectedItems.any((e) => !e.isStock && e.name == element));
+                  selectedItems.clear();
+                  setState(() {
+                  });
+                },
+                child: Text(
+                  "전체삭제",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: PRIMARY_COLOR,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 15.h,
+          ),
+          SizedBox(
+            height: 80.h,
+            width: double.infinity,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Wrap(
+                  spacing: 5.w,
+                  runSpacing: 5.w,
+                  direction: Axis.horizontal,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  alignment: WrapAlignment.start,
+                  children: selectedItems.map((e) => selectedItem(e)).toList()),
+            ),
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _body() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _filter(),
+        _list(),
+      ],
+    );
+  }
+
+  Widget _noData() {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 40,
+            height: 40.h,
           ),
           Icon(
             Icons.filter_alt_off_outlined,
-            size: 100,
+            size: 100.sp,
           ),
           Text(
             "조건에 맞는 뉴스가",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 30.sp, fontWeight: FontWeight.w600),
           ),
           SizedBox(
-            height: 10,
+            height: 10.h,
           ),
           Text(
             "존재하지 않습니다.",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 30.sp, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -245,46 +337,70 @@ class _SearchViewState extends State<SearchView> {
 
   Widget _list() {
     return Flexible(
-      child: FutureBuilder(
-        future: tokenCheck(() => API.getNewsListByFilter(_keylist)),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (_keylist["keywords"]!.isEmpty && _keylist["stocks"]!.isEmpty)
-            return Container();
-          else if(snapshot.data.isEmpty)
-            return _noData();
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
-            child: StatefulBuilder(
-              builder: (BuildContext context2, setter){
-                return _refresher(snapshot.data, setter);
-              },
-            )
-          );
-        },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 10.h,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
+            child: Text(
+              "필터 뉴스",
+              style: TextStyle(
+                fontSize: 22.sp,
+                color: PRIMARY_COLOR,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10.h,
+          ),
+          FutureBuilder(
+            future: tokenCheck(() => API.getNewsListByFilter(_keylist)),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (_keylist["keywords"]!.isEmpty && _keylist["stocks"]!.isEmpty)
+                return Container();
+              else if (snapshot.data.isEmpty) return _noData();
+              return Expanded(
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
+                  child: StatefulBuilder(
+                    builder: (BuildContext context2, setter) {
+                      return _refresher(snapshot.data, setter);
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _refresher(List<NewsTileData> data, setter){
+  Widget _refresher(List<NewsTileData> data, setter) {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
-        controller: _controller,
+        controller: _refreshController,
         onRefresh: () async {
-          final _next = await tokenCheck(() => API.getNewsListByFilter(_keylist));
-          _controller.refreshCompleted();
+          final _next =
+              await tokenCheck(() => API.getNewsListByFilter(_keylist));
+          _refreshController.refreshCompleted();
           data = _next;
           setter(() {});
         },
         onLoading: () async {
           var _next = null;
-          if(!data.isEmpty) {
-            _next = await tokenCheck(() =>
-                API.getNewsListByFilter(_keylist, newsId: data.last.id));
+          if (data.isNotEmpty) {
+            _next = await tokenCheck(
+                () => API.getNewsListByFilter(_keylist, newsId: data.last.id));
           }
-          _controller.loadComplete();
+          _refreshController.loadComplete();
           if (_next != null) {
             data.addAll(_next!);
           }
@@ -293,6 +409,8 @@ class _SearchViewState extends State<SearchView> {
         enablePullUp: true,
         enablePullDown: true,
         child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
           physics: ClampingScrollPhysics(),
           itemBuilder: (context, i) {
             return NewsTile.fromData(data[i]);
