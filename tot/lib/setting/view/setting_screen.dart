@@ -65,13 +65,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         await FirebaseMessaging.instance.getToken();
                     await AppController.storage
                         .write(key: "fcmToken", value: fcmToken);
-                    await API.updateNotificationSetting(fcmToken);
+                    await tokenCheck(() => API.updateNotificationSetting(fcmToken));
                   } else {
                     await AppController.storage
                         .write(key: "fcmToken", value: "");
                     await AppController.storage
-                        .write(key: "notify", value: "[]]");
-                    await API.updateNotificationSetting("");
+                        .write(key: "notify", value: "[]");
+                    await tokenCheck(() => API.updateNotificationSetting(""));
                   }
                 } catch (e) {
                   print(e);
@@ -142,7 +142,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           PlatformDialogAction(
                             child: PlatformText("네"),
                             onPressed: () async {
-                              await API.deleteUser();
+                              await tokenCheck(() => API.deleteUser());
                               await FirebaseAuth.instance.signOut();
                               await FirebaseAuth.instance.signInAnonymously();
                               await API.changeDioToken();
