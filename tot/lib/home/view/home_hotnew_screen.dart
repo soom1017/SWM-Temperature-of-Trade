@@ -54,6 +54,10 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
   }
 
   Widget _refresher(data, setter, update_time) {
+    var t = null;
+    if(widget.isHot) {
+      t = DateTime.parse(update_time);
+    }
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
         controller: _controller,
@@ -100,13 +104,39 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
                   SizedBox(
                     height: 20.h,
                   ),
-                  Text(
-                    widget.isHot ? "많은 사용자가 본 뉴스" : "새롭게 업데이트된 뉴스",
-                    style: TextStyle(
-                        fontSize: 28.sp,
-                        color: PRIMARY_COLOR,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  if (widget.isHot)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "많은 사용자가 본 뉴스",
+                          style: TextStyle(
+                            fontSize: 28.sp,
+                            color: PRIMARY_COLOR,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.h,
+                        ),
+                        Text(
+                          "${t.year}.${t.month.toString().padLeft(2, '0')}.${t.day.toString().padLeft(2, '0')} ${t.hour.toString().padLeft(2, '0')}:${t.minute} 에 업데이트 되었습니다.",
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            color: SMALL_FONT_COLOR,
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (!widget.isHot)
+                    Text(
+                      "새롭게 업데이트된 뉴스",
+                      style: TextStyle(
+                          fontSize: 28.sp,
+                          color: PRIMARY_COLOR,
+                          fontWeight: FontWeight.w600),
+                    ),
                   SizedBox(
                     height: 15.h,
                   ),
