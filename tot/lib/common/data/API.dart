@@ -111,7 +111,7 @@ abstract class API {
       double negative = x[e]![2].toDouble();
       double t = (positive + negative) == 0.0
           ? 0.0
-          : (positive - negative) / (positive + negative);
+          : ((positive - negative) / (positive + negative))/(neutral == 0.0 ? 1 : neutral);
       ans.add(ChartData(DateTime.parse(e), neutral, positive, negative, t));
     }
     return ans.reversed.toList();

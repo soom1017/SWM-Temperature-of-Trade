@@ -266,7 +266,7 @@ class _SearchViewState extends State<SearchView> {
                   "전체삭제",
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: PRIMARY_COLOR,
+                    color: Colors.red,
                   ),
                 ),
               ),
