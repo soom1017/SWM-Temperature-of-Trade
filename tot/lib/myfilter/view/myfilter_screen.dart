@@ -184,16 +184,25 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
   Widget _refresher(List<NewsTileData> data, setter, scrollController) {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
+        footer: ClassicFooter(
+          loadingText: "불러오는 중입니다.",
+          idleText: "당겨서 더보기",
+          noDataText: "이전 뉴스가 없습니다.",
+          failedText: "불러오기 실패",
+          canLoadingText: "이전 뉴스를 불러오기",
+        ),
         controller: _controller,
         onLoading: () async {
-          var _next = null;
-          if (!data.isEmpty) {
+          List<NewsTileData> _next = [];
+          if (data.isNotEmpty) {
             _next = await tokenCheck(() =>
                 API.getNewsListByFilter(userFilterKey, newsId: data.last.id));
           }
-          _controller.loadComplete();
-          if (_next != null) {
-            data.addAll(_next!);
+          if (_next.isNotEmpty) {
+            data.addAll(_next);
+            _controller.loadComplete();
+          }else{
+            _controller.loadNoData();
           }
           setter(() {});
         },

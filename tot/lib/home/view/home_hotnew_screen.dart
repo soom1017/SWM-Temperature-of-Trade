@@ -55,12 +55,26 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
 
   Widget _refresher(data, setter, update_time) {
     var t = null;
-    if(widget.isHot) {
+    if (widget.isHot) {
       t = DateTime.parse(update_time);
     }
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
         controller: _controller,
+        header: ClassicHeader(
+          refreshingText: "불러오는 중입니다.",
+          releaseText: "새로고침",
+          idleText: "당겨서 새로고침",
+          completeText: "새로고침 되었습니다.",
+          failedText: "새로고침 실패",
+        ),
+        footer: ClassicFooter(
+          loadingText: "불러오는 중입니다.",
+          idleText: "당겨서 더보기",
+          noDataText: "이전 뉴스가 없습니다.",
+          failedText: "불러오기 실패",
+          canLoadingText: "이전 뉴스를 불러오기",
+        ),
         onRefresh: () async {
           var _next = null;
           if (widget.isHot) {
@@ -75,21 +89,23 @@ class _HomeHotNewScreenState extends State<HomeHotNewScreen> {
           setter(() {});
         },
         onLoading: () async {
-          var _next = null;
+          var _next = [];
           if (!data.isEmpty) {
             if (widget.isHot) {
-              _next = await tokenCheck(
+              final temp = await tokenCheck(
                   () => API.getNewsListHot(news_id: data.last.id));
-              update_time = _next["update_time"];
-              _next = _next["data"];
+              update_time = temp["update_time"];
+              _next = temp["data"];
             } else {
               _next = await tokenCheck(
                   () => API.getNewsListNew(news_id: data.last.id));
             }
           }
-          _controller.loadComplete();
-          if (_next != null) {
+          if (_next.isNotEmpty) {
             data.addAll(_next!);
+            _controller.loadComplete();
+          }else{
+            _controller.loadNoData();
           }
           setter(() {});
         },

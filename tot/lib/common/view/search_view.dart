@@ -387,6 +387,20 @@ class _SearchViewState extends State<SearchView> {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
         controller: _refreshController,
+        header: ClassicHeader(
+          refreshingText: "불러오는 중입니다.",
+          releaseText: "새로고침",
+          idleText: "당겨서 새로고침",
+          completeText: "새로고침 되었습니다.",
+          failedText: "새로고침 실패",
+        ),
+        footer: ClassicFooter(
+          loadingText: "불러오는 중입니다.",
+          idleText: "당겨서 더보기",
+          noDataText: "이전 뉴스가 없습니다.",
+          failedText: "불러오기 실패",
+          canLoadingText: "이전 뉴스를 불러오기",
+        ),
         onRefresh: () async {
           final _next =
               await tokenCheck(() => API.getNewsListByFilter(_keylist));
@@ -395,14 +409,16 @@ class _SearchViewState extends State<SearchView> {
           setter(() {});
         },
         onLoading: () async {
-          var _next = null;
+          List<NewsTileData> _next = [];
           if (data.isNotEmpty) {
             _next = await tokenCheck(
                 () => API.getNewsListByFilter(_keylist, newsId: data.last.id));
           }
-          _refreshController.loadComplete();
-          if (_next != null) {
-            data.addAll(_next!);
+          if (_next.isNotEmpty) {
+            data.addAll(_next);
+            _refreshController.loadComplete();
+          }else{
+            _refreshController.loadNoData();
           }
           setter(() {});
         },
