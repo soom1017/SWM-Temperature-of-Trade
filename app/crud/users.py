@@ -52,7 +52,7 @@ def etc_auth_request(token: str, fcm_token: str, db: Session = Depends(get_db)):
     uid = get_uid_from_token(token)
     db_user = db.query(User).filter(User.user_id == uid).first()
     if not db_user:
-        create_new_user(uid, fcm_token, db)
+        db_user = create_new_user(uid, fcm_token, db)
     update_user_fcm_token(db_user, fcm_token, db)
 
 ## user
@@ -78,8 +78,9 @@ def update_user_fcm_token(db_user: User, fcm_token: str, db: Session = Depends(g
 
 # delete user
 def delete_user(token: str, db: Session = Depends(get_db)):
-    db_user = get_uid_from_token(token)
+    db_user = get_one_user_by_token(token, db)
     db.delete(db_user)
+    auth.delete_user(db_user.user_id)
     db.commit()
     
 ## user information

@@ -24,7 +24,7 @@ async def auth_request(authData: AuthData, db: Session = Depends(get_db)):
 # Withdrawal
 @users.delete('/')
 async def user_withdrawal(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    db_user = delete_user(token, db)
+    delete_user(token, db)
 
 # Notification
 @users.patch('/notification')
