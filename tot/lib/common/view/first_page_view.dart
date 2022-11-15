@@ -56,27 +56,43 @@ class FirstPageView extends StatelessWidget {
                 _RoundedButton(
                     imageSrc: 'assets/image/facebook.png',
                     press: () async {
-                      await _signInFacebook(context);
-                      _naviToRootTab();
+                      if (await _signInFacebook(context)) {
+                        _naviToRootTab();
+                      }
                     }),
                 if (Platform.isIOS)
                   _RoundedButton(
                       imageSrc: 'assets/image/apple.png',
                       press: () async {
-                        await _signInApple(context);
-                        _naviToRootTab();
+                        bool hasError = false;
+                        try {
+                          await _signInApple(context);
+                        } catch (e) {
+                          hasError = true;
+                        }
+                        if (!hasError) {
+                          _naviToRootTab();
+                        }
                       }),
                 _RoundedButton(
                     imageSrc: 'assets/image/google.png',
                     press: () async {
-                      await _signInGoogle(context);
-                      _naviToRootTab();
+                      if (await _signInGoogle(context)) {
+                        _naviToRootTab();
+                      }
                     }),
                 _RoundedButton(
                     imageSrc: 'assets/image/kakao.png',
                     press: () async {
-                      await _signInKakao(context);
-                      _naviToRootTab();
+                      bool hasError = false;
+                      try {
+                        await _signInKakao(context);
+                      } catch (e) {
+                        hasError = true;
+                      }
+                      if (!hasError) {
+                        _naviToRootTab();
+                      }
                     }),
               ],
             ),
@@ -108,10 +124,18 @@ class FirstPageView extends StatelessWidget {
     );
   }
 
-  Future<void> _signInGoogle(BuildContext context) async {
+  Future<bool> _signInGoogle(BuildContext context) async {
     ProgressDialog pd = ProgressDialog(context: context);
-    final GoogleSignInAccount? googleSignInAccount =
-        await GoogleSignIn().signIn();
+    GoogleSignInAccount? googleSignInAccount;
+    try {
+      googleSignInAccount = await GoogleSignIn().signIn();
+    } catch (e) {
+      print(e);
+      return false;
+    }
+    if(googleSignInAccount == null){
+      return false;
+    }
     pd.show(max: 100, msg: '로그인 하는 중...');
     final GoogleSignInAuthentication? googleSignInAuthentication =
         await googleSignInAccount?.authentication;
@@ -136,11 +160,22 @@ class FirstPageView extends StatelessWidget {
     await c.initialize();
     pd.update(value: 100);
     pd.close();
+    return true;
   }
 
-  Future<void> _signInFacebook(BuildContext context) async {
+  Future<bool> _signInFacebook(BuildContext context) async {
     ProgressDialog pd = ProgressDialog(context: context);
     final FacebookLoginResult result = await FacebookLogin().logIn();
+    switch (result.status) {
+      case FacebookLoginStatus.success:
+        break;
+      case FacebookLoginStatus.cancel:
+        return false;
+        break;
+      case FacebookLoginStatus.error:
+        return false;
+        break;
+    }
     pd.show(max: 100, msg: '로그인 하는 중...');
     final AuthCredential credential =
         FacebookAuthProvider.credential(result.accessToken!.token);
@@ -161,6 +196,7 @@ class FirstPageView extends StatelessWidget {
     await c.initialize();
     pd.update(value: 100);
     pd.close();
+    return true;
   }
 
   Future<void> _signInApple(BuildContext context) async {

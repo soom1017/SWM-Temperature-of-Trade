@@ -83,6 +83,7 @@ class HomeKeywordRankView extends StatelessWidget {
       // isExtraPage: true,
       pageName: "키워드 순위",
       child: SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
         scrollDirection: Axis.vertical,
         child: Container(
           decoration: BoxDecoration(

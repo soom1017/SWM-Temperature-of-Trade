@@ -9,6 +9,7 @@ import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/AppController.dart';
+import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/view/first_page_view.dart';
 
@@ -109,7 +110,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   pd.update(value: 75);
                   await API.changeDioToken();
                   pd.update(value: 100);
-                  userBookmark = [];
+                  BookmarkCache.to.bookmarks.clear();
                   userFilterKey = {};
                   pd.close();
                   Future.delayed(

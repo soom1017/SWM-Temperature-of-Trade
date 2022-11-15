@@ -27,9 +27,16 @@ void main() async {
   );
 }
 
-class _App extends StatelessWidget {
+class _App extends StatefulWidget {
   _App({Key? key}) : super(key: key);
+
+  @override
+  State<_App> createState() => _AppState();
+}
+
+class _AppState extends State<_App> {
   final BookmarkCache x = Get.put(BookmarkCache());
+
   final AppController c = Get.put(AppController());
 
   @override
@@ -55,9 +62,9 @@ class _App extends StatelessWidget {
 
             await AppController.storage
                 .write(key: "notify", value: json.encode(_notifyList));
-            if(Get.currentRoute == "/NotifyView"){
+            if (Get.currentRoute == "/NotifyView") {
               Get.off(() => NotifyView(), preventDuplicates: false);
-            }else {
+            } else {
               Get.to(() => NotifyView());
             }
           }
@@ -65,11 +72,27 @@ class _App extends StatelessWidget {
         }),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const MaterialApp(
+            return MaterialApp(
               debugShowCheckedModeBanner: false,
               home: DefaultLayout(
                 child: Center(
-                  child: Text("data load fail"),
+                  child: Column(
+                    children: [
+                      Text(
+                        "데이터 로딩에 실패했습니다.\n인터넷 연결상태를 확인해주세요",
+                        style: TextStyle(
+                            fontSize: 38.sp, fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 100.h,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            setState(() {});
+                          },
+                          child: Text("새로고침")),
+                    ],
+                  ),
                 ),
               ),
             );

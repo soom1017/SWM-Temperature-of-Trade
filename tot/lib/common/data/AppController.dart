@@ -130,7 +130,6 @@ class AppController extends GetxController {
         !FirebaseAuth.instance.currentUser!.isAnonymous) {
       await API.changeDioToken();
       await BookmarkCache.to.loadBookmark();
-      await getBookmarkByLoad();
       await getKeywordRankByLoad();
       await getFilterKeywordByLoad();
       await getUsersFavoritesByLoad();
@@ -151,15 +150,6 @@ class AppController extends GetxController {
       }
     }
     return true;
-  }
-}
-
-Future<void> getBookmarkByLoad() async {
-  final bookmark = await tokenCheck(() => API.getUserBookmark());
-  if (bookmark != null) {
-    userBookmark = bookmark.map((e) => e.id).toList();
-  } else {
-    userBookmark = [];
   }
 }
 
