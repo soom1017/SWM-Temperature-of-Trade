@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
-import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/view/news_detail_view.dart';
 import 'package:tot/common/const/tot_custom_icons_icons.dart';
@@ -219,6 +217,7 @@ class _NewsTileState extends State<NewsTile> {
         color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               widget.newsTitle,
@@ -269,13 +268,6 @@ class _NewsTileState extends State<NewsTile> {
       height: 18.h,
       child: ElevatedButton(
         onPressed: null,
-        child: FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Text(
-            widget.stockName!,
-            style: TextStyle(fontSize: 13.sp),
-          ),
-        ),
         style: ButtonStyle(
           padding: MaterialStateProperty.all<EdgeInsets>(
               EdgeInsets.symmetric(horizontal: 5.w)),
@@ -287,6 +279,13 @@ class _NewsTileState extends State<NewsTile> {
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+          ),
+        ),
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            widget.stockName!,
+            style: TextStyle(fontSize: 13.sp),
           ),
         ),
       ),

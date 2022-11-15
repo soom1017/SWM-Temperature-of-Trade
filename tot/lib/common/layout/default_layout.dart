@@ -6,8 +6,6 @@ import 'package:tot/common/const/custom_icons_icons.dart';
 import 'package:tot/common/view/root_tab.dart';
 import 'package:tot/common/view/notify_view.dart';
 import 'package:tot/common/view/search_view.dart';
-import 'package:tot/home/view/home_screen.dart';
-import 'package:transition/transition.dart';
 import 'package:tot/common/const/tot_custom_icons_icons.dart';
 
 class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -28,6 +26,8 @@ class DefaultLayout extends StatelessWidget {
   final bool isExtraPage;
   final bool isDetailPage;
   final String? pageName;
+  final bool isNotifyPage;
+  final Function? appBarFunction;
 
   const DefaultLayout({
     required this.child,
@@ -36,6 +36,8 @@ class DefaultLayout extends StatelessWidget {
     this.isExtraPage = false,
     this.isDetailPage = false,
     this.pageName,
+    this.isNotifyPage = false,
+    this.appBarFunction,
   }) : super(key: key);
 
   @override
@@ -54,18 +56,17 @@ class DefaultLayout extends StatelessWidget {
       backgroundColor: Colors.white,
       toolbarHeight: MediaQuery.of(context).size.height * 0.06,
       title: GestureDetector(
-        onTap:() {
-          routeToHomePage(context);
-        },
-        child: Text(
-          'ToT',
-          style: TextStyle(
-            fontSize: 32.0.sp,
-            fontWeight: FontWeight.w500,
-            color: PRIMARY_COLOR,
-          ),
-        )
-      ),
+          onTap: () {
+            routeToHomePage(context);
+          },
+          child: Text(
+            'ToT',
+            style: TextStyle(
+              fontSize: 32.0.sp,
+              fontWeight: FontWeight.w500,
+              color: PRIMARY_COLOR,
+            ),
+          )),
       // centerTitle: true,
       leadingWidth: 30.w,
       leading: Padding(
@@ -88,12 +89,19 @@ class DefaultLayout extends StatelessWidget {
               size: 28.sp,
               color: PRIMARY_COLOR,
             )),
-        IconButton(
-            onPressed: () {
-              routeToNotifyPage(context);
-            },
-            icon:
-                Icon(ToTCustomIcons.notify, size: 28.sp, color: PRIMARY_COLOR)),
+        if (!isNotifyPage)
+          IconButton(
+              onPressed: () {
+                routeToNotifyPage(context);
+              },
+              icon: Icon(ToTCustomIcons.notify,
+                  size: 28.sp, color: PRIMARY_COLOR)),
+        if (isNotifyPage)
+          IconButton(
+              onPressed: () async {
+                await appBarFunction!();
+              },
+              icon: Icon(Icons.delete, size: 32.sp, color: PRIMARY_COLOR)),
       ],
     );
   }
@@ -139,7 +147,7 @@ class DefaultLayout extends StatelessWidget {
   }
 
   routeToHomePage(BuildContext context) {
-    if(Get.currentRoute != "/RootTab") {
+    if (Get.currentRoute != "/RootTab") {
       Get.offAll(() => RootTab());
     }
   }

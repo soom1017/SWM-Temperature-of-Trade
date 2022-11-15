@@ -121,8 +121,8 @@ class AppController extends GetxController {
       }
     });
 
-    final fcmToken = await FirebaseMessaging.instance.getToken();
     if (kDebugMode) {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
       print(fcmToken);
     }
 

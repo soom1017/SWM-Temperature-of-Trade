@@ -97,28 +97,44 @@ class FirstPageView extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            "또는",
+          SizedBox(
+            height: 20.h,
+          ),
+          Row(
+            children: [
+              Expanded(
+                  child: Container(
+                child: Divider(
+                  thickness: 1,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 15.w),
+              )),
+              Text(
+                "또는",
+                style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.w400,
+                    color: PRIMARY_COLOR),
+              ),
+              Expanded(
+                  child: Container(
+                child: Divider(
+                  thickness: 1,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 15.w),
+              )),
+            ],
+          ),
+          SizedBox(
+            height: 30.h,
+          ),
+          TextButton(onPressed: _naviToRootTab, child: Text(
+            "게스트로 로그인",
             style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w400,
                 color: PRIMARY_COLOR),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          GestureDetector(
-            onTap: () {
-              _naviToRootTab();
-            },
-            child: Text(
-              "게스트로 로그인",
-              style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w400,
-                  color: PRIMARY_COLOR),
-            ),
-          ),
+          ),),
         ],
       ),
     );
@@ -133,7 +149,7 @@ class FirstPageView extends StatelessWidget {
       print(e);
       return false;
     }
-    if(googleSignInAccount == null){
+    if (googleSignInAccount == null) {
       return false;
     }
     pd.show(max: 100, msg: '로그인 하는 중...');

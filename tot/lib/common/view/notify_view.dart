@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/AppController.dart';
@@ -19,6 +19,7 @@ class NotifyView extends StatefulWidget {
 
 class _NotifyViewState extends State<NotifyView> {
   final AppController c = Get.put(AppController());
+  bool deleteSign = false;
   List<Map<String, dynamic>>? notifyList;
   List<Map<String, dynamic>> test = [
     {
@@ -56,8 +57,14 @@ class _NotifyViewState extends State<NotifyView> {
 
   @override
   Widget build(BuildContext context) {
+    if (deleteSign) {
+      notifyList = null;
+      deleteSign = false;
+    }
     return DefaultLayout(
+      isNotifyPage: true,
       isExtraPage: false,
+      appBarFunction: deleteFunction,
       child: Container(
         color: NEWSTAB_BG_COLOR,
         padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),
@@ -78,12 +85,27 @@ class _NotifyViewState extends State<NotifyView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "뉴스 알림",
-            style: TextStyle(
-                fontSize: 35.sp,
-                color: KEYWORD_BG_COLOR,
-                fontWeight: FontWeight.w600),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 5.w, 0),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        size: 25.sp,
+                      ))),
+              Text(
+                "뉴스 알림",
+                style: TextStyle(
+                    fontSize: 35.sp,
+                    color: KEYWORD_BG_COLOR,
+                    fontWeight: FontWeight.w600),
+              ),
+            ],
           ),
           Text(
             "회원님의 관심사와 관련된 새로운 뉴스를 표시해드립니다.",
@@ -121,6 +143,40 @@ class _NotifyViewState extends State<NotifyView> {
         ),
       ),
     );
+  }
+
+  deleteFunction() async {
+    Future.delayed(
+      Duration.zero,
+      () => showPlatformDialog(
+        context: context,
+        builder: (_) => PlatformAlertDialog(
+          title: Text(
+            '모든 알림을 지우시겠습니까?',
+            style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+          ),
+          content: Text(
+            '지운 알림은 복구가 불가능합니다.',
+            style: TextStyle(fontSize: 13.sp),
+          ),
+          actions: <Widget>[
+            PlatformDialogAction(
+              child: PlatformText("네"),
+              onPressed: () async {
+                await AppController.storage.write(key: "notify", value: "[]");
+                deleteSign = true;
+                Get.back();
+              },
+            ),
+            PlatformDialogAction(
+              child: PlatformText("아니오"),
+              onPressed: () => Get.back(),
+            ),
+          ],
+        ),
+      ),
+    );
+    setState(() {});
   }
 }
 

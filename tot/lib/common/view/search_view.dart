@@ -73,7 +73,7 @@ class _SearchViewState extends State<SearchView> {
         child: Center(
           child: TypeAheadFormField(
             hideOnLoading: true,
-            noItemsFoundBuilder: (_){
+            noItemsFoundBuilder: (_) {
               return Padding(
                 padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 8.h),
                 child: Text(
@@ -200,7 +200,7 @@ class _SearchViewState extends State<SearchView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         textFocus.unfocus();
       },
       child: Scaffold(
@@ -236,20 +236,26 @@ class _SearchViewState extends State<SearchView> {
               ),
               Spacer(),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   // 초기화
                   keywords.addAll(selectedItems);
-                  _keylist["stocks"]!.removeWhere((element) => selectedItems.any((e) => e.isStock && e.name == element));
-                  _keylist["keywords"]!.removeWhere((element) => selectedItems.any((e) => !e.isStock && e.name == element));
+                  _keylist["stocks"]!.removeWhere((element) =>
+                      selectedItems.any((e) => e.isStock && e.name == element));
+                  _keylist["keywords"]!.removeWhere((element) => selectedItems
+                      .any((e) => !e.isStock && e.name == element));
                   selectedItems.clear();
                   // 불러오기
-                  selectedItems.addAll(List<_Keyword>.from(userFilterKey["stocks"]!.map((e) => _Keyword(name: e, isStock: true))));
-                  selectedItems.addAll(List<_Keyword>.from(userFilterKey["keywords"]!.map((e) => _Keyword(name: e, isStock: false))));
-                  keywords.removeWhere((element) => selectedItems.contains(element));
+                  selectedItems.addAll(List<_Keyword>.from(
+                      userFilterKey["stocks"]!
+                          .map((e) => _Keyword(name: e, isStock: true))));
+                  selectedItems.addAll(List<_Keyword>.from(
+                      userFilterKey["keywords"]!
+                          .map((e) => _Keyword(name: e, isStock: false))));
+                  keywords.removeWhere(
+                      (element) => selectedItems.contains(element));
                   _keylist["stocks"]!.addAll(userFilterKey["stocks"]!);
                   _keylist["keywords"]!.addAll(userFilterKey["keywords"]!);
-                  setState(() {
-                  });
+                  setState(() {});
                 },
                 child: Text(
                   "마이필터 불러오기",
@@ -265,11 +271,12 @@ class _SearchViewState extends State<SearchView> {
               GestureDetector(
                 onTap: () {
                   keywords.addAll(selectedItems);
-                  _keylist["stocks"]!.removeWhere((element) => selectedItems.any((e) => e.isStock && e.name == element));
-                  _keylist["keywords"]!.removeWhere((element) => selectedItems.any((e) => !e.isStock && e.name == element));
+                  _keylist["stocks"]!.removeWhere((element) =>
+                      selectedItems.any((e) => e.isStock && e.name == element));
+                  _keylist["keywords"]!.removeWhere((element) => selectedItems
+                      .any((e) => !e.isStock && e.name == element));
                   selectedItems.clear();
-                  setState(() {
-                  });
+                  setState(() {});
                 },
                 child: Text(
                   "전체삭제",
@@ -368,12 +375,16 @@ class _SearchViewState extends State<SearchView> {
           FutureBuilder(
             future: tokenCheck(() => API.getNewsListByFilter(_keylist)),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
+              print("test");
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (_keylist["keywords"]!.isEmpty && _keylist["stocks"]!.isEmpty)
+              if (_keylist["keywords"]!.isEmpty &&
+                  _keylist["stocks"]!.isEmpty) {
                 return Container();
-              else if (snapshot.data.isEmpty) return _noData();
+              } else if (snapshot.connectionState == ConnectionState.done && snapshot.data.isEmpty) {
+                return _noData();
+              }
               return Expanded(
                 child: Container(
                   padding:
@@ -426,7 +437,7 @@ class _SearchViewState extends State<SearchView> {
           if (_next.isNotEmpty) {
             data.addAll(_next);
             _refreshController.loadComplete();
-          }else{
+          } else {
             _refreshController.loadNoData();
           }
           setter(() {});

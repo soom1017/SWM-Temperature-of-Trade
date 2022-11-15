@@ -295,27 +295,31 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         },
         pickedItemBuilder: (_keyword) {
           return Container(
+            height: 32.h,
             decoration: BoxDecoration(
               color: Color(0xFFD8E1E8),
               border: Border.all(color: Color(0xFFD8E1E8)),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    _keyword.name,
-                    style: TextStyle(fontSize: 21.sp, color: PRIMARY_COLOR),
-                  ),
-                  Text(
-                    '  ×',
-                    style: TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
-                  ),
-                ],
-              ),
+            padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      _keyword.name,
+                      style: TextStyle(fontSize: 17.sp, color: PRIMARY_COLOR),
+                    ),
+                    Text(
+                      '  ×',
+                      style: TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         },

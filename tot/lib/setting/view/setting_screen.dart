@@ -70,8 +70,6 @@ class _SettingScreenState extends State<SettingScreen> {
                   } else {
                     await AppController.storage
                         .write(key: "fcmToken", value: "");
-                    await AppController.storage
-                        .write(key: "notify", value: "[]");
                     await tokenCheck(() => API.updateNotificationSetting(""));
                   }
                 } catch (e) {
