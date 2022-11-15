@@ -57,8 +57,7 @@ class _NotifyViewState extends State<NotifyView> {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      pageName: "알림",
-      isExtraPage: true,
+      isExtraPage: false,
       child: Container(
         color: NEWSTAB_BG_COLOR,
         padding: EdgeInsets.symmetric(horizontal: HORIZONTAL_PADDING.w),

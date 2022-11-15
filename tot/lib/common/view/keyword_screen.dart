@@ -26,8 +26,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      pageName: "키워드 지도",
-      isExtraPage: true,
+      isExtraPage: false,
       child: FutureBuilder(
         future: Future.wait([
           tokenCheck(() => API.getNewsListByKeyword(widget.keyword)),
@@ -53,6 +52,17 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
                 ),
               ),
               _draggableWidget(_newsTileData),
+              GestureDetector(
+                onTap: () {
+                  print("test");
+                  Get.back();
+                },
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 10.h, 5, 0),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 35.sp,
+                  ),),),
             ],
           );
         },

@@ -18,6 +18,7 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
+  final FocusNode textFocus = FocusNode();
   final Map<String, List<String>> _keylist = {
     "keywords": List<String>.from([]),
     "stocks": List<String>.from([])
@@ -61,6 +62,7 @@ class _SearchViewState extends State<SearchView> {
 
   AppBar _appBar() {
     return AppBar(
+      elevation: 0,
       backgroundColor: BG_COLOR,
       foregroundColor: Colors.black,
       title: Container(
@@ -85,7 +87,9 @@ class _SearchViewState extends State<SearchView> {
             },
             textFieldConfiguration: TextFieldConfiguration(
               controller: _textController,
+              focusNode: textFocus,
               decoration: InputDecoration(
+                hintText: "검색어를 입력해주세요.",
                 border: InputBorder.none,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: GestureDetector(
@@ -195,9 +199,14 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _appBar(),
-      body: _body(),
+    return GestureDetector(
+      onTap: (){
+        textFocus.unfocus();
+      },
+      child: Scaffold(
+        appBar: _appBar(),
+        body: _body(),
+      ),
     );
   }
 

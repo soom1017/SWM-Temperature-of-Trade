@@ -104,7 +104,7 @@ class DefaultLayout extends StatelessWidget {
           style: TextStyle(fontSize: 28.0.sp, fontWeight: FontWeight.w600)),
       foregroundColor: Colors.black,
       backgroundColor: Colors.white,
-      elevation: 5,
+      elevation: 0,
       actions: [
         IconButton(
           onPressed: () {
