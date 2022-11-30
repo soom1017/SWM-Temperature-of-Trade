@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/home/view/home_hotnew_screen.dart';
 
@@ -8,26 +9,18 @@ class HomeHotNewButton extends StatelessWidget {
 
   const HomeHotNewButton({required this.text, Key? key}) : super(key: key);
 
-  routeToHotNew(BuildContext context) {
+  routeToHotNew() {
     if (text.compareTo("HOT") == 0) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => HomeHotNewScreen(isHot: true),
-        ),
-      );
+      Get.to(() => HomeHotNewScreen(isHot: true));
     } else if (text.compareTo("NEW") == 0) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => HomeHotNewScreen(isHot: false),
-        ),
-      );
+      Get.to(() => HomeHotNewScreen(isHot: false));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {routeToHotNew(context);},
+      onPressed: () {routeToHotNew();},
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsets>(
             EdgeInsets.fromLTRB(20.w, 3.h, 20.w, 3.h)),

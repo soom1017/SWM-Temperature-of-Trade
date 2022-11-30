@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/const/colors.dart';
 
 class PageTitleLayout extends StatelessWidget {
@@ -23,7 +24,7 @@ class PageTitleLayout extends StatelessWidget {
             children: [
               GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 5.w, 0),

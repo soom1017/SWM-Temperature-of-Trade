@@ -7,7 +7,6 @@ import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/component/news_detail_head.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/news_data.dart';
-import 'package:tot/common/jsonParser.dart';
 import 'package:tot/home/component/home_user_keywords.dart';
 import '../layout/default_layout.dart';
 import 'package:tot/common/const/padding.dart';

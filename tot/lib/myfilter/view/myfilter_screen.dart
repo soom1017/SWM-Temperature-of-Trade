@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:multiple_search_selection/multiple_search_selection.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
@@ -46,8 +47,6 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         isStock: false,
       ),
     );
-    // stocks.removeWhere((element) => userFilterKey["stocks"]!.contains(element.name));
-    // keywords.removeWhere((element) => userFilterKey["keywords"]!.contains(element.name));
 
     if (FirebaseAuth.instance.currentUser!.isAnonymous) {
       Future.delayed(
@@ -66,15 +65,11 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
             actions: <Widget>[
               PlatformDialogAction(
                 child: PlatformText("네"),
-                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => FirstPageView()),
-                        (route) => false),
+                onPressed: () => Get.offAll(() => FirstPageView()),
               ),
               PlatformDialogAction(
                 child: PlatformText("아니오"),
-                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    Transition(child: RootTab(), transitionEffect: TransitionEffect.FADE),
-                        (route) => false),
+                onPressed: () => Get.offAll(() => RootTab()),
               ),
             ],
           ),
@@ -189,16 +184,25 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
   Widget _refresher(List<NewsTileData> data, setter, scrollController) {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
+        footer: ClassicFooter(
+          loadingText: "불러오는 중입니다.",
+          idleText: "당겨서 더보기",
+          noDataText: "이전 뉴스가 없습니다.",
+          failedText: "불러오기 실패",
+          canLoadingText: "이전 뉴스를 불러오기",
+        ),
         controller: _controller,
         onLoading: () async {
-          var _next = null;
-          if (!data.isEmpty) {
+          List<NewsTileData> _next = [];
+          if (data.isNotEmpty) {
             _next = await tokenCheck(() =>
                 API.getNewsListByFilter(userFilterKey, newsId: data.last.id));
           }
-          _controller.loadComplete();
-          if (_next != null) {
-            data.addAll(_next!);
+          if (_next.isNotEmpty) {
+            data.addAll(_next);
+            _controller.loadComplete();
+          }else{
+            _controller.loadNoData();
           }
           setter(() {});
         },
@@ -291,27 +295,31 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         },
         pickedItemBuilder: (_keyword) {
           return Container(
+            height: 32.h,
             decoration: BoxDecoration(
               color: Color(0xFFD8E1E8),
               border: Border.all(color: Color(0xFFD8E1E8)),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    _keyword.name,
-                    style: TextStyle(fontSize: 21.sp, color: PRIMARY_COLOR),
-                  ),
-                  Text(
-                    '  ×',
-                    style: TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
-                  ),
-                ],
-              ),
+            padding: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      _keyword.name,
+                      style: TextStyle(fontSize: 17.sp, color: PRIMARY_COLOR),
+                    ),
+                    Text(
+                      '  ×',
+                      style: TextStyle(fontSize: 15.sp, color: SMALL_FONT_COLOR),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         },
@@ -335,7 +343,7 @@ class _MyfilterScreenState extends State<MyfilterScreen> {
         searchFieldInputDecoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
           hintText: '검색어를 입력하세요',
-          hintStyle: kStyleDefault.copyWith(
+          hintStyle: TextStyle(
             fontSize: 13.sp,
             color: Colors.grey[400],
           ),

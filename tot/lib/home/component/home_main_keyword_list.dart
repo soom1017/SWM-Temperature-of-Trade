@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/const/padding.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/view/keyword_screen.dart';
@@ -10,12 +11,8 @@ import '../../common/const/colors.dart';
 class HomeMainKeywordList extends StatelessWidget {
   const HomeMainKeywordList({Key? key}) : super(key: key);
 
-  routeToKeywordRank(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => HomeKeywordRankView(),
-      ),
-    );
+  routeToKeywordRank() {
+    Get.to(() => HomeKeywordRankView());
   }
 
   @override
@@ -49,7 +46,7 @@ class HomeMainKeywordList extends StatelessWidget {
               alignment: Alignment.topRight,
               child: GestureDetector(
                 onTap: () {
-                  routeToKeywordRank(context);
+                  routeToKeywordRank();
                 },
                 child: Text(
                   "키워드 순위 보기 〉",
@@ -70,19 +67,15 @@ class HomeMainKeywordButton extends StatelessWidget {
   const HomeMainKeywordButton({required this.keyword, Key? key})
       : super(key: key);
 
-  routeToKeywordMap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => KeywordMapScreen(keyword: keyword),
-      ),
-    );
+  routeToKeywordMap() {
+    Get.to(() => KeywordMapScreen(keyword: keyword));
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        routeToKeywordMap(context);
+        routeToKeywordMap();
       },
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsets>(

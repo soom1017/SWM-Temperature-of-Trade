@@ -1,6 +1,7 @@
 import 'package:circlegraph/circlegraph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tot/common/component/news_tile.dart';
 import 'package:tot/common/const/colors.dart';
@@ -25,8 +26,7 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      pageName: "키워드 지도",
-      isExtraPage: true,
+      isExtraPage: false,
       child: FutureBuilder(
         future: Future.wait([
           tokenCheck(() => API.getNewsListByKeyword(widget.keyword)),
@@ -52,6 +52,17 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
                 ),
               ),
               _draggableWidget(_newsTileData),
+              GestureDetector(
+                onTap: () {
+                  print("test");
+                  Get.back();
+                },
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 10.h, 5, 0),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 35.sp,
+                  ),),),
             ],
           );
         },
@@ -146,16 +157,25 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
       Function setter) {
     return SlidableAutoCloseBehavior(
       child: SmartRefresher(
+        footer: ClassicFooter(
+          loadingText: "불러오는 중입니다.",
+          idleText: "당겨서 더보기",
+          noDataText: "이전 뉴스가 없습니다.",
+          failedText: "불러오기 실패",
+          canLoadingText: "이전 뉴스를 불러오기",
+        ),
         controller: _controller,
         onLoading: () async {
-          var _next = null;
+          List<NewsTileData> _next = [];
           if (data.isNotEmpty) {
             _next = await tokenCheck(() => API
                 .getNewsListByKeyword(widget.keyword, news_id: data.last.id));
           }
-          _controller.loadComplete();
-          if (_next != null) {
-            data.addAll(_next!);
+          if (_next.isNotEmpty) {
+            data.addAll(_next);
+            _controller.loadComplete();
+          }else{
+            _controller.loadNoData();
           }
           setter(() {});
         },
@@ -209,10 +229,6 @@ class _KeywordMapScreenState extends State<KeywordMapScreen> {
   }
 
   void _onNodeClick(TreeNodeData node, String data) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => KeywordMapScreen(keyword: data),
-      ),
-    );
+    Get.to(() => KeywordMapScreen(keyword: data), preventDuplicates: false);
   }
 }

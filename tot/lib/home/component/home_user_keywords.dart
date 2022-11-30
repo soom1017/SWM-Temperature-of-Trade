@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/const/padding.dart';
 
@@ -84,21 +85,15 @@ class HomeUserKeyword extends StatelessWidget {
       )})
       : super(key: key);
 
-  routeToKeywordMap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => KeywordMapScreen(
-          keyword: keyword,
-        ),
-      ),
-    );
+  routeToKeywordMap() {
+    Get.to(() => KeywordMapScreen(keyword: keyword));
   }
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        routeToKeywordMap(context);
+        routeToKeywordMap();
       },
       child: Text(
         "#$keyword",

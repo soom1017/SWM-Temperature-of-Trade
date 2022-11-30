@@ -42,7 +42,6 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             child: HomeMainKeywordList(),
-            height: 220.h,
           ),
           Container(
             decoration: BoxDecoration(
@@ -109,7 +108,7 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
       enable: true,
       builder: (BuildContext context, TrackballDetails trackballDetails) {
         return Container(
-          height: 50.h,
+          height: 75.h,
           width: 80.w,
           decoration: BoxDecoration(
             color: Color.fromRGBO(0, 8, 22, 0.75),
@@ -121,6 +120,11 @@ class _WeeklyGraphState extends State<_WeeklyGraph> {
             children: [
               Text(
                   '긍정 : ${widget.data[trackballDetails.pointIndex!].positive.toInt()}건',
+                  style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Color.fromRGBO(255, 255, 255, 1))),
+              Text(
+                  '중립 : ${widget.data[trackballDetails.pointIndex!].neutral.toInt()}건',
                   style: TextStyle(
                       fontSize: 13.sp,
                       color: Color.fromRGBO(255, 255, 255, 1))),

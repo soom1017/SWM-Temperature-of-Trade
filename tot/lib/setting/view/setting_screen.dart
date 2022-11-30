@@ -3,11 +3,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tot/common/const/colors.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/AppController.dart';
+import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/view/first_page_view.dart';
 
@@ -64,13 +66,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         await FirebaseMessaging.instance.getToken();
                     await AppController.storage
                         .write(key: "fcmToken", value: fcmToken);
-                    await API.updateNotificationSetting(fcmToken);
+                    await tokenCheck(() => API.updateNotificationSetting(fcmToken));
                   } else {
                     await AppController.storage
                         .write(key: "fcmToken", value: "");
-                    await AppController.storage
-                        .write(key: "notify", value: "[]]");
-                    await API.updateNotificationSetting("");
+                    await tokenCheck(() => API.updateNotificationSetting(""));
                   }
                 } catch (e) {
                   print(e);
@@ -98,9 +98,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   : '로그인'),
               onPressed: (value) async {
                 if (FirebaseAuth.instance.currentUser!.isAnonymous) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => FirstPageView()),
-                      (route) => false);
+                  Get.offAll(() => FirstPageView());
                 } else {
                   pd.show(max: 100, msg: '로그아웃 하는 중...');
                   pd.update(value: 25);
@@ -110,29 +108,30 @@ class _SettingScreenState extends State<SettingScreen> {
                   pd.update(value: 75);
                   await API.changeDioToken();
                   pd.update(value: 100);
-                  userBookmark = [];
+                  BookmarkCache.to.bookmarks.clear();
                   userFilterKey = {};
                   pd.close();
                   Future.delayed(
-                      Duration.zero,
-                      () => Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (_) => FirstPageView()),
-                          (route) => false));
+                      Duration.zero, () => Get.offAll(() => FirstPageView()));
                 }
               },
             ),
             if (!FirebaseAuth.instance.currentUser!.isAnonymous)
               SettingsTile.navigation(
-                title: Text('회원탈퇴'),
+                title: Text(
+                  '회원탈퇴',
+                  style: TextStyle(color: Colors.red),
+                ),
                 onPressed: (_) async {
                   Future.delayed(
                     Duration.zero,
-                        () => showPlatformDialog(
+                    () => showPlatformDialog(
                       context: context,
                       builder: (_) => PlatformAlertDialog(
                         title: Text(
                           '정말로 회원탈퇴 하시겠습니까?',
-                          style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 17.sp, fontWeight: FontWeight.w600),
                         ),
                         content: Text(
                           '탈퇴하시면 모든 데이터는 복구가 불가능합니다.',
@@ -142,20 +141,17 @@ class _SettingScreenState extends State<SettingScreen> {
                           PlatformDialogAction(
                             child: PlatformText("네"),
                             onPressed: () async {
-                              await API.deleteUser();
+                              await tokenCheck(() => API.deleteUser());
                               await FirebaseAuth.instance.signOut();
                               await FirebaseAuth.instance.signInAnonymously();
                               await API.changeDioToken();
-                              Future.delayed(
-                                  Duration.zero,
-                                      () => Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(builder: (_) => FirstPageView()),
-                                          (route) => false));
+                              Future.delayed(Duration.zero,
+                                  () => Get.offAll(() => FirstPageView()));
                             },
                           ),
                           PlatformDialogAction(
                             child: PlatformText("아니오"),
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => Get.back(),
                           ),
                         ],
                       ),

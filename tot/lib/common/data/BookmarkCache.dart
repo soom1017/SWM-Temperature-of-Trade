@@ -20,11 +20,15 @@ class BookmarkCache extends GetxController {
 
   Future<void> createBookmark(NewsTileData news) async {
     bookmarks.add(news);
-    tokenCheck(() => API.createBookmarkById(news.id));
+    await tokenCheck(() => API.createBookmarkById(news.id));
   }
 
   Future<void> deleteBookmark(int id) async {
     bookmarks.removeWhere((x) => x.id == id);
-    tokenCheck(() => API.deleteBookmarkById(id));
+    await tokenCheck(() => API.deleteBookmarkById(id));
+  }
+
+  bool contain(int id){
+    return bookmarks.any((element) => element.id == id);
   }
 }

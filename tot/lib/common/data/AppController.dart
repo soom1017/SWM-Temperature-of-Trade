@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:tot/NavigationService.dart';
 import 'package:tot/common/data/API.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
 import 'package:tot/common/data/cache.dart';
@@ -70,7 +69,11 @@ class AppController extends GetxController {
       });
 
       await storage.write(key: "notify", value: json.encode(_notifyList));
-      NavigationService().navigateToScreen(const NotifyView());
+      if(Get.currentRoute == "/NotifyView"){
+        Get.off(() => NotifyView(), preventDuplicates: false);
+      }else {
+        Get.to(() => NotifyView());
+      }
     });
     // foreground 알림 생성
     FirebaseMessaging.onMessage.listen((RemoteMessage rm) {
@@ -111,11 +114,15 @@ class AppController extends GetxController {
       });
 
       await storage.write(key: "notify", value: json.encode(_notifyList));
-      NavigationService().navigateToScreen(const NotifyView());
+      if(Get.currentRoute == "/NotifyView"){
+        Get.off(() => NotifyView(), preventDuplicates: false);
+      }else {
+        Get.to(() => NotifyView());
+      }
     });
 
-    final fcmToken = await FirebaseMessaging.instance.getToken();
     if (kDebugMode) {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
       print(fcmToken);
     }
 
@@ -123,7 +130,6 @@ class AppController extends GetxController {
         !FirebaseAuth.instance.currentUser!.isAnonymous) {
       await API.changeDioToken();
       await BookmarkCache.to.loadBookmark();
-      await getBookmarkByLoad();
       await getKeywordRankByLoad();
       await getFilterKeywordByLoad();
       await getUsersFavoritesByLoad();
@@ -144,15 +150,6 @@ class AppController extends GetxController {
       }
     }
     return true;
-  }
-}
-
-Future<void> getBookmarkByLoad() async {
-  final bookmark = await tokenCheck(() => API.getUserBookmark());
-  if (bookmark != null) {
-    userBookmark = bookmark.map((e) => e.id).toList();
-  } else {
-    userBookmark = [];
   }
 }
 

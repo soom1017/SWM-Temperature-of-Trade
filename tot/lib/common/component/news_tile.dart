@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:tot/common/data/API.dart';
+import 'package:get/get.dart';
 import 'package:tot/common/data/BookmarkCache.dart';
-import 'package:tot/common/data/cache.dart';
 import 'package:tot/common/data/news_tile_data.dart';
 import 'package:tot/common/view/news_detail_view.dart';
 import 'package:tot/common/const/tot_custom_icons_icons.dart';
@@ -74,14 +73,8 @@ class _NewsTileState extends State<NewsTile> {
     toggle = checkBookmark(widget.id);
   }
 
-  routeToNewsDetailPage(BuildContext context) {
-    print(widget.id);
-    print(widget.newsTitle);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => NewsDetailView.fromNewsId(widget.id),
-      ),
-    );
+  routeToNewsDetailPage() {
+    Get.to(() => NewsDetailView.fromNewsId(widget.id));
   }
 
   @override
@@ -155,97 +148,46 @@ class _NewsTileState extends State<NewsTile> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) {
-              var snackbar;
-              print("${widget.newsTitle} : $toggle -> ${toggle ^ 1}");
-              if ((widget.isBookmarkPage ?? false)) {
-                print(widget.isBookmarkPage);
-                if (toggle == 0) {
-                  snackbar = SnackBar(
-                    content: Text("북마크에 추가했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        print(widget.id);
-                        if (mounted) {
-                          setState(() {
-                            c.deleteBookmark(widget.id);
-                            toggle ^= 1;
-                          });
-                        }
-                      },
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  if (mounted) {
-                    setState(() {
-                      c.createBookmark(widget.data);
-                      toggle ^= 1;
-                    });
-                  }
-                }
-                if (toggle == 1) {
-                  snackbar = SnackBar(
-                    content: Text("북마크에서 삭제했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        print(widget.id);
-                        if (mounted) {
-                          setState(() {
-                            c.createBookmark(widget.data);
-                            toggle ^= 1;
-                          });
-                        }
-                      },
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  if (mounted) {
-                    setState(() {
-                      c.deleteBookmark(widget.id);
-                      toggle ^= 1;
-                    });
-                  }
-                }
-              } else {
-                print(widget.isBookmarkPage);
-                if (toggle == 0) {
-                  c.createBookmark(widget.data);
-                  snackbar = SnackBar(
-                    content: Text("북마크에 추가했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        print(widget.id);
-                        c.deleteBookmark(widget.id);
+              var snackbar = null;
+              if (!c.contain(widget.id)) {
+                c.createBookmark(widget.data);
+                final id = widget.id;
+                snackbar = SnackBar(
+                  content: Text("북마크에 추가했습니다."),
+                  duration: Duration(milliseconds: 1500),
+                  action: SnackBarAction(
+                    label: '취소',
+                    onPressed: () {
+                      c.deleteBookmark(id);
+                      if (mounted) {
                         setState(() {
                           toggle ^= 1;
                         });
-                      },
-                    ),
-                  );
-                }
-                if (toggle == 1) {
-                  c.deleteBookmark(widget.id);
-                  snackbar = SnackBar(
-                    content: Text("북마크에서 삭제했습니다."),
-                    duration: Duration(milliseconds: 1500),
-                    action: SnackBarAction(
-                      label: '취소',
-                      onPressed: () {
-                        print(widget.id);
-                        c.createBookmark(widget.data);
+                      }
+                    },
+                  ),
+                );
+              } else if (c.contain(widget.id)) {
+                c.deleteBookmark(widget.id);
+                final data = widget.data;
+                snackbar = SnackBar(
+                  content: Text("북마크에서 삭제했습니다."),
+                  duration: Duration(milliseconds: 1500),
+                  action: SnackBarAction(
+                    label: '취소',
+                    onPressed: () {
+                      c.createBookmark(data);
+                      if (mounted) {
                         setState(() {
                           toggle ^= 1;
                         });
-                      },
-                    ),
-                  );
-                }
-                ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                      }
+                    },
+                  ),
+                );
+              }
+              ScaffoldMessenger.of(context).showSnackBar(snackbar);
+              if (mounted) {
                 setState(() {
                   toggle ^= 1;
                 });
@@ -269,12 +211,13 @@ class _NewsTileState extends State<NewsTile> {
   Widget _newsTile() {
     return GestureDetector(
       onTap: () {
-        routeToNewsDetailPage(context);
+        routeToNewsDetailPage();
       },
       child: Container(
         color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               widget.newsTitle,
@@ -325,13 +268,6 @@ class _NewsTileState extends State<NewsTile> {
       height: 18.h,
       child: ElevatedButton(
         onPressed: null,
-        child: FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Text(
-            widget.stockName!,
-            style: TextStyle(fontSize: 13.sp),
-          ),
-        ),
         style: ButtonStyle(
           padding: MaterialStateProperty.all<EdgeInsets>(
               EdgeInsets.symmetric(horizontal: 5.w)),
@@ -343,6 +279,13 @@ class _NewsTileState extends State<NewsTile> {
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+          ),
+        ),
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            widget.stockName!,
+            style: TextStyle(fontSize: 13.sp),
           ),
         ),
       ),
